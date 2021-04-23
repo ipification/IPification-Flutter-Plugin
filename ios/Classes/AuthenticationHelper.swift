@@ -88,12 +88,12 @@ class AuthenticationHelper {
             let xml         = FileManager.default.contents(atPath: path),
             let preferences = try? PropertyListDecoder().decode(Configuration.self, from: xml)
         {
-            print("login_hint", preferences.CLIENT_ID)
+            // print("login_hint", preferences.CLIENT_ID)
             switch configName {
             case "client_id":
                 return preferences.CLIENT_ID
             case "redirect_uri":
-                return preferences.REDIRECT_URI
+                return preferences.REDIRECT_URI?.replacingOccurrences(of: "\\", with: "")
             default:
                 return ""
             }
