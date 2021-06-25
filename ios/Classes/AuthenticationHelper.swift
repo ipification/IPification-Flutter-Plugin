@@ -45,7 +45,7 @@ class AuthenticationHelper {
         if login_hint.isEmpty {
             var temp = AuthenticateResult()
             temp.error_code = ErrorCode.AUTHENTICATE_PHONE_MISSING
-            temp.error_message = "Number phone missing"
+            temp.error_message = "login-hint is missing"
             fail(temp)
             return
         }
