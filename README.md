@@ -1,4 +1,4 @@
 # Flutter IPification SDK 
 
 IPification SDK Plugin for Flutter
- version 1.4
+version 1.5
