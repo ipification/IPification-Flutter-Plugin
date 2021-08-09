@@ -7,20 +7,14 @@ import com.ipification.mobile.sdk.android.callback.CellularCallback
 import com.ipification.mobile.sdk.android.exception.CellularException
 import com.ipification.mobile.sdk.android.response.AuthResponse
 import com.ipification.mobile.sdk.android.response.CoverageResponse
-import com.ipification.sdk.ip_sdk.AuthenciateListener
+import com.ipification.sdk.ip_sdk.AuthenticateListener
 import com.ipification.sdk.ip_sdk.AuthenticateResult
 import com.ipification.sdk.ip_sdk.ErrorCode
 
 
 class AuthenticationHelper(val apiService: IPApiService)  {
 
-
-
-
-
-
-
-    fun doAuthentication (phone_hint:String ="85263480857",listener: AuthenciateListener){
+    fun doAuthentication (phone_hint:String,listener: AuthenticateListener){
         val callback = object : CellularCallback<AuthResponse> {
             override fun onSuccess(res: AuthResponse) {
                 val code = res.getCode()
@@ -33,13 +27,8 @@ class AuthenticationHelper(val apiService: IPApiService)  {
                     }
                     listener.onFail(result)
                 }else{
-
                     listener.onSuccess(code)
                 }
-
-
-
-
             }
 
             override fun onError(error: CellularException) {
@@ -50,8 +39,6 @@ class AuthenticationHelper(val apiService: IPApiService)  {
                     }
                 }
                 listener?.onFail(result)
-
-
             }
         }
         apiService.ipAuthen(phone_hint,callback)
@@ -62,30 +49,22 @@ class AuthenticationHelper(val apiService: IPApiService)  {
 
         val callback = object : CellularCallback<CoverageResponse> {
             override fun onSuccess(res: CoverageResponse) {
-
                 onSuccess.invoke(res.isAvailable())
-
-
             }
 
             override fun onError(error: CellularException) {
-
-
                 val result = AuthenticateResult()
                 result.error_code = ErrorCode.COVERAGE_ERROR
                 result.error_message = error?.getErrorMessage()
-
                 onError.invoke(result)
-
-
             }
 
         }
         apiService.checkIpCoverage(callback)
     }
 
-       fun setConfiguration(file_name:String){
-           Log.d("config_name",file_name)
+    fun setConfiguration(file_name:String){
+        Log.d("config_name",file_name)
         val context = apiService.context
         val cellularService = CellularService<CoverageResponse>(apiService.context)
         val resourceId: Int = context.resources.getIdentifier(file_name, "raw", context.getPackageName())
@@ -99,8 +78,15 @@ class AuthenticationHelper(val apiService: IPApiService)  {
 
     }
 
+    fun setState(state: String){
+        apiService.setState(state)
+    }
 
+    fun addQueryParam(key: String, value: String){
+        apiService.addQueryParam(key, value)
+    }
 
-
-
+    fun setScope(scope: String){
+        apiService.setScope(scope)
+    }
 }

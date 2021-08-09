@@ -21,6 +21,30 @@ class IpSdk {
 
     return result;
   }
+  static void addQueryParam({String key, String value}) {
+    if (key == null) {
+      key = "";
+    }
+    if (value == null) {
+      value = "";
+    }
+    _channel
+        .invokeMethod("addQueryParam", {"key": key, "value": value});
+  }
+  static void setState({String value}) {    
+    if (value == null) {
+      value = "";
+    }
+    _channel
+        .invokeMethod("setState", {"value": value});
+  }
+  static void setScope({String value}) {    
+    if (value == null) {
+      value = "";
+    }
+    _channel
+        .invokeMethod("setScope", {"value": value});
+  }
 
   static Future<bool> get checkCoverage async {
     final bool result = await _channel.invokeMethod<bool>('checkCoverage');

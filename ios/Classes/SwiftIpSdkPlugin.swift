@@ -4,6 +4,7 @@ import UIKit
 
 
 public class SwiftIpSdkPlugin: NSObject, FlutterPlugin {
+  var authenticationHelper: AuthenticationHelper? = nil
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "ip_sdk", binaryMessenger: registrar.messenger())
     let instance = SwiftIpSdkPlugin()
@@ -13,25 +14,77 @@ public class SwiftIpSdkPlugin: NSObject, FlutterPlugin {
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     
     if(call.method == "doAuthentication"){
+      
         let arg =   call.arguments as? Dictionary<String, Any>
         let phone = arg!["login_hint"] as? String
-        
-        AuthenticationHelper.authent(login_hint: phone! , success: { s in
+        if(authenticationHelper == nil){
+          authenticationHelper = AuthenticationHelper()
+        }
+        authenticationHelper?.authent(login_hint: phone! , success: { s in
+            self.authenticationHelper = nil
             result(s)
         }, fail: {f in
+            self.authenticationHelper = nil
             result(FlutterError(code:f.error_code.rawValue,message: f.error_message, details: nil))
         })
 
-    }else if(call.method == "checkCoverage"){
-        AuthenticationHelper.checkCoverage(success:{s in
+    }
+    else if(call.method == "checkCoverage"){
+        if(authenticationHelper == nil){
+          authenticationHelper = AuthenticationHelper()
+        }
+        authenticationHelper?.checkCoverage(success:{s in
              result(s)
         }, fail: {f in
              result(FlutterError(code:f.error_code.rawValue,message: f.error_message, details: nil))
         })
-    }else if(call.method == "getConfiguration"){
+    }
+    else if(call.method == "getConfiguration"){
+        if(authenticationHelper == nil){
+          authenticationHelper = AuthenticationHelper()
+        }
         let arg =   call.arguments as? Dictionary<String, Any>
         let configName = arg!["config_name"] as? String
-        result(AuthenticationHelper.getConfigurationByName(configName:configName!))
+        result(authenticationHelper?.getConfigurationByName(configName:configName!))
+    }
+    else if(call.method == "addQueryParam"){
+        let arg =  call.arguments as? Dictionary<String, Any>
+        var key = arg!["key"] as? String
+        var paramValue = arg!["value"] as? String
+        if(key == nil){
+          key = ""
+        }
+        if(paramValue == nil){
+          paramValue = ""
+        }
+        if(authenticationHelper == nil){
+          authenticationHelper = AuthenticationHelper()
+        }
+        authenticationHelper?.addQueryParam(key: key!, value: paramValue!)
+    }
+    else if(call.method == "setState"){
+        let arg =  call.arguments as? Dictionary<String, Any>
+        var paramValue = arg!["value"] as? String
+      
+        if(paramValue == nil){
+          paramValue = ""
+        }
+        if(authenticationHelper == nil){
+          authenticationHelper = AuthenticationHelper()
+        }
+        authenticationHelper?.setState(value: paramValue!)
+    }
+    else if(call.method == "setScope"){
+        let arg =  call.arguments as? Dictionary<String, Any>
+        var paramValue = arg!["value"] as? String
+      
+        if(paramValue == nil){
+          paramValue = ""
+        }
+        if(authenticationHelper == nil){
+          authenticationHelper = AuthenticationHelper()
+        }
+        authenticationHelper?.setScope(value: paramValue!)
     }
    
   }

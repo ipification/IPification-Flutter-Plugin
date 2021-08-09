@@ -24,10 +24,10 @@ class _MyAppState extends State<MyApp> {
   final String TOKEN_URL =
       "https://stage.ipification.com/auth/realms/ipification/protocol/openid-connect/token";
 
-  final String YOUR_CLIENT_SECRET = '';
+  final String YOUR_CLIENT_SECRET = 'd6d710ee-68db-4913-934e-b02330523549';
 
-  final String countryCode = "381";
-  final String phoneNumber = "123456789";
+  final String countryCode = "84";
+  final String phoneNumber = "921744713";
 
   @override
   Widget build(BuildContext context) {
@@ -79,8 +79,12 @@ class _MyAppState extends State<MyApp> {
           IpSdk.setAuthorizationServiceConfiguration("ipification_services");
         }
         print(countryCode + phoneNumber);
+        IpSdk.addQueryParam(key: "custom_key", value: "custom_value");
+        IpSdk.setState(value: "custom_state");
+        // IpSdk.setScope(value: "custom_scope");
         authenCode =
             await IpSdk.doAuthentication(loginHint: countryCode + phoneNumber);
+        print(authenCode);
         if (authenCode.isNotEmpty) {
           await doTokenExchange(
               authenCode,
@@ -97,12 +101,14 @@ class _MyAppState extends State<MyApp> {
                         errMessage + "Access token: ${success['access_token']}"
                   },
               (fail) => {errMessage = fail});
+        } else {
+          errMessage = "code nil";
         }
       } on PlatformException catch (e) {
         errMessage = e.code + "\n" + e.message;
       }
     }
-
+    print(errMessage);
     if (!mounted) return;
 
     setState(() {
@@ -127,11 +133,12 @@ class _MyAppState extends State<MyApp> {
       'redirect_uri': redirectURI,
       'code': authenCode
     };
+    print(details);
     var client = http.Client();
     try {
       var responseJson = await client.post(TOKEN_URL, body: details);
       // responseJson["access_token"]
-
+      print(responseJson);
       Map<String, dynamic> parse = jsonDecode(responseJson.body);
       if (responseJson.statusCode == 200) {
         Map<String, dynamic> decodedToken =

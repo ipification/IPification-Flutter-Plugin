@@ -67,23 +67,20 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
     if (call.method == "doAuthentication") {
 
       if (authInProgress.get()) {
-
         return
       }
       var login_hint = call.argument<String>("login_hint")
-
-
       if(login_hint.isNullOrEmpty()){
-        login_hint = "85263480857"
+        login_hint = ""
       }
 
 
       authInProgress.set(true)
-      if(authenticationHelper==null){
-        authenticationHelper = AuthenticationHelper(IPApiService(context!!))
+      if(authenticationHelper == null){
+          authenticationHelper = AuthenticationHelper(IPApiService(context!!))
       }
 
-      val listener= object :AuthenciateListener{
+      val listener= object :AuthenticateListener{
         override fun onSuccess(authen_code: String) {
           if (authInProgress.compareAndSet(true, false)) {
 
@@ -99,7 +96,6 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
           if (authInProgress.compareAndSet(true, false)) {
              context?.runOnUiThread{
                result.error(errorResult.error_code.code,errorResult.error_message,null)
-
              }
           }
         }
@@ -122,7 +118,7 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
         return
       }
       authInProgress.set(true)
-      if(authenticationHelper==null){
+      if(authenticationHelper == null){
         authenticationHelper = AuthenticationHelper(IPApiService(context!!))
       }
       authenticationHelper?.checkCoverage({
@@ -168,7 +164,8 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
 
       }
 
-    }else if(call.method=="unregisterNetwork"){
+    }
+    else if(call.method=="unregisterNetwork"){
       context?.let {
         val result =  CellularService.Companion.unregisterNetwork(context!!)
         if(BuildConfig.DEBUG) {
@@ -177,7 +174,34 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
         context = null
         channel.setMethodCallHandler(null);
       }
-
+    }
+    else if(call.method=="addQueryParam"){
+      context?.let {
+        var key = call.argument<String>("key") ?: ""
+        var value = call.argument<String>("value") ?: ""
+        if(authenticationHelper==null){
+          authenticationHelper = AuthenticationHelper(IPApiService(context!!))
+        }
+        authenticationHelper?.addQueryParam(key, value)
+      }
+    }
+    else if(call.method=="setState"){
+      context?.let {
+        var state = call.argument<String>("value") ?: ""
+        if(authenticationHelper==null){
+          authenticationHelper = AuthenticationHelper(IPApiService(context!!))
+        }
+        authenticationHelper?.setState(state)
+      }
+    }
+    else if(call.method=="setScope"){
+      context?.let {
+        var scope = call.argument<String>("value") ?: ""
+        if(authenticationHelper==null){
+          authenticationHelper = AuthenticationHelper(IPApiService(context!!))
+        }
+        authenticationHelper?.setScope(scope)
+      }
     }
   }
 

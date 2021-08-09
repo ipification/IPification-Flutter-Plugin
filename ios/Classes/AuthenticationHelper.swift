@@ -2,7 +2,7 @@
 //  AuthenticationHelper.swift
 //  ip_sdk
 //
-//  Created by thousandhands on 1/20/21.
+//  Created by ipification on 1/20/21.
 //
 
 import Foundation
@@ -11,37 +11,29 @@ import IPificationSDK
 
 
 class AuthenticationHelper {
-    
-    static func checkCoverage(success:@escaping(Bool)->(Void),fail:@escaping(AuthenticateResult)->(Void)){
-        do {
-            let coverageService = CoverageService()
-            coverageService.callbackFailed = { (error) -> Void in
-                print(error.localizedDescription)
-                var temp = AuthenticateResult()
-                temp.error_code = ErrorCode.COVERAGE_UNAVAILABLE
-                temp.error_message = error.localizedDescription
-                fail(temp)
-                
-            }
-            coverageService.callbackSuccess = { (response) -> Void in
-                print("check coverage result: ", response.isAvailable())
-                success(response.isAvailable())
-                
-            }
-            try coverageService.checkCoverage()
-        } catch{
-            print("Unexpected error: \(error).")
+    var authBuilder : AuthorizationRequest.Builder
+    init(){
+        authBuilder = AuthorizationRequest.Builder()
+    }
+    func checkCoverage(success:@escaping(Bool)->(Void),fail:@escaping(AuthenticateResult)->(Void)){
+        let coverageService = CoverageService()
+        coverageService.callbackFailed = { (error) -> Void in
+            print(error.localizedDescription)
             var temp = AuthenticateResult()
-            temp.error_code = ErrorCode.COVERAGE_ERROR
+            temp.error_code = ErrorCode.COVERAGE_UNAVAILABLE
             temp.error_message = error.localizedDescription
             fail(temp)
-            // unavailable, please handle it with another auth service flow
+            
         }
+        coverageService.callbackSuccess = { (response) -> Void in
+            print("check coverage result: ", response.isAvailable())
+            success(response.isAvailable())
+            
+        }
+        coverageService.checkCoverage()
     }
     
-    static func authent(login_hint:String,success:@escaping(String?)->(Void),fail:@escaping(AuthenticateResult)->(Void)){
-        
-        
+    func authent(login_hint:String, success:@escaping(String?)->(Void),fail:@escaping(AuthenticateResult)->(Void)){
         if login_hint.isEmpty {
             var temp = AuthenticateResult()
             temp.error_code = ErrorCode.AUTHENTICATE_PHONE_MISSING
@@ -49,11 +41,9 @@ class AuthenticationHelper {
             fail(temp)
             return
         }
-        
-        
         let authorizationService = AuthorizationService()
         authorizationService.callbackFailed = { (error) -> Void in
-            print("authorized failed", error.localizedDescription)
+            print("authorized failed ", error.localizedDescription)
             var temp = AuthenticateResult()
             temp.error_code = ErrorCode.AUTHENTICATE_ERROR
             temp.error_message = error.localizedDescription
@@ -74,15 +64,26 @@ class AuthenticationHelper {
         }
         
         
-        let builder =  AuthorizationRequest.Builder()
+        
         print("login_hint", login_hint)
-        builder.addQueryParam(key: "login_hint", value: login_hint)
-        authorizationService.doAuthorization(builder.build())
+        authBuilder.addQueryParam(key: "login_hint", value: login_hint)
+        authorizationService.doAuthorization(authBuilder.build())
     }
     
-    
+    func addQueryParam(key: String, value: String){
+        print("key", key, value)
+        authBuilder.addQueryParam(key: key, value: value)
+    }
+    func setState(value: String){
+        print("setState", value)
+        authBuilder.setState(value: value)
+    }
+    func setScope(value: String){
+        print("setScope", value)
+        authBuilder.setScope(value: value)
+    }
         
-    static func getConfigurationByName(configName: String?) -> String?
+    func getConfigurationByName(configName: String?) -> String?
     {
       if  let path        = Bundle.main.path(forResource: "Info", ofType: "plist"),
             let xml         = FileManager.default.contents(atPath: path),
