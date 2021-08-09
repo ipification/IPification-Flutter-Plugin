@@ -79,8 +79,8 @@ class _MyAppState extends State<MyApp> {
           IpSdk.setAuthorizationServiceConfiguration("ipification_services");
         }
         print(countryCode + phoneNumber);
-        IpSdk.addQueryParam(key: "custom_key", value: "custom_value");
-        IpSdk.setState(value: "custom_state");
+        // IpSdk.addQueryParam(key: "custom_key", value: "custom_value");
+        // IpSdk.setState(value: "custom_state");
         // IpSdk.setScope(value: "custom_scope");
         authenCode =
             await IpSdk.doAuthentication(loginHint: countryCode + phoneNumber);
