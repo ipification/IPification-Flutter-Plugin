@@ -13,3 +13,7 @@ Sync with native library 1.5
 ## 1.5.1
 
 Exposed functions : setState , addQueryParam
+
+## 1.6
+
+Sync with native library 1.6
