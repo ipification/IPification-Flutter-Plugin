@@ -150,6 +150,7 @@ public enum CellularError {
   case cannot_connect
   case validation
   case authorized_failed
+  case check_coverage_failed
   public static func == (a: IPificationSDK.CellularError, b: IPificationSDK.CellularError) -> Swift.Bool
   public func hash(into hasher: inout Swift.Hasher)
   public var hashValue: Swift.Int {

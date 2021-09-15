@@ -69,7 +69,7 @@ class _MyAppState extends State<MyApp> {
       // }
 
       var coverageResult = await IpSdk.checkCoverage;
-      coverageAvailable = coverageResult.isAvaiable;
+      coverageAvailable = coverageResult.isAvailable;
       // print(coverageResult.isAvaiable);
       print("operatorCode: ${coverageResult.operatorCode}");
     } on PlatformException catch (e) {

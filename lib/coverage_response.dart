@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 class CheckCoverageResponse {
-  var isAvaiable;
+  var isAvailable;
   var operatorCode;
-  CheckCoverageResponse(bool isAvaiable, String operatorCode) {
-    this.isAvaiable = isAvaiable;
+  CheckCoverageResponse(bool isAvailable, String operatorCode) {
+    this.isAvailable = isAvailable;
     this.operatorCode = operatorCode;
   }
   factory CheckCoverageResponse.fromJson(dynamic str) {
