@@ -15,48 +15,53 @@ class AuthenticationHelper {
     init(){
         authBuilder = AuthorizationRequest.Builder()
     }
-    func checkCoverage(success:@escaping(Bool)->(Void),fail:@escaping(AuthenticateResult)->(Void)){
+    func checkCoverage(success:@escaping(String)->(Void),fail:@escaping(AuthenticationError)->(Void)){
         let coverageService = CoverageService()
         coverageService.callbackFailed = { (error) -> Void in
             print(error.localizedDescription)
-            var temp = AuthenticateResult()
+            var temp = AuthenticationError()
             temp.error_code = ErrorCode.COVERAGE_UNAVAILABLE
             temp.error_message = error.localizedDescription
             fail(temp)
             
         }
         coverageService.callbackSuccess = { (response) -> Void in
-            print("check coverage result: ", response.isAvailable())
-            success(response.isAvailable())
+            print("check coverage result: ", response.getPlainResponse())
+            success(response.getPlainResponse())
             
         }
         coverageService.checkCoverage()
     }
     
-    func authent(login_hint:String, success:@escaping(String?)->(Void),fail:@escaping(AuthenticateResult)->(Void)){
-        if login_hint.isEmpty {
-            var temp = AuthenticateResult()
-            temp.error_code = ErrorCode.AUTHENTICATE_PHONE_MISSING
-            temp.error_message = "login-hint is missing"
-            fail(temp)
-            return
-        }
+    func doAuthentication(login_hint:String, success:@escaping(String?)->(Void),fail:@escaping(AuthenticationError)->(Void)){
+        // if login_hint.isEmpty {
+        //     var temp = AuthenticationError()
+        //     temp.error_code = ErrorCode.AUTHENTICATE_PHONE_MISSING
+        //     temp.error_message = "login-hint is missing"
+        //     fail(temp)
+        //     return
+        // }
         let authorizationService = AuthorizationService()
         authorizationService.callbackFailed = { (error) -> Void in
             print("authorized failed ", error.localizedDescription)
-            var temp = AuthenticateResult()
+            var temp = AuthenticationError()
             temp.error_code = ErrorCode.AUTHENTICATE_ERROR
             temp.error_message = error.localizedDescription
             fail(temp)
             
         }
         authorizationService.callbackSuccess = { (response) -> Void in
-            print("authorized successful with code:", response.getCode())
+            // print("authorized successful with code:", response.getCode())
             
             if(response.getCode() != nil){
-                success(response.getCode())
+                let state = response.getState() ?? ""
+                let resData = response.getPlainResponse()
+                // let json = """{"code":"\(response.getCode())","state":"\(state)", "response_data": "\(resData)"}"""
+                let json = "{\"code\": \"\(response.getCode()!)\", \"state\": \"\(state)\", \"response_data\": \"\(resData)\"}"
+                // print(json)
+                success(json)
             }else{
-                var temp = AuthenticateResult()
+                var temp = AuthenticationError()
                 temp.error_code = ErrorCode.AUTHENTICATE_FAIL
                 temp.error_message = response.getError()
                 fail(temp)
@@ -64,9 +69,10 @@ class AuthenticationHelper {
         }
         
         
-        
-        print("login_hint", login_hint)
-        authBuilder.addQueryParam(key: "login_hint", value: login_hint)
+        if(login_hint.isEmpty == false){
+            print("login_hint", login_hint)
+            authBuilder.addQueryParam(key: "login_hint", value: login_hint)
+        }
         authorizationService.doAuthorization(authBuilder.build())
     }
     

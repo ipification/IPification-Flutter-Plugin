@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
+import 'package:ip_sdk/authentication_response.dart';
 import 'package:ip_sdk/ip_sdk.dart';
 import 'package:http/http.dart' as http;
 import "dart:developer";
@@ -63,28 +64,34 @@ class _MyAppState extends State<MyApp> {
       setState(() {
         alertMessage = "Checking Coverage";
       });
-      if (Platform.isAndroid) {
-        IpSdk.setAuthorizationServiceConfiguration("ipification_services");
-      }
+      // if (Platform.isAndroid) {
+      //   IpSdk.setAuthorizationServiceConfiguration("ipification_services");
+      // }
 
-      coverageAvailable = await IpSdk.checkCoverage;
-      print(coverageAvailable);
+      var coverageResult = await IpSdk.checkCoverage;
+      coverageAvailable = coverageResult.isAvaiable;
+      // print(coverageResult.isAvaiable);
+      print("operatorCode: ${coverageResult.operatorCode}");
     } on PlatformException catch (e) {
       coverageAvailable = false;
       errMessage = e.code + "\n" + e.message;
     }
-    if (coverageAvailable == true || coverageAvailable == false) {
+    if (coverageAvailable == true) {
       try {
-        if (Platform.isAndroid) {
-          IpSdk.setAuthorizationServiceConfiguration("ipification_services");
-        }
+        // if (Platform.isAndroid) {
+        //   IpSdk.setAuthorizationServiceConfiguration("ipification_services");
+        // }
         print(countryCode + phoneNumber);
         // IpSdk.addQueryParam(key: "custom_key", value: "custom_value");
         // IpSdk.setState(value: "custom_state");
         IpSdk.setScope(value: "openid");
-        authenCode =
+        AuthenticationResponse authResponse =
             await IpSdk.doAuthentication(loginHint: countryCode + phoneNumber);
+        authenCode = authResponse.code;
+        
         print(authenCode);
+        print(authResponse.state);
+        print(authResponse.responseString);
         if (authenCode.isNotEmpty) {
           await doTokenExchange(
               authenCode,

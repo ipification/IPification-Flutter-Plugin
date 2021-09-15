@@ -73,25 +73,22 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
       if(login_hint.isNullOrEmpty()){
         login_hint = ""
       }
-
-
       authInProgress.set(true)
       if(authenticationHelper == null){
           authenticationHelper = AuthenticationHelper(IPApiService(context!!))
       }
 
-      val listener= object :AuthenticateListener{
-        override fun onSuccess(authen_code: String) {
+      val listener= object :AuthenticationListener{
+        override fun onSuccess(response: String) {
           if (authInProgress.compareAndSet(true, false)) {
-
             context?.runOnUiThread{
-              result.success(authen_code)
+              result.success(response)
             }
 
           }
         }
 
-        override fun onFail(errorResult: AuthenticateResult) {
+        override fun onFail(errorResult: AuthenticationError) {
 
           if (authInProgress.compareAndSet(true, false)) {
              context?.runOnUiThread{
@@ -100,10 +97,9 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
           }
         }
 
-        override fun onError(errorResult: AuthenticateResult) {
+        override fun onError(errorResult: AuthenticationError) {
           if (authInProgress.compareAndSet(true, false)) {
-
-            result.error(errorResult.error_code.code, errorResult.error_message, null)
+              result.error(errorResult.error_code.code, errorResult.error_message, null)
           }
         }
       }
@@ -114,7 +110,6 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
     } else if(call.method=="checkCoverage") {
 
       if (authInProgress.get()) {
-
         return
       }
       authInProgress.set(true)
@@ -126,15 +121,12 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
           context?.runOnUiThread {
             result.success(it)
           }
-
         }
-
       },{
         if (authInProgress.compareAndSet(true, false)) {
           context?.runOnUiThread{
             result.error(it.error_code.code, it.error_message, null)
           }
-
         }
       })
 

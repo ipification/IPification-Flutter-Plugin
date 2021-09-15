@@ -11,16 +11,15 @@ import com.ipification.mobile.sdk.android.response.CoverageResponse
 class IPApiService(val context: Context, val authRequestBuilder:AuthRequest.Builder = AuthRequest.Builder()) {
 
 
-    fun ipAuthen(hint_phone:String, callback: CellularCallback<AuthResponse>){
+    fun doAuthentication(login_hint:String, callback: CellularCallback<AuthResponse>){
         val cellularService = CellularService<AuthResponse>(context)
-
-        authRequestBuilder.addQueryParam("login_hint", hint_phone)
-
+        if(login_hint != ""){
+            authRequestBuilder.addQueryParam("login_hint", login_hint)
+        }
         val authRequest = authRequestBuilder.build()
         try {
-
             cellularService.performAuth(authRequest,callback)
-        }catch (ex:Exception){
+        } catch (ex:Exception){
             ex.printStackTrace()
         }
     }
@@ -39,7 +38,6 @@ class IPApiService(val context: Context, val authRequestBuilder:AuthRequest.Buil
 
     fun checkIpCoverage(callback: CellularCallback<CoverageResponse>){
         val cellularService = CellularService<CoverageResponse>(context!!)
-
         cellularService.checkCoverage(callback)
     }
 }

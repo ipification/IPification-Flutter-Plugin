@@ -43,6 +43,7 @@ public class CoverageService {
   @objc deinit
 }
 @_hasMissingDesignatedInitializers public class CoverageResponse : IPificationSDK.ResponseProtocol {
+  public func getOperatorCode() -> Swift.String?
   public func isAvailable() -> Swift.Bool
   public func getError() -> Swift.String
   public func getPlainResponse() -> Swift.String
