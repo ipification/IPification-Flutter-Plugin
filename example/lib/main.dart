@@ -68,7 +68,7 @@ class _MyAppState extends State<MyApp> {
       //   IpSdk.setAuthorizationServiceConfiguration("ipification_services");
       // }
 
-      var coverageResult = await IpSdk.checkCoverageWithPhoneNumber(phoneNumber: countryCode + phoneNumber);
+      var coverageResult = await IpSdk.checkCoverage();
       coverageAvailable = coverageResult.isAvailable;
       // print(coverageResult.isAvaiable);
       print("operatorCode: ${coverageResult.operatorCode}");

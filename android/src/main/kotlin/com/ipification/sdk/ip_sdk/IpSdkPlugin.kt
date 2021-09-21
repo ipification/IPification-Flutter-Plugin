@@ -143,16 +143,16 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
         authenticationHelper = AuthenticationHelper(IPApiService(context!!))
       }
       //20092021
-      var phone_number = call.argument<String>("phone_number")
-      if(phone_number.isNullOrEmpty()){
+      var phoneNumber = call.argument<String>("phone_number")
+      if(phoneNumber.isNullOrEmpty()){
         context?.runOnUiThread{
-          result.error("invalid_parameter", "phone_number cannot be empty", null)
+          result.error("invalid_parameter", "phoneNumber cannot be empty", null)
         }
         authInProgress.set(false)
         return
       }
 
-      authenticationHelper?.checkCoverage(phone_number, {
+      authenticationHelper?.checkCoverage(phoneNumber, {
         if (authInProgress.compareAndSet(true, false)) {
           context?.runOnUiThread {
             result.success(it)

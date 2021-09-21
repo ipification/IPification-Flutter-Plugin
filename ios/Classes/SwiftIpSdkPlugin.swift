@@ -36,7 +36,7 @@ public class SwiftIpSdkPlugin: NSObject, FlutterPlugin {
         if(authenticationHelper == nil){
           authenticationHelper = AuthenticationHelper()
         }
-        authenticationHelper?.checkCoverage(phoneNumber, success:{s in
+        authenticationHelper?.checkCoverage(phoneNumber : phoneNumber, success:{s in
              result(s)
         }, fail: {f in
              result(FlutterError(code:f.error_code.rawValue,message: f.error_message, details: nil))

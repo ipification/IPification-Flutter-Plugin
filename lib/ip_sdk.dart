@@ -26,14 +26,13 @@ class IpSdk {
   }
   
 
-  static Future<CheckCoverageResponse> get checkCoverage async {
+  static Future<CheckCoverageResponse> checkCoverage() async {
     final String resultJson =
         await _channel.invokeMethod<String>('checkCoverage');    
     var result = CheckCoverageResponse.fromJson(resultJson);
     return result;
   }
-
-
+  
   static Future<CheckCoverageResponse> checkCoverageWithPhoneNumber({String phoneNumber}) async {
     final String resultJson =
         await _channel.invokeMethod<String>('checkCoverageWithPhoneNumber', {"phone_number": phoneNumber});    

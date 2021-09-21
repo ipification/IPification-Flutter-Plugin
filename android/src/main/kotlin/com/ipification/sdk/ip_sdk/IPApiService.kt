@@ -41,8 +41,8 @@ class IPApiService(val context: Context, val authRequestBuilder:AuthRequest.Buil
         cellularService.checkCoverage(callback)
     }
     //20092021 - add phone parameter
-    fun checkCoverage(phone_number: String, callback: CellularCallback<CoverageResponse>){
+    fun checkCoverage(phoneNumber: String, callback: CellularCallback<CoverageResponse>){
         val cellularService = CellularService<CoverageResponse>(context!!)
-        cellularService.checkCoverage(phone_number, callback)
+        cellularService.checkCoverage(phoneNumber, callback)
     }
 }

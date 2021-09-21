@@ -16,7 +16,7 @@ import com.ipification.sdk.ip_sdk.ErrorCode
 class AuthenticationHelper(val apiService: IPApiService)  {
 
     
-    fun checkCoverage(phone_number: String, onSuccess:(String)->Unit={},onError:(AuthenticationError)->Unit={}) {
+    fun checkCoverage(phoneNumber: String, onSuccess:(String)->Unit={},onError:(AuthenticationError)->Unit={}) {
 
         val callback = object : CellularCallback<CoverageResponse> {
             override fun onSuccess(res: CoverageResponse) {
@@ -31,7 +31,7 @@ class AuthenticationHelper(val apiService: IPApiService)  {
             }
 
         }
-        apiService.checkCoverage(phone_number, callback)
+        apiService.checkCoverage(phoneNumber, callback)
     }
     fun checkCoverage(onSuccess:(String)->Unit={},onError:(AuthenticationError)->Unit={}) {
 

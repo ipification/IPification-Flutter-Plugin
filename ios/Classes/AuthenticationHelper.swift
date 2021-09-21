@@ -30,7 +30,7 @@ class AuthenticationHelper {
             success(response.getPlainResponse())
             
         }
-        coverageService.checkCoverage(phone_number: phoneNumber)
+        coverageService.checkCoverage(phoneNumber: phoneNumber)
     }
     func checkCoverage(success:@escaping(String)->(Void),fail:@escaping(AuthenticationError)->(Void)){
         let coverageService = CoverageService()
