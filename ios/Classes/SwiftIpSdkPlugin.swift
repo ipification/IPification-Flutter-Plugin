@@ -22,7 +22,26 @@ public class SwiftIpSdkPlugin: NSObject, FlutterPlugin {
         }, fail: {f in
              result(FlutterError(code:f.error_code.rawValue,message: f.error_message, details: nil))
         })
-    } 
+    }
+    else if(call.method == "checkCoverageWithPhoneNumber"){
+        var phoneNumber = ""
+        let arg =   call.arguments as? Dictionary<String, Any>
+        if(arg != nil && arg!["phone_number"] != nil){
+          phoneNumber = arg!["phone_number"] as? String ?? ""
+        }
+        if(phoneNumber == ""){
+           result(FlutterError(code:"validation_failed",message: "phone_number cannot be empty", details: nil))
+           return
+        }
+        if(authenticationHelper == nil){
+          authenticationHelper = AuthenticationHelper()
+        }
+        authenticationHelper?.checkCoverage(phoneNumber, success:{s in
+             result(s)
+        }, fail: {f in
+             result(FlutterError(code:f.error_code.rawValue,message: f.error_message, details: nil))
+        })
+    }  
     else if(call.method == "doAuthentication"){
         var login_hint = ""
         let arg =   call.arguments as? Dictionary<String, Any>

@@ -16,7 +16,23 @@ import com.ipification.sdk.ip_sdk.ErrorCode
 class AuthenticationHelper(val apiService: IPApiService)  {
 
     
+    fun checkCoverage(phone_number: String, onSuccess:(String)->Unit={},onError:(AuthenticationError)->Unit={}) {
 
+        val callback = object : CellularCallback<CoverageResponse> {
+            override fun onSuccess(res: CoverageResponse) {
+                onSuccess.invoke(res.responseData)
+            }
+
+            override fun onError(error: CellularException) {
+                val result = AuthenticationError()
+                result.error_code = ErrorCode.COVERAGE_ERROR
+                result.error_message = error?.getErrorMessage()
+                onError.invoke(result)
+            }
+
+        }
+        apiService.checkCoverage(phone_number, callback)
+    }
     fun checkCoverage(onSuccess:(String)->Unit={},onError:(AuthenticationError)->Unit={}) {
 
         val callback = object : CellularCallback<CoverageResponse> {
@@ -32,7 +48,7 @@ class AuthenticationHelper(val apiService: IPApiService)  {
             }
 
         }
-        apiService.checkIpCoverage(callback)
+        apiService.checkCoverage(callback)
     }
     fun doAuthentication (login_hint:String, listener: AuthenticationListener){
         val callback = object : CellularCallback<AuthResponse> {
@@ -46,10 +62,10 @@ class AuthenticationHelper(val apiService: IPApiService)  {
                     }
                     listener.onFail(result)
                 }else{
-                    val state = res.getState() ?: ""
+                    // val state = res.getState() ?: ""
                     val resData = res.responseData
-                    var json = """{"code":"${code}","state":"${state}", "response_data": "${resData}"}""";
-                    listener.onSuccess(json)
+                    // var json = """{"code":"${code}","state":"${state}", "response_data": "${resData}"}""";
+                    listener.onSuccess(resData)
                 }
                 
             }

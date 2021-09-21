@@ -34,6 +34,13 @@ class IpSdk {
   }
 
 
+  static Future<CheckCoverageResponse> checkCoverageWithPhoneNumber({String phoneNumber}) async {
+    final String resultJson =
+        await _channel.invokeMethod<String>('checkCoverageWithPhoneNumber', {"phone_number": phoneNumber});    
+    var result = CheckCoverageResponse.fromJson(resultJson);
+    return result;
+  }
+
   static void addQueryParam({String key, String value}) {
     if (key == null) {
       key = "";
@@ -63,7 +70,7 @@ class IpSdk {
     }
     final String resultJson = await _channel
         .invokeMethod("doAuthentication", {"login_hint": loginHint});
-   var result = AuthenticationResponse.fromJson(resultJson);
+   var result = AuthenticationResponse.fromUri(resultJson);
     return result;
   }
 

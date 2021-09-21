@@ -40,6 +40,7 @@ public class CoverageService {
   public var callbackLog: ((Swift.String) -> Swift.Void)?
   public init()
   public func checkCoverage(_ customCoverageRequest: IPificationSDK.CoverageRequest? = nil)
+  public func checkCoverage(phone_number phone: Swift.String, _ customCoverageRequest: IPificationSDK.CoverageRequest? = nil)
   @objc deinit
 }
 @_hasMissingDesignatedInitializers public class CoverageResponse : IPificationSDK.ResponseProtocol {

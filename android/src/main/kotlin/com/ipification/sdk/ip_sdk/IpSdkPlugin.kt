@@ -112,6 +112,7 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
       if (authInProgress.get()) {
         return
       }
+
       authInProgress.set(true)
       if(authenticationHelper == null){
         authenticationHelper = AuthenticationHelper(IPApiService(context!!))
@@ -129,6 +130,42 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
           }
         }
       })
+
+    }
+    else if(call.method=="checkCoverageWithPhoneNumber") {
+
+      if (authInProgress.get()) {
+        return
+      }
+
+      authInProgress.set(true)
+      if(authenticationHelper == null){
+        authenticationHelper = AuthenticationHelper(IPApiService(context!!))
+      }
+      //20092021
+      var phone_number = call.argument<String>("phone_number")
+      if(phone_number.isNullOrEmpty()){
+        context?.runOnUiThread{
+          result.error("invalid_parameter", "phone_number cannot be empty", null)
+        }
+        authInProgress.set(false)
+        return
+      }
+
+      authenticationHelper?.checkCoverage(phone_number, {
+        if (authInProgress.compareAndSet(true, false)) {
+          context?.runOnUiThread {
+            result.success(it)
+          }
+        }
+      },{
+        if (authInProgress.compareAndSet(true, false)) {
+          context?.runOnUiThread{
+            result.error(it.error_code.code, it.error_message, null)
+          }
+        }
+      })
+      
 
     }
     else if(call.method=="setConfiguration"){

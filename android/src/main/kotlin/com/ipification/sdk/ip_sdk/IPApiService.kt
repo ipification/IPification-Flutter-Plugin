@@ -36,8 +36,13 @@ class IPApiService(val context: Context, val authRequestBuilder:AuthRequest.Buil
         authRequestBuilder.setScope(scope)
     }
 
-    fun checkIpCoverage(callback: CellularCallback<CoverageResponse>){
+    fun checkCoverage(callback: CellularCallback<CoverageResponse>){
         val cellularService = CellularService<CoverageResponse>(context!!)
         cellularService.checkCoverage(callback)
+    }
+    //20092021 - add phone parameter
+    fun checkCoverage(phone_number: String, callback: CellularCallback<CoverageResponse>){
+        val cellularService = CellularService<CoverageResponse>(context!!)
+        cellularService.checkCoverage(phone_number, callback)
     }
 }

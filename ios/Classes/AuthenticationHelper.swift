@@ -15,6 +15,23 @@ class AuthenticationHelper {
     init(){
         authBuilder = AuthorizationRequest.Builder()
     }
+    func checkCoverage(phoneNumber: String, success:@escaping(String)->(Void),fail:@escaping(AuthenticationError)->(Void)){
+        let coverageService = CoverageService()
+        coverageService.callbackFailed = { (error) -> Void in
+            print(error.localizedDescription)
+            var temp = AuthenticationError()
+            temp.error_code = ErrorCode.COVERAGE_UNAVAILABLE
+            temp.error_message = error.localizedDescription
+            fail(temp)
+            
+        }
+        coverageService.callbackSuccess = { (response) -> Void in
+            print("check coverage result: ", response.getPlainResponse())
+            success(response.getPlainResponse())
+            
+        }
+        coverageService.checkCoverage(phone_number: phoneNumber)
+    }
     func checkCoverage(success:@escaping(String)->(Void),fail:@escaping(AuthenticationError)->(Void)){
         let coverageService = CoverageService()
         coverageService.callbackFailed = { (error) -> Void in
@@ -54,12 +71,12 @@ class AuthenticationHelper {
             // print("authorized successful with code:", response.getCode())
             
             if(response.getCode() != nil){
-                let state = response.getState() ?? ""
-                let resData = response.getPlainResponse()
+                // let state = response.getState() ?? ""
+                // let resData = response.getPlainResponse()
                 // let json = """{"code":"\(response.getCode())","state":"\(state)", "response_data": "\(resData)"}"""
-                let json = "{\"code\": \"\(response.getCode()!)\", \"state\": \"\(state)\", \"response_data\": \"\(resData)\"}"
+                // let json = "{\"code\": \"\(response.getCode()!)\", \"state\": \"\(state)\", \"response_data\": \"\(resData)\"}"
                 // print(json)
-                success(json)
+                success(response.getPlainResponse())
             }else{
                 var temp = AuthenticationError()
                 temp.error_code = ErrorCode.AUTHENTICATE_FAIL
