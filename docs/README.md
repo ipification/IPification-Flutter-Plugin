@@ -112,7 +112,7 @@ dependencies:
         }
     }
     ```
-    * `isAvailable = true/false` - the mobile network of the end user is supported by IPification and you can initiate the Auth process or before it, show an info screen about seamless authentication that will be performed.
+    * `isAvailable == true` - the mobile network of the end user is supported by IPification and you can initiate the Auth process or before it, show an info screen about seamless authentication that will be performed.
 
     * `getOperatorCode(): String?` - resolved Telco operator. This function returns null by default. Read detail (<a href="#/auth/latest/?id=operator-data-in-json-response" target="_blank">Operator Code</a>)
 
