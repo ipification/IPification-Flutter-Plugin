@@ -34,7 +34,7 @@
 		</data>
 		<key>Modules/IPificationSDK.swiftmodule/i386-apple-ios-simulator.swiftmodule</key>
 		<data>
-		/3tdMSWh79jbLSmvb0y5npyD7SY=
+		yhBj5Kyg+Hp4eUiMitQZz9LdBYU=
 		</data>
 		<key>Modules/IPificationSDK.swiftmodule/i386.swiftdoc</key>
 		<data>
@@ -46,7 +46,7 @@
 		</data>
 		<key>Modules/IPificationSDK.swiftmodule/i386.swiftmodule</key>
 		<data>
-		/3tdMSWh79jbLSmvb0y5npyD7SY=
+		yhBj5Kyg+Hp4eUiMitQZz9LdBYU=
 		</data>
 		<key>Modules/IPificationSDK.swiftmodule/x86_64-apple-ios-simulator.swiftdoc</key>
 		<data>
@@ -58,7 +58,7 @@
 		</data>
 		<key>Modules/IPificationSDK.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		pm9096i/72XytUEMLbILyUQORmU=
+		8B2YKoxXoW+ZtlxQAHvuvvpEEqg=
 		</data>
 		<key>Modules/IPificationSDK.swiftmodule/x86_64.swiftdoc</key>
 		<data>
@@ -70,7 +70,7 @@
 		</data>
 		<key>Modules/IPificationSDK.swiftmodule/x86_64.swiftmodule</key>
 		<data>
-		pm9096i/72XytUEMLbILyUQORmU=
+		8B2YKoxXoW+ZtlxQAHvuvvpEEqg=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -153,11 +153,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			/3tdMSWh79jbLSmvb0y5npyD7SY=
+			yhBj5Kyg+Hp4eUiMitQZz9LdBYU=
 			</data>
 			<key>hash2</key>
 			<data>
-			3AsJP4PkzI8IFMduKEnj4Omd5b96hV0KnAMrE8e/xds=
+			Z/fRpnhfcPCAWVgGa8ZIUWo2xZ9xOwvrAIBzTAUAisI=
 			</data>
 		</dict>
 		<key>Modules/IPificationSDK.swiftmodule/i386.swiftdoc</key>
@@ -186,11 +186,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			/3tdMSWh79jbLSmvb0y5npyD7SY=
+			yhBj5Kyg+Hp4eUiMitQZz9LdBYU=
 			</data>
 			<key>hash2</key>
 			<data>
-			3AsJP4PkzI8IFMduKEnj4Omd5b96hV0KnAMrE8e/xds=
+			Z/fRpnhfcPCAWVgGa8ZIUWo2xZ9xOwvrAIBzTAUAisI=
 			</data>
 		</dict>
 		<key>Modules/IPificationSDK.swiftmodule/x86_64-apple-ios-simulator.swiftdoc</key>
@@ -219,11 +219,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			pm9096i/72XytUEMLbILyUQORmU=
+			8B2YKoxXoW+ZtlxQAHvuvvpEEqg=
 			</data>
 			<key>hash2</key>
 			<data>
-			PZjv3g90qqb5Wm13FF24C5or6JQHF4gui95Y34tIl0g=
+			tEm8ZPSjzFSodr0IRnhPBb11jzhdsyNjVJ1dZj79HrQ=
 			</data>
 		</dict>
 		<key>Modules/IPificationSDK.swiftmodule/x86_64.swiftdoc</key>
@@ -252,11 +252,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			pm9096i/72XytUEMLbILyUQORmU=
+			8B2YKoxXoW+ZtlxQAHvuvvpEEqg=
 			</data>
 			<key>hash2</key>
 			<data>
-			PZjv3g90qqb5Wm13FF24C5or6JQHF4gui95Y34tIl0g=
+			tEm8ZPSjzFSodr0IRnhPBb11jzhdsyNjVJ1dZj79HrQ=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>

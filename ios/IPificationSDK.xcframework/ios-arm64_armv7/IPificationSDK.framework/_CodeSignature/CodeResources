@@ -34,7 +34,7 @@
 		</data>
 		<key>Modules/IPificationSDK.swiftmodule/arm.swiftmodule</key>
 		<data>
-		AdpF44537OZKxGXziQLkTYr/870=
+		rcn3P/Psjix6eOJjqI/LMBfEccU=
 		</data>
 		<key>Modules/IPificationSDK.swiftmodule/arm64-apple-ios.swiftdoc</key>
 		<data>
@@ -46,7 +46,7 @@
 		</data>
 		<key>Modules/IPificationSDK.swiftmodule/arm64-apple-ios.swiftmodule</key>
 		<data>
-		Ty+z/jrHVMP8scoFdElHaMOvd6s=
+		kD2yKJ7JpDMCmsR8iYwXglS4dDY=
 		</data>
 		<key>Modules/IPificationSDK.swiftmodule/arm64.swiftdoc</key>
 		<data>
@@ -58,7 +58,7 @@
 		</data>
 		<key>Modules/IPificationSDK.swiftmodule/arm64.swiftmodule</key>
 		<data>
-		Ty+z/jrHVMP8scoFdElHaMOvd6s=
+		kD2yKJ7JpDMCmsR8iYwXglS4dDY=
 		</data>
 		<key>Modules/IPificationSDK.swiftmodule/armv7-apple-ios.swiftdoc</key>
 		<data>
@@ -70,7 +70,7 @@
 		</data>
 		<key>Modules/IPificationSDK.swiftmodule/armv7-apple-ios.swiftmodule</key>
 		<data>
-		AdpF44537OZKxGXziQLkTYr/870=
+		rcn3P/Psjix6eOJjqI/LMBfEccU=
 		</data>
 		<key>Modules/IPificationSDK.swiftmodule/armv7.swiftdoc</key>
 		<data>
@@ -82,7 +82,7 @@
 		</data>
 		<key>Modules/IPificationSDK.swiftmodule/armv7.swiftmodule</key>
 		<data>
-		AdpF44537OZKxGXziQLkTYr/870=
+		rcn3P/Psjix6eOJjqI/LMBfEccU=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -165,11 +165,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			AdpF44537OZKxGXziQLkTYr/870=
+			rcn3P/Psjix6eOJjqI/LMBfEccU=
 			</data>
 			<key>hash2</key>
 			<data>
-			O/NaYMIAgbIEWXJgzHaqTdqV0LQ7mpbAtJPBLKwFZvg=
+			rgvY5dU99Gq8HxgLw1n9SEJ6j4afvMylRNrFiMbaP4A=
 			</data>
 		</dict>
 		<key>Modules/IPificationSDK.swiftmodule/arm64-apple-ios.swiftdoc</key>
@@ -198,11 +198,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			Ty+z/jrHVMP8scoFdElHaMOvd6s=
+			kD2yKJ7JpDMCmsR8iYwXglS4dDY=
 			</data>
 			<key>hash2</key>
 			<data>
-			q2bvefr4lDbu+k54oT78fXiogqu+v24K67udpEwbzQI=
+			9xoEh+PtbhvnEjnyET7jXBcMuRmtTklb4+RtK0wY7rY=
 			</data>
 		</dict>
 		<key>Modules/IPificationSDK.swiftmodule/arm64.swiftdoc</key>
@@ -231,11 +231,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			Ty+z/jrHVMP8scoFdElHaMOvd6s=
+			kD2yKJ7JpDMCmsR8iYwXglS4dDY=
 			</data>
 			<key>hash2</key>
 			<data>
-			q2bvefr4lDbu+k54oT78fXiogqu+v24K67udpEwbzQI=
+			9xoEh+PtbhvnEjnyET7jXBcMuRmtTklb4+RtK0wY7rY=
 			</data>
 		</dict>
 		<key>Modules/IPificationSDK.swiftmodule/armv7-apple-ios.swiftdoc</key>
@@ -264,11 +264,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			AdpF44537OZKxGXziQLkTYr/870=
+			rcn3P/Psjix6eOJjqI/LMBfEccU=
 			</data>
 			<key>hash2</key>
 			<data>
-			O/NaYMIAgbIEWXJgzHaqTdqV0LQ7mpbAtJPBLKwFZvg=
+			rgvY5dU99Gq8HxgLw1n9SEJ6j4afvMylRNrFiMbaP4A=
 			</data>
 		</dict>
 		<key>Modules/IPificationSDK.swiftmodule/armv7.swiftdoc</key>
@@ -297,11 +297,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			AdpF44537OZKxGXziQLkTYr/870=
+			rcn3P/Psjix6eOJjqI/LMBfEccU=
 			</data>
 			<key>hash2</key>
 			<data>
-			O/NaYMIAgbIEWXJgzHaqTdqV0LQ7mpbAtJPBLKwFZvg=
+			rgvY5dU99Gq8HxgLw1n9SEJ6j4afvMylRNrFiMbaP4A=
 			</data>
 		</dict>
 		<key>Modules/module.modulemap</key>
