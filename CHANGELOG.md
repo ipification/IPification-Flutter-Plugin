@@ -26,6 +26,11 @@ Sync with native library 1.6.1
 
 Sync with native library 1.6.2
 
-## 1.6.2
+## 1.6.3
 
 Sync with native library 1.6.3
+
+
+## 1.7
+
+Sync with native library 1.7
