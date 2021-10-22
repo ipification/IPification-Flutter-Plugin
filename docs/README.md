@@ -92,8 +92,9 @@ CLIENT_ID = your-stage-client-id
 <!-- tabs:end -->
 
 ![Xcode screen](images/ide-11.png)
-* Now go to your project, click on `Info` tab, under the configurations section expand the list and select your xconfig file `Debug / Release` from the dropdown box:
-    ![Xcode screen](images/ide-12.png)
+* Now go to your project, click on `Info` tab, under the configurations section expand the list and select your xconfig file `Debug / Release` from the dropdown box: <br/>
+
+![Xcode screen](images/ide-12.png)
 
 * Add these variables in `Info.plist`
 
