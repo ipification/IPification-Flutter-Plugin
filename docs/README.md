@@ -1,4 +1,4 @@
-# Flutter SDK
+# Flutter Plugin
 
 This document describes the IPification plugin for Flutter and its usage. The main purpose of the SDK is to provide network based authentication for the mobile users.
 At the end of the flow, the client will be presented with information if the phone number is verified (field `phone_number_verified`) and / or a `mobile_id` - JWT field which represents the value of IPification unique **MobileID**. 
