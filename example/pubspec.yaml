@@ -11,7 +11,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  jwt_decoder: ^2.0.1
+  http: ^0.13.4
+  
   ip_sdk:
     # When depending on this package from a real application you should use:
     #   ip_sdk: ^x.y.z
