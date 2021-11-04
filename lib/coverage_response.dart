@@ -3,7 +3,7 @@ import 'dart:convert';
 class CheckCoverageResponse {
   var isAvailable;
   var operatorCode;
-  CheckCoverageResponse(bool isAvailable, String operatorCode) {
+  CheckCoverageResponse(bool isAvailable, String? operatorCode) {
     this.isAvailable = isAvailable;
     this.operatorCode = operatorCode;
   }

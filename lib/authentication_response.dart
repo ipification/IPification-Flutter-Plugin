@@ -1,10 +1,9 @@
-import 'dart:convert';
 
 class AuthenticationResponse {
-  var code;
-  var state;
-  var responseString;
-  AuthenticationResponse(String code, String state, String responseString) {
+  String? code;
+  String? state;
+  String? responseString;
+  AuthenticationResponse(String? code, String? state, String? responseString) {
     this.code = code;
     this.state = state;
     this.responseString = responseString;
@@ -16,7 +15,6 @@ class AuthenticationResponse {
     var uri = Uri.parse(str);
     var code = "";
     var state = "";
-    var responseString = str;
     uri.queryParameters.forEach((k, v) {
       if (k == "code") {
         code = v;
@@ -25,6 +23,6 @@ class AuthenticationResponse {
         state = v;
       }
     });
-    return AuthenticationResponse(code, state, responseString);
+    return AuthenticationResponse(code, state, str);
   }
 }
