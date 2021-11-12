@@ -8,6 +8,7 @@ import 'package:ip_sdk/ip_sdk.dart';
 import 'package:http/http.dart' as http;
 import "dart:developer";
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:flutter/foundation.dart';
 
 void main() {
   runApp(MaterialApp(home: MyApp()));
@@ -67,12 +68,19 @@ class _MyAppState extends State<MyApp> {
       // if (Platform.isAndroid) {
       //   IpSdk.setAuthorizationServiceConfiguration("ipification_services");
       // }
-      // IpSdk.setCheckCoverageUrl(
-      //     "https://stage.ipification.com/auth/realms/ipification/coverage/202.175.50.128");
-      // IpSdk.setAuthorizationUrl(
-      //     "https://stage.ipification.com/auth/realms/ipification/protocol/openid-connect/auth");
-      // IpSdk.setClientId("9f49df46a311454d882824607136c68f");
-      // IpSdk.setRedirectUri("https://api.dev.ipification.com/api/v1/callback");
+      if(kReleaseMode){
+          IpSdk.setCheckCoverageUrl("https://stage.ipification.com/auth/realms/ipification/coverage/202.175.50.128");
+          IpSdk.setAuthorizationUrl("https://stage.ipification.com/auth/realms/ipification/protocol/openid-connect/auth");
+          IpSdk.setClientId("9f49df46a311454d882824607136c68f");
+          IpSdk.setRedirectUri("https://api.dev.ipification.com/api/v1/callback");
+      } else {
+          IpSdk.setCheckCoverageUrl("https://api.ipification.com/auth/realms/ipification/coverage/202.175.50.128");
+          IpSdk.setAuthorizationUrl("https://api.ipification.com/auth/realms/ipification/protocol/openid-connect/auth");
+          IpSdk.setClientId("9f49df46a311454d882824607136c68f");
+          IpSdk.setRedirectUri("https://api.dev.ipification.com/api/v1/callback");
+      }
+
+      
       var clientid = await IpSdk.getClientId();
       print(clientid);
       var coverageResult = await IpSdk.checkCoverage();
