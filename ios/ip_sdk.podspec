@@ -4,18 +4,16 @@
 #
 Pod::Spec.new do |s|
   s.name = "ip_sdk"
-  s.version = "1.7.0"
+  s.version = "1.8.0"
   s.summary = "IPIfication SDK"
-  s.description = <<-DESC
-IPIfication SDK
-                       DESC
+  s.description = "IPIfication SDK"
   s.homepage = "https://ipification.com"
   s.license = { :file => "../LICENSE" }
   s.author = { "IPification" => "info@ipification.com" }
   s.source = { :path => "." }
   s.source_files = "Classes/**/*"
   s.dependency "Flutter"
-  s.platform = :ios, "8.0"
+  s.platform = :ios, "9.0"
   s.preserve_paths = "IPificationSDK.xcframework"
   s.xcconfig = { "OTHER_LDFLAGS" => "-framework IPificationSDK" }
   s.vendored_frameworks = "IPificationSDK.xcframework"

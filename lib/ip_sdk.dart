@@ -58,4 +58,35 @@ class IpSdk {
   static void unregisterNetwork() {
     _channel.invokeMethod("unregisterNetwork");
   }
+
+  static Future<String?> setClientId(String clientid) async {
+    _channel
+        .invokeMethod<String>('setClientId', {"value": clientid});
+  }
+
+  static Future<String?> setRedirectUri(String redirectUri) async {
+    _channel
+        .invokeMethod<String>('setRedirectUri', {"value": redirectUri});
+  }
+  static Future<String?> setCheckCoverageUrl(String checkCoverageUrl) async {
+    _channel
+        .invokeMethod<String>('setCheckCoverageUrl', {"value": checkCoverageUrl});
+  }
+
+  static Future<String?> setAuthorizationUrl(String authUrl) async {
+     _channel
+        .invokeMethod<String>('setAuthorizationUrl', {"value": authUrl});
+    
+  }
+
+  static Future<String?> getClientId() async {
+    final String? result = await _channel
+        .invokeMethod<String>('getClientId');
+    return result;
+  }
+  static Future<String?> getRedirectUri() async {
+    final String? result = await _channel
+        .invokeMethod<String>('getRedirectUri');
+    return result;
+  }
 }

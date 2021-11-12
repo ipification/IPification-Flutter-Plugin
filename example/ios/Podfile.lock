@@ -1,6 +1,6 @@
 PODS:
   - Flutter (1.0.0)
-  - ip_sdk (1.0.3):
+  - ip_sdk (1.8.0):
     - Flutter
 
 DEPENDENCIES:
@@ -14,9 +14,9 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/ip_sdk/ios"
 
 SPEC CHECKSUMS:
-  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  ip_sdk: 83e9f3dbd27cd2b00ad95b3d8877318aa3559261
+  Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  ip_sdk: a762e97bb653564aa93bd4d1963988767c3d99d6
 
 PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
 
-COCOAPODS: 1.10.1
+COCOAPODS: 1.11.2

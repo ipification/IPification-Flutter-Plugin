@@ -67,7 +67,14 @@ class _MyAppState extends State<MyApp> {
       // if (Platform.isAndroid) {
       //   IpSdk.setAuthorizationServiceConfiguration("ipification_services");
       // }
-
+      // IpSdk.setCheckCoverageUrl(
+      //     "https://stage.ipification.com/auth/realms/ipification/coverage/202.175.50.128");
+      // IpSdk.setAuthorizationUrl(
+      //     "https://stage.ipification.com/auth/realms/ipification/protocol/openid-connect/auth");
+      // IpSdk.setClientId(
+      //     "9f49df46a311454d882824607136c68f");
+      // IpSdk.setRedirectUri(
+      //     "https://api.dev.ipification.com/api/v1/callback");
       var coverageResult = await IpSdk.checkCoverage();
       coverageAvailable = coverageResult.isAvailable;
       // print(coverageResult.isAvaiable);
@@ -88,7 +95,7 @@ class _MyAppState extends State<MyApp> {
         AuthenticationResponse authResponse =
             await IpSdk.doAuthentication(loginHint: countryCode + phoneNumber);
         authenCode = authResponse.code;
-        
+
         print(authenCode);
         print(authResponse.state);
         print(authResponse.responseString);
@@ -143,7 +150,7 @@ class _MyAppState extends State<MyApp> {
     print(details);
     var client = http.Client();
     try {
-      var responseJson = await client.post(TOKEN_URL, body: details);
+      var responseJson = await client.post(Uri.parse(TOKEN_URL), body: details);
       // responseJson["access_token"]
       print(responseJson);
       Map<String, dynamic> parse = jsonDecode(responseJson.body);

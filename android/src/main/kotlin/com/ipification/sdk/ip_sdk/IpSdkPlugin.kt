@@ -6,7 +6,7 @@ import androidx.annotation.NonNull
 import com.example.ip_sdk.AuthenticationHelper
 import com.example.ip_sdk.IPApiService
 import com.ipification.mobile.sdk.android.CellularService
-
+import com.ipification.mobile.sdk.android.IPConfigurationFile
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -17,6 +17,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
 import java.util.concurrent.atomic.AtomicBoolean
+import android.net.Uri
 
 /** IpSdkPlugin */
 class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
@@ -194,6 +195,57 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
       }
 
     }
+    else if(call.method=="getClientId"){
+      context?.let {
+        result.success(IPConfigurationFile.getInstance().CLIENT_ID)
+      }
+    }
+    else if(call.method=="getRedirectUri"){
+      context?.let {
+        result.success(IPConfigurationFile.getInstance().REDIRECT_URI.toString())
+      }
+    }
+    else if(call.method=="setClientId"){
+      val clientValue = call.argument<String>("value")
+      if (!clientValue.isNullOrEmpty()){
+        context?.let {
+          IPConfigurationFile.getInstance().CLIENT_ID = clientValue
+        }
+        // context = null
+        // channel.setMethodCallHandler(null);
+      }
+    }
+    else if(call.method=="setRedirectUri"){
+      val redirectValue = call.argument<String>("value")
+      if (!redirectValue.isNullOrEmpty()){
+        context?.let {
+          IPConfigurationFile.getInstance().REDIRECT_URI = Uri.parse(redirectValue)
+        }
+        // context = null
+        // channel.setMethodCallHandler(null);
+      }
+    }
+    else if(call.method=="setCheckCoverageUrl"){
+      val coverageValue = call.argument<String>("value")
+      if (!coverageValue.isNullOrEmpty()){
+        context?.let {
+          IPConfigurationFile.getInstance().COVERAGE_URL = Uri.parse(coverageValue)
+        }
+        // context = null
+        // channel.setMethodCallHandler(null);
+      }
+    }
+    else if(call.method=="setAuthorizationUrl"){
+      val authorizationValue = call.argument<String>("value")
+      if (!authorizationValue.isNullOrEmpty()){
+        context?.let {
+          IPConfigurationFile.getInstance().AUTHORIZATION_URL = Uri.parse(authorizationValue)
+        }
+        // context = null
+        // channel.setMethodCallHandler(null);
+      }
+    }
+    
     else if(call.method=="unregisterNetwork"){
       context?.let {
         val result =  CellularService.Companion.unregisterNetwork(context!!)
