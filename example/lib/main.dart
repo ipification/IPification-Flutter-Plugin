@@ -71,10 +71,10 @@ class _MyAppState extends State<MyApp> {
       //     "https://stage.ipification.com/auth/realms/ipification/coverage/202.175.50.128");
       // IpSdk.setAuthorizationUrl(
       //     "https://stage.ipification.com/auth/realms/ipification/protocol/openid-connect/auth");
-      // IpSdk.setClientId(
-      //     "9f49df46a311454d882824607136c68f");
-      // IpSdk.setRedirectUri(
-      //     "https://api.dev.ipification.com/api/v1/callback");
+      // IpSdk.setClientId("9f49df46a311454d882824607136c68f");
+      // IpSdk.setRedirectUri("https://api.dev.ipification.com/api/v1/callback");
+      var clientid = await IpSdk.getClientId();
+      print(clientid);
       var coverageResult = await IpSdk.checkCoverage();
       coverageAvailable = coverageResult.isAvailable;
       // print(coverageResult.isAvaiable);
