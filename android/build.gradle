@@ -18,9 +18,16 @@ rootProject.allprojects {
     repositories {
         google()
         jcenter()
-        flatDir{
-            dirs project(':ip_sdk').file('libs')
+       
+       
+        maven {
+            url "https://artifacts.ipification.com/artifactory/libs-release-local"
+            credentials {
+                username 'tinhn'
+                password 'J6b*39@Vu7&*$9H^d#L'
+            }
         }
+    
     }
 }
 
@@ -41,6 +48,6 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation (name: 'ipification-auth-1.8', ext: 'aar')
-    api "com.squareup.okhttp3:okhttp:4.9.0"
+    implementation 'com.ipification.mobile.android:ipification-auth:1.9.17'
+
 }

@@ -62,6 +62,49 @@ public class SwiftIpSdkPlugin: NSObject, FlutterPlugin {
         })
 
     }
+    else if(call.method == "doAuthenticationWithChannel"){
+        var channel = ""
+        var login_hint = ""
+        let arg =   call.arguments as? Dictionary<String, Any>
+        if(arg != nil && arg!["login_hint"] != nil){
+          login_hint = arg!["login_hint"] as? String ?? ""
+        }
+        if(arg != nil && arg!["channel"] != nil){
+          channel = arg!["channel"] as? String ?? ""
+        }
+        
+        if(authenticationHelper == nil){
+          authenticationHelper = AuthenticationHelper()
+        }
+        authenticationHelper?.doAuthentication(login_hint: login_hint , channel: channel, success: { s in
+            self.authenticationHelper = nil
+            result(s)
+        }, fail: {f in
+            self.authenticationHelper = nil
+            result(FlutterError(code:f.error_code.rawValue, message: f.error_message, details: nil))
+        })
+
+    }
+    else if(call.method == "doIMAuthentication"){
+        var channel = ""
+        let arg =   call.arguments as? Dictionary<String, Any>
+        
+        if(arg != nil && arg!["channel"] != nil){
+          channel = arg!["channel"] as? String ?? ""
+        }
+        
+        if(authenticationHelper == nil){
+          authenticationHelper = AuthenticationHelper()
+        }
+        authenticationHelper?.doAuthentication(channel: channel, success: { s in
+            self.authenticationHelper = nil
+            result(s)
+        }, fail: {f in
+            self.authenticationHelper = nil
+            result(FlutterError(code:f.error_code.rawValue, message: f.error_message, details: nil))
+        })
+
+    }
     
     else if(call.method == "addQueryParam"){
         let arg =  call.arguments as? Dictionary<String, Any>

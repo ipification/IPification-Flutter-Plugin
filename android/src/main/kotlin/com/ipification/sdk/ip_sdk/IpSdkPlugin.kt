@@ -18,49 +18,81 @@ import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
 import java.util.concurrent.atomic.AtomicBoolean
 import android.net.Uri
+import android.content.Intent;
+import io.flutter.plugin.common.BinaryMessenger
+import com.ipification.mobile.sdk.im.IMService
+import io.flutter.plugin.common.PluginRegistry.ActivityResultListener
 
 /** IpSdkPlugin */
-class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
+class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, ActivityResultListener{
   /// The MethodChannel that will the communication between Flutter and native Android
   ///
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
   /// when the Flutter Engine is detached from the Activity
   private lateinit var channel : MethodChannel
-  private  var context: Activity? = null
+  private  var activity: Activity? = null
   private val authInProgress: AtomicBoolean = AtomicBoolean(false)
   private var authenticationHelper: AuthenticationHelper?=null
   private val TAG = "IpSdk";
+  private var pluginBinding: FlutterPlugin.FlutterPluginBinding? = null
+
+
+  fun registerWith(registrar: Registrar) {
+    val activity: Activity = registrar.activity()
+    val plugin = IpSdkPlugin()
+    plugin.setup(registrar.messenger(), activity, registrar, null)
+  }
+  private fun setup(
+    messenger: BinaryMessenger?,
+    activity: Activity?,
+    registrar: Registrar?,
+    activityBinding: ActivityPluginBinding?
+  ) {
+    if(messenger != null){
+      channel = MethodChannel(messenger!!, "ip_sdk")
+      channel.setMethodCallHandler(this)
+    }
+    
+    if (registrar != null) {
+      // V1 embedding setup for activity listeners.
+      registrar.addActivityResultListener(this)
+      // registrar.addRequestPermissionsResultListener(this)
+    } else {
+      // V2 embedding setup for activity listeners.
+      activityBinding?.addActivityResultListener(this)
+      // activityBinding.addRequestPermissionsResultListener(this)
+    }
+  }
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "ip_sdk")
-
-
-
+    pluginBinding = flutterPluginBinding;
   }
 
   override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-    context = binding.activity
+    activity = binding.activity
     channel.setMethodCallHandler(this)
+    setup(pluginBinding?.binaryMessenger, activity, null, binding);
   }
 
   override fun onDetachedFromActivity() {
-     context?.let {
-       val result =  CellularService.Companion.unregisterNetwork(context!!)
+    activity?.let {
+       val result =  CellularService.Companion.unregisterNetwork(activity!!)
        if(BuildConfig.DEBUG) {
          Log.d(TAG, "unregisterNetwork: $result")
        }
-       context = null
+       activity = null
        channel.setMethodCallHandler(null);
      }
 
   }
 
   override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-    context = binding.activity
+    activity = binding.activity
   }
 
   override fun onDetachedFromActivityForConfigChanges() {
-    context = null
+    activity = null
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
@@ -76,13 +108,13 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
       }
       authInProgress.set(true)
       if(authenticationHelper == null){
-          authenticationHelper = AuthenticationHelper(IPApiService(context!!))
+          authenticationHelper = AuthenticationHelper(IPApiService(activity!!))
       }
 
       val listener= object :AuthenticationListener{
         override fun onSuccess(response: String) {
           if (authInProgress.compareAndSet(true, false)) {
-            context?.runOnUiThread{
+            activity?.runOnUiThread{
               result.success(response)
             }
 
@@ -92,7 +124,7 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
         override fun onFail(errorResult: AuthenticationError) {
 
           if (authInProgress.compareAndSet(true, false)) {
-             context?.runOnUiThread{
+             activity?.runOnUiThread{
                result.error(errorResult.error_code.code,errorResult.error_message,null)
              }
           }
@@ -108,7 +140,90 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
 
 
 
-    } else if(call.method=="checkCoverage") {
+    } 
+    else if (call.method == "doAuthenticationWithChannel") {
+
+      if (authInProgress.get()) {
+        return
+      }
+      var login_hint = call.argument<String>("login_hint")
+      if(login_hint.isNullOrEmpty()){
+        login_hint = ""
+      }
+      var channel = call.argument<String>("channel")
+      if(channel.isNullOrEmpty()){
+        channel = ""
+      }
+      authInProgress.set(true)
+      if(authenticationHelper == null){
+          authenticationHelper = AuthenticationHelper(IPApiService(activity!!))
+      }
+
+      val listener= object :AuthenticationListener{
+        override fun onSuccess(response: String) {
+          if (authInProgress.compareAndSet(true, false)) {
+            activity?.runOnUiThread{
+              result.success(response)
+            }
+
+          }
+        }
+        override fun onFail(errorResult: AuthenticationError) {
+          if (authInProgress.compareAndSet(true, false)) {
+             activity?.runOnUiThread{
+               result.error(errorResult.error_code.code,errorResult.error_message,null)
+             }
+          }
+        }
+
+        override fun onError(errorResult: AuthenticationError) {
+          if (authInProgress.compareAndSet(true, false)) {
+              result.error(errorResult.error_code.code, errorResult.error_message, null)
+          }
+        }
+      }
+      authenticationHelper?.startAuthorization(activity!!, login_hint ,channel,listener)
+    } 
+    else if (call.method == "doIMAuthentication") {
+
+      if (authInProgress.get()) {
+        return
+      }
+      var channel = call.argument<String>("channel")
+      if(channel.isNullOrEmpty()){
+        channel = ""
+      }
+      authInProgress.set(true)
+      if(authenticationHelper == null){
+          authenticationHelper = AuthenticationHelper(IPApiService(activity!!))
+      }
+
+      val listener= object :AuthenticationListener{
+        override fun onSuccess(response: String) {
+          if (authInProgress.compareAndSet(true, false)) {
+            activity?.runOnUiThread{
+              result.success(response)
+            }
+
+          }
+        }
+        override fun onFail(errorResult: AuthenticationError) {
+          if (authInProgress.compareAndSet(true, false)) {
+             activity?.runOnUiThread{
+               result.error(errorResult.error_code.code,errorResult.error_message,null)
+             }
+          }
+        }
+
+        override fun onError(errorResult: AuthenticationError) {
+          if (authInProgress.compareAndSet(true, false)) {
+              result.error(errorResult.error_code.code, errorResult.error_message, null)
+          }
+        }
+      }
+      authenticationHelper?.startAuthorization(activity!!, channel, listener)
+    }    
+    else if(call.method=="checkCoverage") {
 
       if (authInProgress.get()) {
         return
@@ -116,17 +231,17 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
 
       authInProgress.set(true)
       if(authenticationHelper == null){
-        authenticationHelper = AuthenticationHelper(IPApiService(context!!))
+        authenticationHelper = AuthenticationHelper(IPApiService(activity!!))
       }
       authenticationHelper?.checkCoverage({
         if (authInProgress.compareAndSet(true, false)) {
-          context?.runOnUiThread {
+          activity?.runOnUiThread {
             result.success(it)
           }
         }
       },{
         if (authInProgress.compareAndSet(true, false)) {
-          context?.runOnUiThread{
+          activity?.runOnUiThread{
             result.error(it.error_code.code, it.error_message, null)
           }
         }
@@ -141,12 +256,12 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
 
       authInProgress.set(true)
       if(authenticationHelper == null){
-        authenticationHelper = AuthenticationHelper(IPApiService(context!!))
+        authenticationHelper = AuthenticationHelper(IPApiService(activity!!))
       }
       //20092021
       var phoneNumber = call.argument<String>("phone_number")
       if(phoneNumber.isNullOrEmpty()){
-        context?.runOnUiThread{
+        activity?.runOnUiThread{
           result.error("invalid_parameter", "phoneNumber cannot be empty", null)
         }
         authInProgress.set(false)
@@ -155,13 +270,13 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
 
       authenticationHelper?.checkCoverage(phoneNumber, {
         if (authInProgress.compareAndSet(true, false)) {
-          context?.runOnUiThread {
+          activity?.runOnUiThread {
             result.success(it)
           }
         }
       },{
         if (authInProgress.compareAndSet(true, false)) {
-          context?.runOnUiThread{
+          activity?.runOnUiThread{
             result.error(it.error_code.code, it.error_message, null)
           }
         }
@@ -176,7 +291,7 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
           Log.d(TAG, "config_file_name: $result")
         }
         if(authenticationHelper==null){
-          authenticationHelper = AuthenticationHelper(IPApiService(context!!))
+          authenticationHelper = AuthenticationHelper(IPApiService(activity!!))
         }
         authenticationHelper?.setConfiguration(json_config)
       }
@@ -186,9 +301,9 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
       val configName = call.argument<String>("config_name")
       if (!configName.isNullOrEmpty()){
         if(authenticationHelper==null){
-          authenticationHelper = AuthenticationHelper(IPApiService(context!!))
+          authenticationHelper = AuthenticationHelper(IPApiService(activity!!))
         }
-        context?.runOnUiThread {
+        activity?.runOnUiThread {
           result.success(authenticationHelper?.getConfigurationByName(configName))
         }
 
@@ -196,19 +311,19 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
 
     }
     else if(call.method=="getClientId"){
-      context?.let {
+      activity?.let {
         result.success(IPConfigurationFile.getInstance().CLIENT_ID)
       }
     }
     else if(call.method=="getRedirectUri"){
-      context?.let {
+      activity?.let {
         result.success(IPConfigurationFile.getInstance().REDIRECT_URI.toString())
       }
     }
     else if(call.method=="setClientId"){
       val clientValue = call.argument<String>("value")
       if (!clientValue.isNullOrEmpty()){
-        context?.let {
+        activity?.let {
           IPConfigurationFile.getInstance().CLIENT_ID = clientValue
         }
         // context = null
@@ -218,7 +333,7 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
     else if(call.method=="setRedirectUri"){
       val redirectValue = call.argument<String>("value")
       if (!redirectValue.isNullOrEmpty()){
-        context?.let {
+        activity?.let {
           IPConfigurationFile.getInstance().REDIRECT_URI = Uri.parse(redirectValue)
         }
         // context = null
@@ -228,7 +343,7 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
     else if(call.method=="setCheckCoverageUrl"){
       val coverageValue = call.argument<String>("value")
       if (!coverageValue.isNullOrEmpty()){
-        context?.let {
+        activity?.let {
           IPConfigurationFile.getInstance().COVERAGE_URL = Uri.parse(coverageValue)
         }
         // context = null
@@ -238,7 +353,7 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
     else if(call.method=="setAuthorizationUrl"){
       val authorizationValue = call.argument<String>("value")
       if (!authorizationValue.isNullOrEmpty()){
-        context?.let {
+        activity?.let {
           IPConfigurationFile.getInstance().AUTHORIZATION_URL = Uri.parse(authorizationValue)
         }
         // context = null
@@ -247,39 +362,39 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
     }
     
     else if(call.method=="unregisterNetwork"){
-      context?.let {
-        val result =  CellularService.Companion.unregisterNetwork(context!!)
-        if(BuildConfig.DEBUG) {
-          Log.d(TAG, "unregisterNetwork: $result")
+        activity?.let {
+          val result =  CellularService.Companion.unregisterNetwork(activity!!)
+          if(BuildConfig.DEBUG) {
+            Log.d(TAG, "unregisterNetwork: $result")
+          }
+          activity = null
+          channel.setMethodCallHandler(null);
         }
-        context = null
-        channel.setMethodCallHandler(null);
-      }
     }
     else if(call.method=="addQueryParam"){
-      context?.let {
+      activity?.let {
         var key = call.argument<String>("key") ?: ""
         var value = call.argument<String>("value") ?: ""
         if(authenticationHelper==null){
-          authenticationHelper = AuthenticationHelper(IPApiService(context!!))
+          authenticationHelper = AuthenticationHelper(IPApiService(activity!!))
         }
         authenticationHelper?.addQueryParam(key, value)
       }
     }
     else if(call.method=="setState"){
-      context?.let {
+      activity?.let {
         var state = call.argument<String>("value") ?: ""
         if(authenticationHelper==null){
-          authenticationHelper = AuthenticationHelper(IPApiService(context!!))
+          authenticationHelper = AuthenticationHelper(IPApiService(activity!!))
         }
         authenticationHelper?.setState(state)
       }
     }
     else if(call.method=="setScope"){
-      context?.let {
+      activity?.let {
         var scope = call.argument<String>("value") ?: ""
         if(authenticationHelper==null){
-          authenticationHelper = AuthenticationHelper(IPApiService(context!!))
+          authenticationHelper = AuthenticationHelper(IPApiService(activity!!))
         }
         authenticationHelper?.setScope(scope)
       }
@@ -287,7 +402,13 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
   }
 
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+    pluginBinding = null;
+  }
 
+  override fun onActivityResult(requestCode:Int, resultCode:Int, data:Intent): Boolean
+  {
+    IMService.onActivityResult(requestCode, resultCode, data)
+    return true
   }
 
 }

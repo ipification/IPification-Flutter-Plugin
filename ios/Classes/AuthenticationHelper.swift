@@ -6,7 +6,8 @@
 //
 
 import Foundation
-
+import UIKit
+import Flutter
 import IPificationSDK
 
 
@@ -90,7 +91,94 @@ class AuthenticationHelper {
             print("login_hint", login_hint)
             authBuilder.addQueryParam(key: "login_hint", value: login_hint)
         }
-        authorizationService.doAuthorization(authBuilder.build())
+        authorizationService.startAuthorization(authBuilder.build())
+    }
+
+
+    func doAuthentication(login_hint:String, channel: String, success:@escaping(String?)->(Void),fail:@escaping(AuthenticationError)->(Void)){
+       
+        let authorizationService = AuthorizationService()
+        authorizationService.callbackFailed = { (error) -> Void in
+            print("authorized failed ", error.localizedDescription)
+            var temp = AuthenticationError()
+            temp.error_code = ErrorCode.AUTHENTICATE_ERROR
+            temp.error_message = error.localizedDescription
+            fail(temp)
+            
+        }
+        authorizationService.callbackSuccess = { (response) -> Void in
+            
+            if(response.getCode() != nil){
+                success(response.getPlainResponse())
+            }else{
+                var temp = AuthenticationError()
+                temp.error_code = ErrorCode.AUTHENTICATE_FAIL
+                temp.error_message = response.getError()
+                fail(temp)
+            }
+        }
+        
+
+        if(login_hint.isEmpty == false){
+            print("login_hint", login_hint)
+            authBuilder.addQueryParam(key: "login_hint", value: login_hint)
+        }
+
+        if(channel.isEmpty == false){
+            print("channel", channel)
+            authBuilder.addQueryParam(key: "channel", value: channel)
+        }
+        let storyboard : UIStoryboard? = UIStoryboard.init(name: "Main", bundle: nil);
+        let window: UIWindow = ((UIApplication.shared.delegate?.window)!)!
+        let controller : FlutterViewController = window.rootViewController as! FlutterViewController
+        authorizationService.startAuthorization(viewController: controller, authBuilder.build())
+    }
+
+    func doAuthentication(channel: String, success:@escaping(String?)->(Void),fail:@escaping(AuthenticationError)->(Void)){
+        // if login_hint.isEmpty {
+        //     var temp = AuthenticationError()
+        //     temp.error_code = ErrorCode.AUTHENTICATE_PHONE_MISSING
+        //     temp.error_message = "login-hint is missing"
+        //     fail(temp)
+        //     return
+        // }
+        let authorizationService = AuthorizationService()
+        authorizationService.callbackFailed = { (error) -> Void in
+            print("authorized failed ", error.localizedDescription)
+            var temp = AuthenticationError()
+            temp.error_code = ErrorCode.AUTHENTICATE_ERROR
+            temp.error_message = error.localizedDescription
+            fail(temp)
+            
+        }
+        authorizationService.callbackSuccess = { (response) -> Void in
+            // print("authorized successful with code:", response.getCode())
+            
+            if(response.getCode() != nil){
+                // let state = response.getState() ?? ""
+                // let resData = response.getPlainResponse()
+                // let json = """{"code":"\(response.getCode())","state":"\(state)", "response_data": "\(resData)"}"""
+                // let json = "{\"code\": \"\(response.getCode()!)\", \"state\": \"\(state)\", \"response_data\": \"\(resData)\"}"
+                // print(json)
+                success(response.getPlainResponse())
+            }else{
+                var temp = AuthenticationError()
+                temp.error_code = ErrorCode.AUTHENTICATE_FAIL
+                temp.error_message = response.getError()
+                fail(temp)
+            }
+        }
+        
+        
+        
+        if(channel.isEmpty == false){
+            print("channel", channel)
+            authBuilder.addQueryParam(key: "channel", value: channel)
+        }
+        let storyboard : UIStoryboard? = UIStoryboard.init(name: "Main", bundle: nil);
+        let window: UIWindow = ((UIApplication.shared.delegate?.window)!)!
+        let controller : FlutterViewController = window.rootViewController as! FlutterViewController
+        authorizationService.startIMAuthorization(viewController: controller, authBuilder.build())
     }
     
     func addQueryParam(key: String, value: String){

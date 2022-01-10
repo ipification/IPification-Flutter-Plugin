@@ -21,18 +21,18 @@ class IpSdk {
         .invokeMethod<String>('getConfiguration', {"config_name": configName});
     return result;
   }
-  
 
   static Future<CheckCoverageResponse> checkCoverage() async {
     final String? resultJson =
-        await _channel.invokeMethod<String>('checkCoverage');    
+        await _channel.invokeMethod<String>('checkCoverage');
     var result = CheckCoverageResponse.fromJson(resultJson);
     return result;
   }
-  
-  static Future<CheckCoverageResponse> checkCoverageWithPhoneNumber({required String phoneNumber}) async {
-    final String? resultJson =
-        await _channel.invokeMethod<String>('checkCoverageWithPhoneNumber', {"phone_number": phoneNumber});    
+
+  static Future<CheckCoverageResponse> checkCoverageWithPhoneNumber(
+      {required String phoneNumber}) async {
+    final String? resultJson = await _channel.invokeMethod<String>(
+        'checkCoverageWithPhoneNumber', {"phone_number": phoneNumber});
     var result = CheckCoverageResponse.fromJson(resultJson);
     return result;
   }
@@ -48,9 +48,27 @@ class IpSdk {
   static void setScope({required String value}) {
     _channel.invokeMethod("setScope", {"value": value});
   }
-  static Future<AuthenticationResponse> doAuthentication({required String loginHint}) async {
+
+  static Future<AuthenticationResponse> doAuthentication(
+      {required String loginHint}) async {
     final String? resultJson = await _channel
         .invokeMethod("doAuthentication", {"login_hint": loginHint});
+    var result = AuthenticationResponse.fromUri(resultJson);
+    return result;
+  }
+
+  static Future<AuthenticationResponse> doAuthenticationWithChannel(
+      {required String channel, required String loginHint}) async {
+    final String? resultJson = await _channel.invokeMethod( "doAuthenticationWithChannel",
+        {"channel": channel, "login_hint": loginHint});
+    var result = AuthenticationResponse.fromUri(resultJson);
+    return result;
+  }
+
+  static Future<AuthenticationResponse> doIMAuthentication(
+      {required String channel}) async {
+    final String? resultJson =
+        await _channel.invokeMethod("doAuthentication", {"channel": channel});
     var result = AuthenticationResponse.fromUri(resultJson);
     return result;
   }
@@ -60,33 +78,30 @@ class IpSdk {
   }
 
   static Future<String?> setClientId(String clientid) async {
-    _channel
-        .invokeMethod<String>('setClientId', {"value": clientid});
+    _channel.invokeMethod<String>('setClientId', {"value": clientid});
   }
 
   static Future<String?> setRedirectUri(String redirectUri) async {
-    _channel
-        .invokeMethod<String>('setRedirectUri', {"value": redirectUri});
+    _channel.invokeMethod<String>('setRedirectUri', {"value": redirectUri});
   }
+
   static Future<String?> setCheckCoverageUrl(String checkCoverageUrl) async {
-    _channel
-        .invokeMethod<String>('setCheckCoverageUrl', {"value": checkCoverageUrl});
+    _channel.invokeMethod<String>(
+        'setCheckCoverageUrl', {"value": checkCoverageUrl});
   }
 
   static Future<String?> setAuthorizationUrl(String authUrl) async {
-     _channel
-        .invokeMethod<String>('setAuthorizationUrl', {"value": authUrl});
-    
+    _channel.invokeMethod<String>('setAuthorizationUrl', {"value": authUrl});
   }
 
   static Future<String?> getClientId() async {
-    final String? result = await _channel
-        .invokeMethod<String>('getClientId');
+    final String? result = await _channel.invokeMethod<String>('getClientId');
     return result;
   }
+
   static Future<String?> getRedirectUri() async {
-    final String? result = await _channel
-        .invokeMethod<String>('getRedirectUri');
+    final String? result =
+        await _channel.invokeMethod<String>('getRedirectUri');
     return result;
   }
 }
