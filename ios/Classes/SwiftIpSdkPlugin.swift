@@ -154,37 +154,37 @@ public class SwiftIpSdkPlugin: NSObject, FlutterPlugin {
         result(authenticationHelper?.getConfigurationByName(configName:configName!))
     }
     else if(call.method=="getClientId"){
-      result(IPConfigurationFile.sharedInstance.CLIENT_ID)
+      result(IPConfiguration.sharedInstance.CLIENT_ID)
     }
     else if(call.method=="getRedirectUri"){
-      result(IPConfigurationFile.sharedInstance.REDIRECT_URI)
+      result(IPConfiguration.sharedInstance.REDIRECT_URI)
     }
     else if(call.method=="setClientId"){
       let arg = call.arguments as? Dictionary<String, Any>
       let clientValue = arg!["value"] as? String
       if (clientValue != ""){
-        IPConfigurationFile.sharedInstance.CLIENT_ID = clientValue ?? ""
+        IPConfiguration.sharedInstance.CLIENT_ID = clientValue ?? ""
       }
     }
     else if(call.method=="setRedirectUri"){
       let arg = call.arguments as? Dictionary<String, Any>
       let redirectValue = arg!["value"] as? String
       if (redirectValue != ""){
-        IPConfigurationFile.sharedInstance.REDIRECT_URI = redirectValue ?? ""
+        IPConfiguration.sharedInstance.REDIRECT_URI = redirectValue ?? ""
       }
     }
     else if(call.method=="setCheckCoverageUrl"){
       let arg = call.arguments as? Dictionary<String, Any>
       let coverageValue = arg!["value"] as? String
       if (coverageValue != ""){
-        IPConfigurationFile.sharedInstance.COVERAGE_URL = coverageValue ?? ""
+        IPConfiguration.sharedInstance.COVERAGE_URL = coverageValue ?? ""
       }
     }
     else if(call.method=="setAuthorizationUrl"){
       let arg = call.arguments as? Dictionary<String, Any>
       let authValue = arg!["value"] as? String
       if (authValue != ""){
-        IPConfigurationFile.sharedInstance.AUTHORIZATION_URL = authValue ?? ""
+        IPConfiguration.sharedInstance.AUTHORIZATION_URL = authValue ?? ""
       }
     }
    

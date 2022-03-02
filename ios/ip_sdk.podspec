@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name = "ip_sdk"
-  s.version = "1.8.0"
+  s.version = "2.0.0"
   s.summary = "IPIfication SDK"
   s.description = "IPIfication SDK"
   s.homepage = "https://ipification.com"

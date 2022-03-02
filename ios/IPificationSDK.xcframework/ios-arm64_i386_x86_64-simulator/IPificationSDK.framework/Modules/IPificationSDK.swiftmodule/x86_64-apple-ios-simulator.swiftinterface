@@ -1,5 +1,5 @@
 // swift-interface-format-version: 1.0
-// swift-compiler-version: Apple Swift version 5.5.1 (swiftlang-1300.0.31.4 clang-1300.0.29.6)
+// swift-compiler-version: Apple Swift version 5.5.2 (swiftlang-1300.0.47.5 clang-1300.0.29.30)
 // swift-module-flags: -target x86_64-apple-ios10.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name IPificationSDK
 import IPificationSDK.CocoaAsyncSocket
 import CoreTelephony
@@ -41,6 +41,12 @@ public class CoverageService {
   public func checkCoverage(phoneNumber phone: Swift.String, _ customCoverageRequest: IPificationSDK.CoverageRequest? = nil)
   @objc deinit
 }
+@objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class IPificationTheme : ObjectiveC.NSObject {
+  public func updateScreen(titleColor: UIKit.UIColor, descColor: UIKit.UIColor, backgroundColor: UIKit.UIColor)
+  public func updateScreen(toolbarTitleColor: UIKit.UIColor, cancelBtnColor: UIKit.UIColor, titleColor: UIKit.UIColor, descColor: UIKit.UIColor, backgroundColor: UIKit.UIColor)
+  public static let sharedInstance: IPificationSDK.IPificationTheme
+  @objc deinit
+}
 @_hasMissingDesignatedInitializers public class CoverageResponse : IPificationSDK.ResponseProtocol {
   public func getOperatorCode() -> Swift.String?
   public func isAvailable() -> Swift.Bool
@@ -60,6 +66,7 @@ public class CoverageService {
 }
 public class AuthorizationService {
   public var locale: IPificationSDK.IPificationLocale
+  public var theme: IPificationSDK.IPificationTheme
   public var debug: Swift.Bool
   public var callbackSuccess: ((_ response: IPificationSDK.AuthorizationResponse) -> Swift.Void)?
   public var callbackFailed: ((_ response: IPificationSDK.IPificationException) -> Swift.Void)?
@@ -99,8 +106,9 @@ public protocol Coordinator : AnyObject {
   public func removeChildCoordinators()
   @objc deinit
 }
-@_hasMissingDesignatedInitializers public class IPificationLocale {
-  public init(title: Swift.String, topTitle: Swift.String, description: Swift.String, whatsappBtnText: Swift.String, viberBtnText: Swift.String, telegramBtnText: Swift.String, doneBtnText: Swift.String)
+@objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class IPificationLocale : ObjectiveC.NSObject {
+  public func updateScreen(titleBar topTitle: Swift.String, title: Swift.String, description: Swift.String, whatsappBtnText: Swift.String, viberBtnText: Swift.String, telegramBtnText: Swift.String, cancelBtnText: Swift.String)
+  public static let sharedInstance: IPificationSDK.IPificationLocale
   @objc deinit
 }
 public enum ResponseType {
@@ -139,8 +147,9 @@ public class CoverageRequest : IPificationSDK.RequestProtocol {
   public func formatedHeaders(enableCarrierHeaders: Swift.Bool) -> Swift.String
   @objc deinit
 }
-@objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class IPConfigurationFile : ObjectiveC.NSObject {
+@objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class IPConfiguration : ObjectiveC.NSObject {
   public var enableCarrierHeaders: Swift.Bool
+  public var STATE_LENGTH: Swift.Int
   public var CoverageReadTimeout: Swift.Double
   public var CoverageConnectTimeout: Swift.Double
   public var AuthReadTimeout: Swift.Double
@@ -149,8 +158,10 @@ public class CoverageRequest : IPificationSDK.RequestProtocol {
   public var AUTHORIZATION_URL: Swift.String
   public var REDIRECT_URI: Swift.String
   public var CLIENT_ID: Swift.String
+  public var log: Swift.String
   public var debug: Swift.Bool
-  public static let sharedInstance: IPificationSDK.IPConfigurationFile
+  public static let sharedInstance: IPificationSDK.IPConfiguration
+  public func generateState() -> Swift.String
   @objc deinit
 }
 public class AuthorizationRequest : IPificationSDK.RequestProtocol {

@@ -6,7 +6,7 @@ import androidx.annotation.NonNull
 import com.example.ip_sdk.AuthenticationHelper
 import com.example.ip_sdk.IPApiService
 import com.ipification.mobile.sdk.android.CellularService
-import com.ipification.mobile.sdk.android.IPConfigurationFile
+import com.ipification.mobile.sdk.android.IPConfiguration
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -312,19 +312,19 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, ActivityResu
     }
     else if(call.method=="getClientId"){
       activity?.let {
-        result.success(IPConfigurationFile.getInstance().CLIENT_ID)
+        result.success(IPConfiguration.getInstance().CLIENT_ID)
       }
     }
     else if(call.method=="getRedirectUri"){
       activity?.let {
-        result.success(IPConfigurationFile.getInstance().REDIRECT_URI.toString())
+        result.success(IPConfiguration.getInstance().REDIRECT_URI.toString())
       }
     }
     else if(call.method=="setClientId"){
       val clientValue = call.argument<String>("value")
       if (!clientValue.isNullOrEmpty()){
         activity?.let {
-          IPConfigurationFile.getInstance().CLIENT_ID = clientValue
+          IPConfiguration.getInstance().CLIENT_ID = clientValue
         }
         // context = null
         // channel.setMethodCallHandler(null);
@@ -334,7 +334,7 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, ActivityResu
       val redirectValue = call.argument<String>("value")
       if (!redirectValue.isNullOrEmpty()){
         activity?.let {
-          IPConfigurationFile.getInstance().REDIRECT_URI = Uri.parse(redirectValue)
+          IPConfiguration.getInstance().REDIRECT_URI = Uri.parse(redirectValue)
         }
         // context = null
         // channel.setMethodCallHandler(null);
@@ -344,7 +344,7 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, ActivityResu
       val coverageValue = call.argument<String>("value")
       if (!coverageValue.isNullOrEmpty()){
         activity?.let {
-          IPConfigurationFile.getInstance().COVERAGE_URL = Uri.parse(coverageValue)
+          IPConfiguration.getInstance().COVERAGE_URL = Uri.parse(coverageValue)
         }
         // context = null
         // channel.setMethodCallHandler(null);
@@ -354,7 +354,7 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, ActivityResu
       val authorizationValue = call.argument<String>("value")
       if (!authorizationValue.isNullOrEmpty()){
         activity?.let {
-          IPConfigurationFile.getInstance().AUTHORIZATION_URL = Uri.parse(authorizationValue)
+          IPConfiguration.getInstance().AUTHORIZATION_URL = Uri.parse(authorizationValue)
         }
         // context = null
         // channel.setMethodCallHandler(null);

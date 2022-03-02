@@ -21,11 +21,7 @@ rootProject.allprojects {
        
        
         maven {
-            url "https://artifacts.ipification.com/artifactory/libs-release-local"
-            credentials {
-                username 'tinhn'
-                password 'J6b*39@Vu7&*$9H^d#L'
-            }
+            url "https://artifacts.ipification.com/artifactory/mobile-libs-release"
         }
     
     }
@@ -48,6 +44,6 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.ipification.mobile.android:ipification-auth:1.9.17'
+    implementation 'com.ipification.mobile.android:ipification-auth:2.0.25'
 
 }
