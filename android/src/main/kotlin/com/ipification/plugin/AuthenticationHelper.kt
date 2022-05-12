@@ -1,4 +1,4 @@
-package com.example.ip_sdk
+package com.ipification.plugin
 import android.app.Activity
 import android.util.Log
 import com.ipification.mobile.sdk.android.AuthorizationServiceConfiguration
@@ -7,9 +7,9 @@ import com.ipification.mobile.sdk.android.callback.CellularCallback
 import com.ipification.mobile.sdk.android.exception.CellularException
 import com.ipification.mobile.sdk.android.response.AuthResponse
 import com.ipification.mobile.sdk.android.response.CoverageResponse
-import com.ipification.sdk.ip_sdk.AuthenticationListener
-import com.ipification.sdk.ip_sdk.AuthenticationError
-import com.ipification.sdk.ip_sdk.ErrorCode
+import com.ipification.plugin.AuthenticationListener
+import com.ipification.plugin.AuthenticationError
+import com.ipification.plugin.ErrorCode
 import com.ipification.mobile.sdk.android.callback.IPificationCallback
 import com.ipification.mobile.sdk.android.IPificationServices
 import com.ipification.mobile.sdk.android.exception.IPificationError
@@ -84,7 +84,8 @@ class AuthenticationHelper(val apiService: IPApiService)  {
         }
         apiService.doAuthentication(login_hint, callback)
     }
-    fun startAuthorization(activity: Activity, login_hint:String, channel: String,  listener: AuthenticationListener){
+    
+    fun startAuthorization(activity: Activity, login_hint: String, channel: String,  listener: AuthenticationListener){
         val callback = object : IPificationCallback {
             override fun onSuccess(res: AuthResponse) {
                 val code = res.getCode()

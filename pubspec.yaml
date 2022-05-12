@@ -1,7 +1,7 @@
-name: ip_sdk
-description: IPification SDK.
-version: 1.8.0
-homepage: ipification.com
+name: ipification_plugin
+description: IPification Flutter Plugin.
+version: 2.0.4
+homepage: developer.ipification.com
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
@@ -31,10 +31,10 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.ipification.sdk.ip_sdk
-        pluginClass: IpSdkPlugin
+        package: com.ipification.plugin
+        pluginClass: IPificationPlugin
       ios:
-        pluginClass: IpSdkPlugin
+        pluginClass: IPificationPlugin
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:

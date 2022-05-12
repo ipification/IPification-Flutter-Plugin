@@ -1,10 +1,10 @@
-package com.ipification.sdk.ip_sdk
+package com.ipification.plugin
 
 import android.app.Activity
 import android.util.Log
 import androidx.annotation.NonNull
-import com.example.ip_sdk.AuthenticationHelper
-import com.example.ip_sdk.IPApiService
+import com.ipification.plugin.AuthenticationHelper
+import com.ipification.plugin.IPApiService
 import com.ipification.mobile.sdk.android.CellularService
 import com.ipification.mobile.sdk.android.IPConfiguration
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -23,8 +23,8 @@ import io.flutter.plugin.common.BinaryMessenger
 import com.ipification.mobile.sdk.im.IMService
 import io.flutter.plugin.common.PluginRegistry.ActivityResultListener
 
-/** IpSdkPlugin */
-class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, ActivityResultListener{
+/** IPificationPlugin */
+class IPificationPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, ActivityResultListener{
   /// The MethodChannel that will the communication between Flutter and native Android
   ///
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -33,13 +33,13 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, ActivityResu
   private  var activity: Activity? = null
   private val authInProgress: AtomicBoolean = AtomicBoolean(false)
   private var authenticationHelper: AuthenticationHelper?=null
-  private val TAG = "IpSdk";
+  private val TAG = "IPification_plugin";
   private var pluginBinding: FlutterPlugin.FlutterPluginBinding? = null
 
 
   fun registerWith(registrar: Registrar) {
     val activity: Activity = registrar.activity()
-    val plugin = IpSdkPlugin()
+    val plugin = IPificationPlugin()
     plugin.setup(registrar.messenger(), activity, registrar, null)
   }
   private fun setup(
@@ -49,7 +49,7 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, ActivityResu
     activityBinding: ActivityPluginBinding?
   ) {
     if(messenger != null){
-      channel = MethodChannel(messenger!!, "ip_sdk")
+      channel = MethodChannel(messenger!!, "ipification_plugin")
       channel.setMethodCallHandler(this)
     }
     
@@ -65,7 +65,7 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, ActivityResu
   }
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "ip_sdk")
+    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "ipification_plugin")
     pluginBinding = flutterPluginBinding;
   }
 
@@ -136,7 +136,7 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, ActivityResu
           }
         }
       }
-      authenticationHelper?.doAuthentication(login_hint,listener)
+      authenticationHelper?.doAuthentication(login_hint, listener)
 
 
 
@@ -405,7 +405,7 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, ActivityResu
     pluginBinding = null;
   }
 
-  override fun onActivityResult(requestCode:Int, resultCode:Int, data:Intent): Boolean
+  override fun onActivityResult(requestCode:Int, resultCode:Int, data: Intent?): Boolean
   {
     IMService.onActivityResult(requestCode, resultCode, data)
     return true

@@ -4,11 +4,11 @@ import IPificationSDK
 
 
 
-public class SwiftIpSdkPlugin: NSObject, FlutterPlugin {
+public class SwiftIPificationPlugin: NSObject, FlutterPlugin {
   var authenticationHelper: AuthenticationHelper? = nil
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "ip_sdk", binaryMessenger: registrar.messenger())
-    let instance = SwiftIpSdkPlugin()
+    let channel = FlutterMethodChannel(name: "ipification_plugin", binaryMessenger: registrar.messenger())
+    let instance = SwiftIPificationPluginPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
 

@@ -1,21 +1,23 @@
 import 'dart:async';
+import 'package:ipification_plugin/authentication_response.dart';
+import 'package:ipification_plugin/coverage_response.dart';
 import 'package:flutter/services.dart';
-import 'package:ip_sdk/authentication_response.dart';
-import 'package:ip_sdk/coverage_response.dart';
 
-class IpSdk {
-  static const MethodChannel _channel = const MethodChannel('ip_sdk');
+class IPificationPlugin {
+  static const MethodChannel _channel =
+      const MethodChannel('ipification_plugin');
 
   // static Future<String> get platformVersion async {
   //   final String version = await _channel.invokeMethod('getPlatformVersion');
   //   return version;
   // }
-
+  @Deprecated('Use [setAuthorizationUrl()]')
   static void setAuthorizationServiceConfiguration(String fileName) {
     _channel
         .invokeMethod<bool>('setConfiguration', {"config_file_name": fileName});
   }
 
+  @Deprecated('Deprecated')
   static Future<String?> getConfigurationByName(String configName) async {
     final String? result = await _channel
         .invokeMethod<String>('getConfiguration', {"config_name": configName});
@@ -59,7 +61,8 @@ class IpSdk {
 
   static Future<AuthenticationResponse> doAuthenticationWithChannel(
       {required String channel, required String loginHint}) async {
-    final String? resultJson = await _channel.invokeMethod( "doAuthenticationWithChannel",
+    final String? resultJson = await _channel.invokeMethod(
+        "doAuthenticationWithChannel",
         {"channel": channel, "login_hint": loginHint});
     var result = AuthenticationResponse.fromUri(resultJson);
     return result;
@@ -67,8 +70,8 @@ class IpSdk {
 
   static Future<AuthenticationResponse> doIMAuthentication(
       {required String channel}) async {
-    final String? resultJson =
-        await _channel.invokeMethod("doAuthentication", {"channel": channel});
+    final String? resultJson = await _channel
+        .invokeMethod("doAuthenticationWithChannel", {"channel": channel});
     var result = AuthenticationResponse.fromUri(resultJson);
     return result;
   }
@@ -77,20 +80,20 @@ class IpSdk {
     _channel.invokeMethod("unregisterNetwork");
   }
 
-  static Future<String?> setClientId(String clientid) async {
-    _channel.invokeMethod<String>('setClientId', {"value": clientid});
+  static void setClientId(String clientId) async {
+    _channel.invokeMethod<String>('setClientId', {"value": clientId});
   }
 
-  static Future<String?> setRedirectUri(String redirectUri) async {
+  static void setRedirectUri(String redirectUri) async {
     _channel.invokeMethod<String>('setRedirectUri', {"value": redirectUri});
   }
 
-  static Future<String?> setCheckCoverageUrl(String checkCoverageUrl) async {
+  static void setCheckCoverageUrl(String checkCoverageUrl) async {
     _channel.invokeMethod<String>(
         'setCheckCoverageUrl', {"value": checkCoverageUrl});
   }
 
-  static Future<String?> setAuthorizationUrl(String authUrl) async {
+  static void setAuthorizationUrl(String authUrl) async {
     _channel.invokeMethod<String>('setAuthorizationUrl', {"value": authUrl});
   }
 

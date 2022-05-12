@@ -1,4 +1,4 @@
-package com.example.ip_sdk
+package com.ipification.plugin
 
 import android.content.Context
 import android.app.Activity
@@ -27,6 +27,7 @@ class IPApiService(val activity: Activity, var authRequestBuilder:AuthRequest.Bu
             ex.printStackTrace()
         }
     }
+    
 
     fun startAuthentication(activity: Activity, login_hint:String, channel: String, callback: IPificationCallback){
         

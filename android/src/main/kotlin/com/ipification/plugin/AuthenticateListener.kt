@@ -1,5 +1,4 @@
-package com.ipification.sdk.ip_sdk
-
+package com.ipification.plugin
 
 
 interface AuthenticationListener {

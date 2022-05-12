@@ -1,4 +1,4 @@
-group 'com.ipification.sdk.ip_sdk'
+group 'com.ipification.plugin'
 version '1.7-SNAPSHOT'
 
 buildscript {
@@ -31,7 +31,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -44,6 +44,6 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.ipification.mobile.android:ipification-auth:2.0.25'
+    implementation 'com.ipification.mobile.android:ipification-auth:2.0.4'
 
 }

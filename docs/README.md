@@ -23,7 +23,7 @@ Add the IPification SDK as a dependency to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
- ip_sdk:
+ ipification_plugin:
     path: ipification_plugin_folder_path (for example: `path: ../ipification_flutter/`)
 ```
 ## 2. Set Up Variables
@@ -144,7 +144,7 @@ CLIENT_ID = your-stage-client-id
 
     ```dart
     import 'package:flutter/services.dart';
-    import 'package:ip_sdk/ip_sdk.dart';
+    import 'package:ipification_plugin/ipification.dart';
     ```
 
 * Perform to check Coverage with `checkCoverage` function

@@ -1,4 +1,4 @@
-package com.ipification.sdk.ip_sdk
+package com.ipification.plugin
 
 enum class ErrorCode (val code:String){
     COVERAGE_UNAVAILABLE("check_coverage_unavailable"),

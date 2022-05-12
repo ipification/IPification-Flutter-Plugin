@@ -1,5 +1,5 @@
-name: ip_sdk_example
-description: Demonstrates how to use the ip_sdk plugin.
+name: ipification_demo_app
+description: Demonstrates how to use the ipification plugin.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
@@ -14,12 +14,7 @@ dependencies:
   jwt_decoder: ^2.0.1
   http: ^0.13.4
   
-  ip_sdk:
-    # When depending on this package from a real application you should use:
-    #   ip_sdk: ^x.y.z
-    # See https://dart.dev/tools/pub/dependencies#version-constraints
-    # The example app is bundled with the plugin so we use a path dependency on
-    # the parent directory to use the current plugin's version.
+  ipification_plugin:
     path: ../
 
   

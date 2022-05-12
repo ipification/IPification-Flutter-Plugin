@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.ipification.sdk.ip_sdk">
+  xmlns:tools="http://schemas.android.com/tools"
+  package="com.ipification.plugin">
     <uses-permission android:name="android.permission.INTERNET"/>
+    
 </manifest>

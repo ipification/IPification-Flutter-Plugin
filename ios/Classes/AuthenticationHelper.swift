@@ -1,6 +1,6 @@
 //
 //  AuthenticationHelper.swift
-//  ip_sdk
+//  ipification_plugin
 //
 //  Created by ipification on 1/20/21.
 //
