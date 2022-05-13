@@ -326,8 +326,6 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, Activi
         activity?.let {
           IPConfiguration.getInstance().CLIENT_ID = clientValue
         }
-        // context = null
-        // channel.setMethodCallHandler(null);
       }
     }
     else if(call.method=="setRedirectUri"){
@@ -336,8 +334,6 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, Activi
         activity?.let {
           IPConfiguration.getInstance().REDIRECT_URI = Uri.parse(redirectValue)
         }
-        // context = null
-        // channel.setMethodCallHandler(null);
       }
     }
     else if(call.method=="setCheckCoverageUrl"){
@@ -346,8 +342,6 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, Activi
         activity?.let {
           IPConfiguration.getInstance().COVERAGE_URL = Uri.parse(coverageValue)
         }
-        // context = null
-        // channel.setMethodCallHandler(null);
       }
     }
     else if(call.method=="setAuthorizationUrl"){
@@ -356,19 +350,15 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, Activi
         activity?.let {
           IPConfiguration.getInstance().AUTHORIZATION_URL = Uri.parse(authorizationValue)
         }
-        // context = null
-        // channel.setMethodCallHandler(null);
       }
     }
     
     else if(call.method=="unregisterNetwork"){
         activity?.let {
-          val result =  CellularService.Companion.unregisterNetwork(activity!!)
+          val result =  CellularService.unregisterNetwork(activity!!)
           if(BuildConfig.DEBUG) {
             Log.d(TAG, "unregisterNetwork: $result")
           }
-          activity = null
-          channel.setMethodCallHandler(null);
         }
     }
     else if(call.method=="addQueryParam"){
