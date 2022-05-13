@@ -13,6 +13,6 @@ class CheckCoverageResponse {
     }
     var json = jsonDecode(str);
     return CheckCoverageResponse(
-        json['available'] as bool, json['operator_code'] as String);
+        json['available'] as bool, json['operator_code'] as String?);
   }
 }

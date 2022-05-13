@@ -252,8 +252,8 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
         if(BuildConfig.DEBUG) {
           Log.d(TAG, "unregisterNetwork: $result")
         }
-        context = null
-        channel.setMethodCallHandler(null);
+        // context = null
+        // channel.setMethodCallHandler(null);
       }
     }
     else if(call.method=="addQueryParam"){
