@@ -35,10 +35,7 @@ Sync with native library 1.6.3
 
 Sync with native library 1.7
 
-## 1.8
 
-Sync with native library 1.8
+## 1.7.1
 
-## 1.8.1
-
-Fix Coverage Issue
+Support Null-Safety

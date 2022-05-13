@@ -13,7 +13,6 @@ import com.ipification.sdk.ip_sdk.ErrorCode
 
 
 
-
 class AuthenticationHelper(val apiService: IPApiService)  {
 
     
@@ -96,7 +95,7 @@ class AuthenticationHelper(val apiService: IPApiService)  {
         apiService.setScope(scope)
     }
     
-    fun setConfiguration(file_name : String){
+    fun setConfiguration(file_name:String){
         Log.d("config_name", file_name)
         val context = apiService.context
         val cellularService = CellularService<CoverageResponse>(apiService.context)
@@ -106,10 +105,11 @@ class AuthenticationHelper(val apiService: IPApiService)  {
 
     }
 
-    fun getConfigurationByName(name : String) : String?{
+    fun getConfigurationByName(name:String):String?{
         val cellularService = CellularService<CoverageResponse>(apiService.context)
        return cellularService.getConfiguration(name)
 
     }
+
     
 }
