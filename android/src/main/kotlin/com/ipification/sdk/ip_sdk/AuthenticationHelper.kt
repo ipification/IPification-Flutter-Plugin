@@ -10,6 +10,7 @@ import com.ipification.mobile.sdk.android.response.CoverageResponse
 import com.ipification.sdk.ip_sdk.AuthenticationListener
 import com.ipification.sdk.ip_sdk.AuthenticationError
 import com.ipification.sdk.ip_sdk.ErrorCode
+import com.ipification.mobile.sdk.android.IPConfiguration
 
 
 
@@ -97,18 +98,12 @@ class AuthenticationHelper(val apiService: IPApiService)  {
     
     fun setConfiguration(file_name:String){
         Log.d("config_name", file_name)
-        val context = apiService.context
-        val cellularService = CellularService<CoverageResponse>(apiService.context)
-        val resourceId: Int = context.resources.getIdentifier(file_name, "raw", context.getPackageName())
-        val inputStream = apiService.context.resources.openRawResource(resourceId)
-        cellularService.setAuthorizationServiceConfiguration(AuthorizationServiceConfiguration(inputStream))
-
+        IPConfiguration.getInstance().configFileName = file_name
     }
 
     fun getConfigurationByName(name:String):String?{
         val cellularService = CellularService<CoverageResponse>(apiService.context)
        return cellularService.getConfiguration(name)
-
     }
 
     

@@ -18,6 +18,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
 import java.util.concurrent.atomic.AtomicBoolean
+import android.net.Uri
 
 /** IpSdkPlugin */
 class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{

@@ -8,12 +8,13 @@ import 'package:ip_sdk/coverage_response.dart';
 class IpSdk {
   static const MethodChannel _channel = const MethodChannel('ip_sdk');
 
-  // static Future<String> get platformVersion async {
-  //   final String version = await _channel.invokeMethod('getPlatformVersion');
-  //   return version;
-  // }
-
+  @Deprecated("Use setConfigurationFileName")
   static void setAuthorizationServiceConfiguration(String fileName) {
+    _channel
+        .invokeMethod<bool>('setConfiguration', {"config_file_name": fileName});
+  }
+
+  static void setConfigurationFileName(String fileName) {
     _channel
         .invokeMethod<bool>('setConfiguration', {"config_file_name": fileName});
   }
@@ -61,5 +62,33 @@ class IpSdk {
 
   static void unregisterNetwork() {
     _channel.invokeMethod("unregisterNetwork");
+  }
+
+  static void setClientId(String clientId) async {
+    _channel.invokeMethod<String>('setClientId', {"value": clientId});
+  }
+
+  static void setRedirectUri(String redirectUri) async {
+    _channel.invokeMethod<String>('setRedirectUri', {"value": redirectUri});
+  }
+
+  static void setCheckCoverageUrl(String checkCoverageUrl) async {
+    _channel.invokeMethod<String>(
+        'setCheckCoverageUrl', {"value": checkCoverageUrl});
+  }
+
+  static void setAuthorizationUrl(String authUrl) async {
+    _channel.invokeMethod<String>('setAuthorizationUrl', {"value": authUrl});
+  }
+
+  static Future<String?> getClientId() async {
+    final String? result = await _channel.invokeMethod<String>('getClientId');
+    return result;
+  }
+
+  static Future<String?> getRedirectUri() async {
+    final String? result =
+        await _channel.invokeMethod<String>('getRedirectUri');
+    return result;
   }
 }
