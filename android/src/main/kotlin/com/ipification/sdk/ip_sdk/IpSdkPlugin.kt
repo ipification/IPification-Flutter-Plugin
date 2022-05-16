@@ -6,6 +6,7 @@ import androidx.annotation.NonNull
 import com.example.ip_sdk.AuthenticationHelper
 import com.example.ip_sdk.IPApiService
 import com.ipification.mobile.sdk.android.CellularService
+import com.ipification.mobile.sdk.android.IPConfiguration
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
@@ -230,6 +231,48 @@ class IpSdkPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware{
           authenticationHelper = AuthenticationHelper(IPApiService(context!!))
         }
         authenticationHelper?.setScope(scope)
+      }
+    }
+    else if(call.method=="getClientId"){
+      context?.let {
+        result.success(IPConfiguration.getInstance().CLIENT_ID)
+      }
+    }
+    else if(call.method=="getRedirectUri"){
+      context?.let {
+        result.success(IPConfiguration.getInstance().REDIRECT_URI.toString())
+      }
+    }
+    else if(call.method=="setClientId"){
+      val clientValue = call.argument<String>("value")
+      if (!clientValue.isNullOrEmpty()){
+        context?.let {
+          IPConfiguration.getInstance().CLIENT_ID = clientValue
+        }
+      }
+    }
+    else if(call.method=="setRedirectUri"){
+      val redirectValue = call.argument<String>("value")
+      if (!redirectValue.isNullOrEmpty()){
+        context?.let {
+          IPConfiguration.getInstance().REDIRECT_URI = Uri.parse(redirectValue)
+        }
+      }
+    }
+    else if(call.method=="setCheckCoverageUrl"){
+      val coverageValue = call.argument<String>("value")
+      if (!coverageValue.isNullOrEmpty()){
+        context?.let {
+          IPConfiguration.getInstance().COVERAGE_URL = Uri.parse(coverageValue)
+        }
+      }
+    }
+    else if(call.method=="setAuthorizationUrl"){
+      val authorizationValue = call.argument<String>("value")
+      if (!authorizationValue.isNullOrEmpty()){
+        context?.let {
+          IPConfiguration.getInstance().AUTHORIZATION_URL = Uri.parse(authorizationValue)
+        }
       }
     }
   }
