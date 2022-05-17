@@ -1,4 +1,4 @@
-name: ip_sdk_example
+name: ip_demo_app
 description: Demonstrates how to use the ip_sdk plugin.
 
 # The following line prevents the package from being accidentally published to

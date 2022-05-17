@@ -18,7 +18,7 @@ class IpSdk {
     _channel
         .invokeMethod<bool>('setConfiguration', {"config_file_name": fileName});
   }
-
+  @Deprecated("Use getClientId() | getRedirectUri()")
   static Future<String> getConfigurationByName(String configName) async {
     final String? result = await _channel
         .invokeMethod<String>('getConfiguration', {"config_name": configName});

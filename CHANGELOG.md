@@ -39,3 +39,8 @@ Sync with native library 1.7
 ## 1.7.1
 
 Support Null-Safety
+
+
+## 1.8.1
+
+Sync with native library 1.8.1
