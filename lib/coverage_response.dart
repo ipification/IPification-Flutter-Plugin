@@ -11,8 +11,12 @@ class CheckCoverageResponse {
     if (str == null || str == "") {
       return CheckCoverageResponse(false, null);
     }
-    var json = jsonDecode(str);
-    return CheckCoverageResponse(
-        json['available'] as bool, json['operator_code'] as String);
+    try {
+      var json = jsonDecode(str);
+      return CheckCoverageResponse(
+          json['available'] as bool, json['operator_code'] as String?);
+    } catch (e) {
+      return CheckCoverageResponse(false, null);
+    }
   }
 }
