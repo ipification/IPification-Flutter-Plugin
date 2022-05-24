@@ -1,6 +1,8 @@
 package com.ipification.plugin
 
 import android.app.Activity
+import android.app.ActivityManager
+import android.content.Context
 import android.util.Log
 import androidx.annotation.NonNull
 import com.ipification.plugin.AuthenticationHelper
@@ -21,24 +23,26 @@ import android.net.Uri
 import android.content.Intent;
 import io.flutter.plugin.common.BinaryMessenger
 import com.ipification.mobile.sdk.im.IMService
+import com.ipification.mobile.sdk.im.ui.IMVerificationActivity
 import io.flutter.plugin.common.PluginRegistry.ActivityResultListener
 
 /** IPificationPlugin */
-class IPificationPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, ActivityResultListener{
+class IPificationPlugin: FlutterPlugin, MethodCallHandler , ActivityAware, ActivityResultListener{
   /// The MethodChannel that will the communication between Flutter and native Android
   ///
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
   /// when the Flutter Engine is detached from the Activity
   private lateinit var channel : MethodChannel
-  private  var activity: Activity? = null
+  private var activity: Activity? = null
   private val authInProgress: AtomicBoolean = AtomicBoolean(false)
   private var authenticationHelper: AuthenticationHelper?=null
-  private val TAG = "IPification_plugin";
+  private val TAG = "IPificationPlugin";
   private var pluginBinding: FlutterPlugin.FlutterPluginBinding? = null
 
 
   fun registerWith(registrar: Registrar) {
-    val activity: Activity = registrar.activity()
+    val activity: Activity? = registrar.activity()
+    ContextHelper.context = activity
     val plugin = IPificationPlugin()
     plugin.setup(registrar.messenger(), activity, registrar, null)
   }
@@ -52,7 +56,7 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, Activi
       channel = MethodChannel(messenger!!, "ipification_plugin")
       channel.setMethodCallHandler(this)
     }
-    
+    Log.e(TAG, "setup")
     if (registrar != null) {
       // V1 embedding setup for activity listeners.
       registrar.addActivityResultListener(this)
@@ -66,22 +70,21 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, Activi
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "ipification_plugin")
+    channel.setMethodCallHandler(this)
     pluginBinding = flutterPluginBinding;
   }
 
   override fun onAttachedToActivity(binding: ActivityPluginBinding) {
     activity = binding.activity
+    ContextHelper.context = activity
     channel.setMethodCallHandler(this)
     setup(pluginBinding?.binaryMessenger, activity, null, binding);
   }
 
   override fun onDetachedFromActivity() {
     activity?.let {
-       val result =  CellularService.Companion.unregisterNetwork(activity!!)
-       if(BuildConfig.DEBUG) {
-         Log.d(TAG, "unregisterNetwork: $result")
-       }
        activity = null
+       ContextHelper.context = null
        channel.setMethodCallHandler(null);
      }
 
@@ -89,6 +92,7 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, Activi
 
   override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
     activity = binding.activity
+    ContextHelper.context = activity
   }
 
   override fun onDetachedFromActivityForConfigChanges() {
@@ -117,8 +121,8 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, Activi
             activity?.runOnUiThread{
               result.success(response)
             }
-
           }
+          authenticationHelper = null
         }
 
         override fun onFail(errorResult: AuthenticationError) {
@@ -126,15 +130,17 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, Activi
           if (authInProgress.compareAndSet(true, false)) {
              activity?.runOnUiThread{
                result.error(errorResult.error_code.code,errorResult.error_message,null)
-             }
+             }  
           }
+          authenticationHelper = null
         }
 
-        override fun onError(errorResult: AuthenticationError) {
-          if (authInProgress.compareAndSet(true, false)) {
-              result.error(errorResult.error_code.code, errorResult.error_message, null)
-          }
-        }
+        // override fun onError(errorResult: AuthenticationError) {
+        //   if (authInProgress.compareAndSet(true, false)) {
+        //       result.error(errorResult.error_code.code, errorResult.error_message, null)
+        //   }
+        //   authenticationHelper = null
+        // }
       }
       authenticationHelper?.doAuthentication(login_hint, listener)
 
@@ -165,21 +171,18 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, Activi
             activity?.runOnUiThread{
               result.success(response)
             }
-
+            
           }
+          authenticationHelper = null  
         }
         override fun onFail(errorResult: AuthenticationError) {
           if (authInProgress.compareAndSet(true, false)) {
              activity?.runOnUiThread{
                result.error(errorResult.error_code.code,errorResult.error_message,null)
              }
+             
           }
-        }
-
-        override fun onError(errorResult: AuthenticationError) {
-          if (authInProgress.compareAndSet(true, false)) {
-              result.error(errorResult.error_code.code, errorResult.error_message, null)
-          }
+          authenticationHelper = null
         }
       }
       authenticationHelper?.startAuthorization(activity!!, login_hint ,channel,listener)
@@ -204,8 +207,8 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, Activi
             activity?.runOnUiThread{
               result.success(response)
             }
-
           }
+          authenticationHelper = null
         }
         override fun onFail(errorResult: AuthenticationError) {
           if (authInProgress.compareAndSet(true, false)) {
@@ -213,12 +216,7 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, Activi
                result.error(errorResult.error_code.code,errorResult.error_message,null)
              }
           }
-        }
-
-        override fun onError(errorResult: AuthenticationError) {
-          if (authInProgress.compareAndSet(true, false)) {
-              result.error(errorResult.error_code.code, errorResult.error_message, null)
-          }
+          authenticationHelper = null
         }
       }
       authenticationHelper?.startAuthorization(activity!!, channel, listener)
@@ -239,12 +237,14 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, Activi
             result.success(it)
           }
         }
-      },{
+        authenticationHelper = null
+      }, {
         if (authInProgress.compareAndSet(true, false)) {
           activity?.runOnUiThread{
             result.error(it.error_code.code, it.error_message, null)
           }
         }
+        authenticationHelper = null
       })
 
     }
@@ -274,12 +274,14 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, Activi
             result.success(it)
           }
         }
+        authenticationHelper = null
       },{
         if (authInProgress.compareAndSet(true, false)) {
           activity?.runOnUiThread{
             result.error(it.error_code.code, it.error_message, null)
           }
         }
+        authenticationHelper = null
       })
       
 
@@ -353,14 +355,7 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, Activi
       }
     }
     
-    else if(call.method=="unregisterNetwork"){
-        activity?.let {
-          val result =  CellularService.unregisterNetwork(activity!!)
-          if(BuildConfig.DEBUG) {
-            Log.d(TAG, "unregisterNetwork: $result")
-          }
-        }
-    }
+    
     else if(call.method=="addQueryParam"){
       activity?.let {
         var key = call.argument<String>("key") ?: ""
@@ -384,13 +379,44 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, Activi
       activity?.let {
         var scope = call.argument<String>("value") ?: ""
         if(authenticationHelper==null){
-          authenticationHelper = AuthenticationHelper(IPApiService(activity!!))
+          authenticationHelper = AuthenticationHelper(IPApiService(it))
         }
         authenticationHelper?.setScope(scope)
       }
     }
+    else if(call.method=="generateState"){
+      activity?.let {
+        result.success(IPConfiguration.getInstance().generateState())
+      }
+    }
+    else if(call.method=="showNotification"){
+      Log.d(TAG,"context: " + ContextHelper.context)
+      if(activity == null){
+        activity = ContextHelper.context
+      }
+      try{
+        val title = call.argument<String>("title") ?: ""
+        val message = call.argument<String>("message") ?: ""
+        val notificationFolder = call.argument<String>("notificationFolder") ?: ""
+        val notiIcon = call.argument<String>("notificationIcon") ?: ""
+        Log.d(TAG,"context: " + notificationFolder + notiIcon)
+        activity?.let {
+          Log.e(TAG, "showNotification ")
+          val notificationIcon = it.resources.getIdentifier(notiIcon, notificationFolder , it.packageName)
+          IMService.showIPNotification(activity!!, title, message, notificationIcon);
+        }
+      }catch(e: Exception){
+        Log.e(TAG, "showNotification error : ${e.message}")
+      }
+    } else if(call.method=="unregisterNetwork"){
+      activity?.let {
+        val result =  CellularService.unregisterNetwork(activity!!)
+        if(BuildConfig.DEBUG) {
+          Log.d(TAG, "unregisterNetwork: $result")
+        }
+      }
   }
-
+  }
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
     pluginBinding = null;
   }
@@ -400,5 +426,6 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler ,ActivityAware, Activi
     IMService.onActivityResult(requestCode, resultCode, data)
     return true
   }
+  
 
 }

@@ -1,8 +1,14 @@
 package com.ipification.plugin
-import android.app.Activity
+import android.app.*
+import android.content.Context
+import android.content.Intent
+import android.media.RingtoneManager
+import android.os.Build
 import android.util.Log
+import androidx.core.app.NotificationCompat
 import com.ipification.mobile.sdk.android.AuthorizationServiceConfiguration
 import com.ipification.mobile.sdk.android.CellularService
+import com.ipification.mobile.sdk.android.IPConfiguration
 import com.ipification.mobile.sdk.android.callback.CellularCallback
 import com.ipification.mobile.sdk.android.exception.CellularException
 import com.ipification.mobile.sdk.android.response.AuthResponse
@@ -13,6 +19,8 @@ import com.ipification.plugin.ErrorCode
 import com.ipification.mobile.sdk.android.callback.IPificationCallback
 import com.ipification.mobile.sdk.android.IPificationServices
 import com.ipification.mobile.sdk.android.exception.IPificationError
+import com.ipification.mobile.sdk.im.IMService
+import com.ipification.mobile.sdk.im.ui.IMVerificationActivity
 
 
 class AuthenticationHelper(val apiService: IPApiService)  {

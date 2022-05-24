@@ -19,9 +19,11 @@ public class SwiftIPificationPlugin: NSObject, FlutterPlugin {
           authenticationHelper = AuthenticationHelper()
         }
         authenticationHelper?.checkCoverage(success:{s in
-             result(s)
+            self.authenticationHelper = nil
+            result(s)
         }, fail: {f in
-             result(FlutterError(code:f.error_code.rawValue,message: f.error_message, details: nil))
+            self.authenticationHelper = nil
+            result(FlutterError(code:f.error_code.rawValue,message: f.error_message, details: nil))
         })
     }
     else if(call.method == "checkCoverageWithPhoneNumber"){
@@ -38,9 +40,11 @@ public class SwiftIPificationPlugin: NSObject, FlutterPlugin {
           authenticationHelper = AuthenticationHelper()
         }
         authenticationHelper?.checkCoverage(phoneNumber : phoneNumber, success:{s in
-             result(s)
+            self.authenticationHelper = nil
+            result(s)
         }, fail: {f in
-             result(FlutterError(code:f.error_code.rawValue,message: f.error_message, details: nil))
+            self.authenticationHelper = nil
+            result(FlutterError(code:f.error_code.rawValue,message: f.error_message, details: nil))
         })
     }  
     else if(call.method == "doAuthentication"){
@@ -186,6 +190,12 @@ public class SwiftIPificationPlugin: NSObject, FlutterPlugin {
       if (authValue != ""){
         IPConfiguration.sharedInstance.AUTHORIZATION_URL = authValue ?? ""
       }
+    }
+    else if(call.method=="generateState"){
+      result(IPConfiguration.sharedInstance.generateState())
+    }
+    else if(call.method=="showNotification"){
+      // do nothing
     }
    
   }

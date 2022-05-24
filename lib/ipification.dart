@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:ipification_plugin/authentication_response.dart';
 import 'package:ipification_plugin/coverage_response.dart';
 import 'package:flutter/services.dart';
+import 'dart:math';
+import 'dart:convert';
 
 class IPificationPlugin {
   static const MethodChannel _channel =
@@ -106,5 +108,26 @@ class IPificationPlugin {
     final String? result =
         await _channel.invokeMethod<String>('getRedirectUri');
     return result;
+  }
+
+  static Future<String> generateState() async {
+    final String? result = await _channel.invokeMethod<String>('generateState');
+    return result ?? getRandString(100);
+  }
+
+  static String getRandString(int len) {
+    var random = Random.secure();
+    var values = List<int>.generate(len, (i) => random.nextInt(255));
+    return base64UrlEncode(values);
+  }
+
+  static void showNotification(String title, String message,
+      String notificationFolder, String notificationIcon) async {
+    _channel.invokeMethod<String>('showNotification', {
+      "title": title,
+      "message": message,
+      "notificationFolder": notificationFolder,
+      "notificationIcon": notificationIcon
+    });
   }
 }
