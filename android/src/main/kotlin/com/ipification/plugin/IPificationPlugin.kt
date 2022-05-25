@@ -21,8 +21,13 @@ import io.flutter.plugin.common.PluginRegistry.Registrar
 import java.util.concurrent.atomic.AtomicBoolean
 import android.net.Uri
 import android.content.Intent;
+import android.graphics.Color
+import android.view.View
+import com.ipification.mobile.sdk.android.IPificationServices
+import com.ipification.mobile.sdk.im.IMLocale
 import io.flutter.plugin.common.BinaryMessenger
 import com.ipification.mobile.sdk.im.IMService
+import com.ipification.mobile.sdk.im.IMTheme
 import com.ipification.mobile.sdk.im.ui.IMVerificationActivity
 import io.flutter.plugin.common.PluginRegistry.ActivityResultListener
 
@@ -403,7 +408,7 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler , ActivityAware, Activ
         activity?.let {
           Log.e(TAG, "showNotification ")
           val notificationIcon = it.resources.getIdentifier(notiIcon, notificationFolder , it.packageName)
-          IMService.showIPNotification(activity!!, title, message, notificationIcon);
+          // IMService.showIPNotification(activity!!, title, message, notificationIcon);
         }
       }catch(e: Exception){
         Log.e(TAG, "showNotification error : ${e.message}")
@@ -415,7 +420,50 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler , ActivityAware, Activ
           Log.d(TAG, "unregisterNetwork: $result")
         }
       }
-  }
+    }
+    else if(call.method=="updateLocale"){
+      activity?.let {
+        try{
+          val mainTitle = call.argument<String>("mainTitle") ?: ""
+          val description = call.argument<String>("description") ?: ""
+          val whatsappBtnText = call.argument<String>("whatsappBtnText") ?: ""
+          val telegramBtnText = call.argument<String>("telegramBtnText") ?: ""
+          val viberBtnText = call.argument<String>("viberBtnText") ?: ""
+          IPificationServices.locale = IMLocale(mainTitle = mainTitle,
+            description = description,
+            whatsappText = whatsappBtnText,
+            telegramText = telegramBtnText,
+            viberText = viberBtnText)
+          
+        }catch (e: java.lang.Exception){
+          Log.e(TAG, "updateLocale: ${e.message}")
+        }
+      }
+    }
+    else if(call.method=="updateTheme"){
+      activity?.let {
+        try{
+          val backgroundColor = call.argument<String>("backgroundColor") ?: ""
+          val toolbarTextColor = call.argument<String>("toolbarTextColor") ?: ""
+          val toolbarColor = call.argument<String>("toolbarColor") ?: ""
+          val toolbarTitle = call.argument<String>("toolbarTitle") ?: ""
+          val isVisible = call.argument<Boolean>("isVisible") ?: true
+          Log.d(TAG, "backgroundColor")
+
+          Log.d(TAG, backgroundColor ?: "")
+          IPificationServices.theme = IMTheme(
+            backgroundColor = Color.parseColor(backgroundColor),
+            toolbarTextColor = Color.parseColor(toolbarTextColor),
+            toolbarColor = Color.parseColor(toolbarColor),
+            toolbarTitle = toolbarTitle,
+            toolbarVisibility = if(isVisible) { View.VISIBLE } else View.GONE
+          )
+
+        }catch (e: java.lang.Exception){
+          Log.e(TAG, "updateTheme: ${e.message}")
+        }
+      }
+    }
   }
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
     pluginBinding = null;

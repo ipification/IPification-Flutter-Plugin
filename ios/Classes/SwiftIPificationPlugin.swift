@@ -197,8 +197,62 @@ public class SwiftIPificationPlugin: NSObject, FlutterPlugin {
     else if(call.method=="showNotification"){
       // do nothing
     }
-   
+    else if(call.method=="updateLocale"){
+      let arg = call.arguments as? Dictionary<String, Any>
+      let titleBar = arg!["titleBar"] as? String
+      let title = arg!["mainTitle"] as? String
+      let description = arg!["description"] as? String
+      let whatsappBtnText = arg!["whatsappBtnText"] as? String
+      let viberBtnText = arg!["viberBtnText"] as? String
+      let telegramBtnText = arg!["telegramBtnText"] as? String
+      let cancelBtnText = arg!["cancelBtnText"] as? String
+      IPificationLocale.sharedInstance.updateScreen(
+        titleBar: titleBar ?? "IPification", 
+        title: title ?? "Phone Number Verify", 
+        description: description ?? "Please tap on the preferred messaging app then follow our instruction on the screen", 
+        whatsappBtnText: whatsappBtnText ?? "Quick Login via Whatsapp", 
+        viberBtnText : viberBtnText ?? "Quick Login via Viber", 
+        telegramBtnText : telegramBtnText ?? "Quick Login via Telegram", 
+        cancelBtnText:cancelBtnText ?? "Cancel"
+      )
+    }
+    else if(call.method=="updateTheme"){
+      let arg = call.arguments as? Dictionary<String, Any>
+      let toolbarTitleColor = arg!["toolbarTitleColor"] as? String
+      let cancelBtnColor = arg!["cancelBtnColor"] as? String
+      let titleColor = arg!["titleColor"] as? String
+      let descColor = arg!["descColor"] as? String
+      let backgroundColor = arg!["backgroundColor"] as? String
+       IPificationTheme.sharedInstance.updateScreen(
+            toolbarTitleColor: hexStringToUIColor(hex: toolbarTitleColor as! String),
+            cancelBtnColor: hexStringToUIColor(hex: cancelBtnColor as! String),
+            titleColor: hexStringToUIColor(hex: titleColor as! String),
+            descColor: hexStringToUIColor(hex: descColor as! String),
+            backgroundColor: hexStringToUIColor(hex: backgroundColor as! String))
+    }
   }
+
+  func hexStringToUIColor (hex:String) -> UIColor {
+        var cString:String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+
+        if (cString.hasPrefix("#")) {
+            cString.remove(at: cString.startIndex)
+        }
+
+        if ((cString.count) != 6) {
+            return UIColor.gray
+        }
+
+        var rgbValue:UInt64 = 0
+        Scanner(string: cString).scanHexInt64(&rgbValue)
+
+        return UIColor(
+            red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+            green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
+            blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
+            alpha: CGFloat(1.0)
+        )
+    }
     
 }
 

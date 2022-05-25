@@ -11,7 +11,7 @@ import com.ipification.mobile.sdk.android.callback.IPificationCallback
 import com.ipification.mobile.sdk.android.IPificationServices
 
 
-class IPApiService(val activity: Activity, var authRequestBuilder:AuthRequest.Builder = AuthRequest.Builder()) {
+class IPApiService(private val activity: Activity, var authRequestBuilder:AuthRequest.Builder = AuthRequest.Builder()) {
     fun context(): Context{
         return activity.applicationContext
     }
@@ -72,12 +72,10 @@ class IPApiService(val activity: Activity, var authRequestBuilder:AuthRequest.Bu
     }
 
     fun checkCoverage(callback: CellularCallback<CoverageResponse>){
-        val cellularService = CellularService<CoverageResponse>(context())
-        cellularService.checkCoverage(callback)
+        IPificationServices.startCheckCoverage(context(), callback)
     }
     //20092021 - add phone parameter
     fun checkCoverage(phoneNumber: String, callback: CellularCallback<CoverageResponse>){
-        val cellularService = CellularService<CoverageResponse>(context())
-        cellularService.checkCoverage(phoneNumber, callback)
+        IPificationServices.startCheckCoverage(phoneNumber, context(), callback)
     }
 }

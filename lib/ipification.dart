@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:ipification_plugin/authentication_response.dart';
 import 'package:ipification_plugin/coverage_response.dart';
 import 'package:flutter/services.dart';
@@ -129,5 +130,78 @@ class IPificationPlugin {
       "notificationFolder": notificationFolder,
       "notificationIcon": notificationIcon
     });
+  }
+
+  static void updateIOSLocale(
+      String titleBar,
+      String mainTitle,
+      String description,
+      String whatsappBtnText,
+      String telegramBtnText,
+      String viberBtnText,
+      String cancelBtnText) {
+    if (Platform.isIOS) {
+      {
+        _channel.invokeMethod<String>('updateLocale', {
+          "titleBar": titleBar,
+          "mainTitle": mainTitle,
+          "description": description,
+          "whatsappBtnText": whatsappBtnText,
+          "telegramBtnText": telegramBtnText,
+          "viberBtnText": viberBtnText,
+          "cancelBtnText": cancelBtnText,
+        });
+      }
+    }
+  }
+
+  static void updateIOSTheme(String toolbarTitleColor, String titleColor,
+      String descColor, String cancelBtnColor, String backgroundColor) {
+    if (Platform.isIOS) {
+      {
+        _channel.invokeMethod<String>('updateTheme', {
+          "toolbarTitleColor": toolbarTitleColor,
+          "cancelBtnColor": cancelBtnColor,
+          "titleColor": titleColor,
+          "descColor": descColor,
+          "backgroundColor": backgroundColor
+        });
+      }
+    }
+  }
+
+  static void updateAndroidLocale(String mainTitle, String description,
+      String whatsappBtnText, String telegramBtnText, String viberBtnText) {
+    if (Platform.isAndroid) {
+      {
+        print(mainTitle);
+        _channel.invokeMethod<String>('updateLocale', {
+          "mainTitle": mainTitle,
+          "description": description,
+          "whatsappBtnText": whatsappBtnText,
+          "telegramBtnText": telegramBtnText,
+          "viberBtnText": viberBtnText
+        });
+      }
+    }
+  }
+
+  static void updateAndroidTheme(
+      String backgroundColor,
+      String toolbarTextColor,
+      String toolbarColor,
+      String toolbarTitle,
+      bool isVisible) {
+    if (Platform.isAndroid) {
+      {
+        _channel.invokeMethod<String>('updateTheme', {
+          "backgroundColor": backgroundColor,
+          "toolbarTextColor": toolbarTextColor,
+          "toolbarColor": toolbarColor,
+          "toolbarTitle": toolbarTitle,
+          "isVisible": isVisible,
+        });
+      }
+    }
   }
 }
