@@ -126,7 +126,7 @@ Future<void> doAuthentication() async {
     }
     if (authCode != null) {
         // TODO
-        // call your Token Exchange API with {code}
+        // call your Token Exchange API with {authCode}
     } else {
         // TODO
         // problem, please try again or handle it with another auth service
@@ -307,7 +307,7 @@ IM Authentication Init is almost the same as IP Auth Init in [IPification Flow](
 If the channel contains `ip` value, Auth will be attempted via IP Auth as a primary channel if Coverage is supported, otherwise fallback to IM will be offered. 
 
 1. Set Scope 
-2. Set State (require if you want to send success message via notification, see ) 
+2. Set State (This is required if you want to send success message via notification, see Setup Push Notifications <a id="push-notifications"></a> ) 
 3. Perform authentication with `doIMAuthentication(channel: channelValue)` function from `IPificationPlugin` class
 
 
@@ -318,13 +318,19 @@ var authResponse = await IPificationPlugin.doIMAuthentication(
           channel: "wa telegram viber");
 if (authResponse?.code?.isNotEmpty != null) {
     // await IPNetworkManager.doTokenExchange(
-        // authResponse!.code!,
+        // authResponse.code!,
         // (success) => {},
         // (fail) => {}
         //);
 } else {
-   // TODO  
-   // error Fallback to another authentication service flow
+    // TODO  
+    // check if user cancel from IM Screen
+    if (e.code == IP_AUTHENTICATE_IM_CANCEL) {
+        // for example : dismiss loadingView
+        // context.loaderOverlay.hide();
+        return;
+    }
+    // otherwise: error - fallback to another authentication service flow
 }
 
 ```
@@ -344,22 +350,22 @@ Use those two functions to change theme and texts on IM page:
 
 ```dart
     IPificationPlugin.updateIOSLocale(
-            "IPification",
-            "Phone Number Verify",
-            "Please tap on the preferred messaging app then follow instructions on the screen",
-            "Login with WhatsApp",
-            "Login with Telegram",
-            "Login with Viber",
-            "Cancel");
+        "IPification",
+        "Phone Number Verify",
+        "Please tap on the preferred messaging app then follow instructions on the screen",
+        "Login with WhatsApp",
+        "Login with Telegram",
+        "Login with Viber",
+        "Cancel");
     IPificationPlugin.updateIOSTheme(
-        "#000000", "#000000", "#000000", "#ffffff", "#000000");
+        "#000000", "#000000", "#000000", "#000000", "#ffffff");
     
 ```
 
 ![Theme&Locale](images/im-theme-and-locale-iOS.svg)
 
 1. **titleBar** - title bar (text, color)
-2. **title** - IM page title (text, color)
+2. **mainTitle** - IM page title (text, color)
 3. **description** - short description (text, color)
 4. **whatsappBtnText** - WhatsApp button (text)
 5. **viberBtnText** - Viber button (text)
@@ -374,13 +380,14 @@ Use those two functions to change theme and texts on IM page:
 
 ```dart
     IPificationPlugin.updateAndroidLocale(
+        "IPification",
         "Phone Number Verification",
         "Please tap on the preferred messaging app then follow instructions on the screen",
         "Login with WhatsApp",
         "Login with Telegram",
         "Login with Viber");
-    IPificationPlugin.updateAndroidTheme(
-        "#ffffff", "#ffffff", "#ed1e26", "IPification", true);
+
+    IPificationPlugin.updateAndroidTheme("#ffffff", "#ffffff", "#c91636");
 
 
 ```
