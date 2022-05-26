@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name = "ipification_plugin"
-  s.version = "2.0.3"
+  s.version = "2.0.5"
   s.summary = "IPIfication Plugin"
   s.description = "IPIfication Plugin"
   s.homepage = "https://ipification.com"
