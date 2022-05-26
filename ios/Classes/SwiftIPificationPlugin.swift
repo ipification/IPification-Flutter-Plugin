@@ -197,6 +197,12 @@ public class SwiftIPificationPlugin: NSObject, FlutterPlugin {
     else if(call.method=="showNotification"){
       // do nothing
     }
+    else if(call.method=="enableLog"){
+      IPConfiguration.sharedInstance.debug = true
+    }
+    else if(call.method=="getLog"){
+      result(IPConfiguration.sharedInstance.log)
+    }
     else if(call.method=="updateLocale"){
       let arg = call.arguments as? Dictionary<String, Any>
       let titleBar = arg!["titleBar"] as? String
@@ -230,6 +236,7 @@ public class SwiftIPificationPlugin: NSObject, FlutterPlugin {
             descColor: hexStringToUIColor(hex: descColor as! String),
             backgroundColor: hexStringToUIColor(hex: backgroundColor as! String))
     }
+    
   }
 
   func hexStringToUIColor (hex:String) -> UIColor {

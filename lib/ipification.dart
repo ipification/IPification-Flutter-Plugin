@@ -116,6 +116,15 @@ class IPificationPlugin {
     return result ?? getRandString(100);
   }
 
+  static Future<void> enableLog() async {
+    await _channel.invokeMethod<String>('enableLog');
+  }
+
+  static Future<String> getLog() async {
+    final String? result = await _channel.invokeMethod<String>('getLog');
+    return result ?? "";
+  }
+
   static String getRandString(int len) {
     var random = Random.secure();
     var values = List<int>.generate(len, (i) => random.nextInt(255));
@@ -170,12 +179,12 @@ class IPificationPlugin {
     }
   }
 
-  static void updateAndroidLocale(String mainTitle, String description,
+  static void updateAndroidLocale(String toolbarTitle, String mainTitle, String description,
       String whatsappBtnText, String telegramBtnText, String viberBtnText) {
     if (Platform.isAndroid) {
       {
-        print(mainTitle);
         _channel.invokeMethod<String>('updateLocale', {
+          "toolbarTitle": toolbarTitle,
           "mainTitle": mainTitle,
           "description": description,
           "whatsappBtnText": whatsappBtnText,
@@ -187,19 +196,13 @@ class IPificationPlugin {
   }
 
   static void updateAndroidTheme(
-      String backgroundColor,
-      String toolbarTextColor,
-      String toolbarColor,
-      String toolbarTitle,
-      bool isVisible) {
+      String backgroundColor, String toolbarTextColor, String toolbarColor) {
     if (Platform.isAndroid) {
       {
         _channel.invokeMethod<String>('updateTheme', {
           "backgroundColor": backgroundColor,
           "toolbarTextColor": toolbarTextColor,
-          "toolbarColor": toolbarColor,
-          "toolbarTitle": toolbarTitle,
-          "isVisible": isVisible,
+          "toolbarColor": toolbarColor
         });
       }
     }

@@ -63,10 +63,16 @@ class AuthenticationHelper {
         authorizationService.callbackFailed = { (error) -> Void in
             print("authorized failed ", error.localizedDescription)
             var temp = AuthenticationError()
-            temp.error_code = ErrorCode.AUTHENTICATE_ERROR
+            temp.error_code = ErrorCode.AUTHENTICATE_FAIL
             temp.error_message = error.localizedDescription
             fail(temp)
             
+        }
+        authorizationService.callbackIMCanceled = { () -> Void in
+            print("authorized canceled")
+            var error = AuthenticationError()
+            error.error_code = ErrorCode.AUTHENTICATE_IM_CANCEL
+            fail(error)
         }
         authorizationService.callbackSuccess = { (response) -> Void in
             // print("authorized successful with code:", response.getCode())
@@ -98,13 +104,19 @@ class AuthenticationHelper {
     func doAuthentication(login_hint:String, channel: String, success:@escaping(String?)->(Void),fail:@escaping(AuthenticationError)->(Void)){
        
         let authorizationService = AuthorizationService()
-        authorizationService.callbackFailed = { (error) -> Void in
-            print("authorized failed ", error.localizedDescription)
-            var temp = AuthenticationError()
-            temp.error_code = ErrorCode.AUTHENTICATE_ERROR
-            temp.error_message = error.localizedDescription
-            fail(temp)
+        authorizationService.callbackFailed = { (e) -> Void in
+            print("authorized failed ", e.localizedDescription)
+            var error = AuthenticationError()
+            error.error_code = ErrorCode.AUTHENTICATE_FAIL
+            error.error_message = e.localizedDescription
+            fail(error)
             
+        }
+        authorizationService.callbackIMCanceled = { () -> Void in
+            print("authorized canceled")
+            var error = AuthenticationError()
+            error.error_code = ErrorCode.AUTHENTICATE_IM_CANCEL
+            fail(error)
         }
         authorizationService.callbackSuccess = { (response) -> Void in
             
@@ -146,10 +158,16 @@ class AuthenticationHelper {
         authorizationService.callbackFailed = { (error) -> Void in
             print("authorized failed ", error.localizedDescription)
             var temp = AuthenticationError()
-            temp.error_code = ErrorCode.AUTHENTICATE_ERROR
+            temp.error_code = ErrorCode.AUTHENTICATE_FAIL
             temp.error_message = error.localizedDescription
             fail(temp)
             
+        }
+        authorizationService.callbackIMCanceled = { () -> Void in
+            print("authorized canceled")
+            var error = AuthenticationError()
+            error.error_code = ErrorCode.AUTHENTICATE_IM_CANCEL
+            fail(error)
         }
         authorizationService.callbackSuccess = { (response) -> Void in
             // print("authorized successful with code:", response.getCode())

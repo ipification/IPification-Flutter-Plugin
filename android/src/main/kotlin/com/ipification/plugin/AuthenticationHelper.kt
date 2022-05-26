@@ -36,7 +36,7 @@ class AuthenticationHelper(val apiService: IPApiService)  {
             override fun onError(error: CellularException) {
                 val result = AuthenticationError()
                 result.error_code = ErrorCode.COVERAGE_ERROR
-                result.error_message = error?.getErrorMessage()
+                result.error_message = error.getErrorMessage()
                 onError.invoke(result)
             }
 
@@ -53,7 +53,7 @@ class AuthenticationHelper(val apiService: IPApiService)  {
             override fun onError(error: CellularException) {
                 val result = AuthenticationError()
                 result.error_code = ErrorCode.COVERAGE_ERROR
-                result.error_message = error?.getErrorMessage()
+                result.error_message = error.getErrorMessage()
                 onError.invoke(result)
             }
 
@@ -67,7 +67,7 @@ class AuthenticationHelper(val apiService: IPApiService)  {
                 if(code.isNullOrEmpty()){
                     val result = AuthenticationError()
                     result.error_code = ErrorCode.AUTHENTICATE_FAIL
-                    res?.getErrorMessage()?.let {
+                    res.getErrorMessage().let {
                         result.error_message = it
                     }
                     listener.onFail(result)
@@ -82,12 +82,15 @@ class AuthenticationHelper(val apiService: IPApiService)  {
 
             override fun onError(error: CellularException) {
                 val result = AuthenticationError().apply {
-                    error_code = ErrorCode.AUTHENTICATE_ERROR
-                    error?.getErrorMessage()?.let {
+                    error_code = ErrorCode.AUTHENTICATE_FAIL
+                    error.getErrorMessage().let {
                      error_message = it
                     }
                 }
-                listener?.onFail(result)
+                listener.onFail(result)
+            }
+            override fun onIMCancel() {
+                listener.onIMCancel()
             }
         }
         apiService.doAuthentication(login_hint, callback)
@@ -100,7 +103,7 @@ class AuthenticationHelper(val apiService: IPApiService)  {
                 if(code.isNullOrEmpty()){
                     val result = AuthenticationError()
                     result.error_code = ErrorCode.AUTHENTICATE_FAIL
-                    res?.getErrorMessage()?.let {
+                    res.getErrorMessage().let {
                         result.error_message = it
                     }
                     listener.onFail(result)
@@ -115,12 +118,15 @@ class AuthenticationHelper(val apiService: IPApiService)  {
 
             override fun onError(error: IPificationError) {
                 val result = AuthenticationError().apply {
-                    error_code = ErrorCode.AUTHENTICATE_ERROR
-                    error?.getErrorMessage()?.let {
-                     error_message = it
+                    error_code = ErrorCode.AUTHENTICATE_FAIL
+                    error.getErrorMessage().let {
+                        error_message = it
                     }
                 }
-                listener?.onFail(result)
+                listener.onFail(result)
+            }
+            override fun onIMCancel() {
+                listener.onIMCancel()
             }
         }
         apiService.startAuthentication(activity, login_hint, channel, callback)
@@ -133,7 +139,7 @@ class AuthenticationHelper(val apiService: IPApiService)  {
                 if(code.isNullOrEmpty()){
                     val result = AuthenticationError()
                     result.error_code = ErrorCode.AUTHENTICATE_FAIL
-                    res?.getErrorMessage()?.let {
+                    res.getErrorMessage().let {
                         result.error_message = it
                     }
                     listener.onFail(result)
@@ -148,12 +154,15 @@ class AuthenticationHelper(val apiService: IPApiService)  {
 
             override fun onError(error: IPificationError) {
                 val result = AuthenticationError().apply {
-                    error_code = ErrorCode.AUTHENTICATE_ERROR
-                    error?.getErrorMessage()?.let {
-                     error_message = it
+                    error_code = ErrorCode.AUTHENTICATE_FAIL
+                    error.getErrorMessage().let {
+                        error_message = it
                     }
                 }
-                listener?.onFail(result)
+                listener.onFail(result)
+            }
+            override fun onIMCancel() {
+                listener.onIMCancel()
             }
         }
         apiService.startIMAuthentication(activity, channel, callback)
@@ -175,7 +184,7 @@ class AuthenticationHelper(val apiService: IPApiService)  {
         Log.d("config_name", file_name)
         val context = apiService.context()
         val cellularService = CellularService<CoverageResponse>(context)
-        val resourceId: Int = context.resources.getIdentifier(file_name, "raw", context.getPackageName())
+        val resourceId: Int = context.resources.getIdentifier(file_name, "raw", context.packageName)
         val inputStream = apiService.context().resources.openRawResource(resourceId)
         cellularService.setAuthorizationServiceConfiguration(AuthorizationServiceConfiguration(inputStream))
 
