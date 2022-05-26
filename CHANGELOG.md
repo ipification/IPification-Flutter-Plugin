@@ -38,3 +38,11 @@ Sync with native library 1.7
 ## 1.8
 
 Sync with native library 1.8
+
+## 2.0.4
+
+Sync with native library 2.0.4
+
+## 2.0.5
+
+Sync with native library 2.0.5
