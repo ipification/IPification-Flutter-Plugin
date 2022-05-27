@@ -1,8 +1,8 @@
-group 'com.ipification.sdk.ip_sdk'
-version '1.7-SNAPSHOT'
+group 'com.ipification.plugin'
+version '2.0.5'
 
 buildscript {
-    ext.kotlin_version = '1.3.50'
+    ext.kotlin_version = '1.3.72'
     repositories {
         google()
         jcenter()
@@ -18,8 +18,10 @@ rootProject.allprojects {
     repositories {
         google()
         jcenter()
-        flatDir{
-            dirs project(':ip_sdk').file('libs')
+
+        //ipification maven
+        maven {
+            url "https://artifacts.ipification.com/artifactory/mobile-libs-release/"
         }
     }
 }
@@ -28,7 +30,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -41,6 +43,6 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation (name: 'ipification-auth-1.8', ext: 'aar')
-    api "com.squareup.okhttp3:okhttp:4.9.0"
+    implementation 'com.ipification.mobile.android:ipification-auth:2.0.5'
+
 }

@@ -39,6 +39,10 @@ Sync with native library 1.7
 
 Sync with native library 1.8
 
-## 1.8.1
+## 2.0.4
 
-Fix Coverage Issue
+Sync with native library 2.0.4
+
+## 2.0.5
+
+Sync with native library 2.0.5

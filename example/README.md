@@ -1,6 +1,6 @@
-# ip_sdk_example
+# ipification_plugin_example
 
-Demonstrates how to use the ip_sdk plugin.
+Demonstrates how to use the ipification plugin.
 
 ## Getting Started
 

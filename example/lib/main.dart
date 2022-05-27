@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
-import 'package:ip_sdk/authentication_response.dart';
-import 'package:ip_sdk/ip_sdk.dart';
+import 'package:ipification_plugin/authentication_response.dart';
 import 'package:http/http.dart' as http;
+import 'package:ipification_plugin/ipification.dart';
 import "dart:developer";
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:flutter/foundation.dart';
@@ -54,7 +54,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void deactivate() {
     if (Platform.isAndroid) {
-      IpSdk.unregisterNetwork();
+      IPificationPlugin.unregisterNetwork();
     }
     super.deactivate();
   }
@@ -68,22 +68,27 @@ class _MyAppState extends State<MyApp> {
       // if (Platform.isAndroid) {
       //   IpSdk.setAuthorizationServiceConfiguration("ipification_services");
       // }
-      if(kReleaseMode){
-          IpSdk.setCheckCoverageUrl("https://stage.ipification.com/auth/realms/ipification/coverage/202.175.50.128");
-          IpSdk.setAuthorizationUrl("https://stage.ipification.com/auth/realms/ipification/protocol/openid-connect/auth");
-          IpSdk.setClientId("9f49df46a311454d882824607136c68f");
-          IpSdk.setRedirectUri("https://api.dev.ipification.com/api/v1/callback");
+      if (kReleaseMode) {
+        IPificationPlugin.setCheckCoverageUrl(
+            "https://stage.ipification.com/auth/realms/ipification/coverage/202.175.50.128");
+        IPificationPlugin.setAuthorizationUrl(
+            "https://stage.ipification.com/auth/realms/ipification/protocol/openid-connect/auth");
+        IPificationPlugin.setClientId("9f49df46a311454d882824607136c68f");
+        IPificationPlugin.setRedirectUri(
+            "https://api.dev.ipification.com/api/v1/callback");
       } else {
-          IpSdk.setCheckCoverageUrl("https://api.ipification.com/auth/realms/ipification/coverage/202.175.50.128");
-          IpSdk.setAuthorizationUrl("https://api.ipification.com/auth/realms/ipification/protocol/openid-connect/auth");
-          IpSdk.setClientId("9f49df46a311454d882824607136c68f");
-          IpSdk.setRedirectUri("https://api.dev.ipification.com/api/v1/callback");
+        IPificationPlugin.setCheckCoverageUrl(
+            "https://api.ipification.com/auth/realms/ipification/coverage/202.175.50.128");
+        IPificationPlugin.setAuthorizationUrl(
+            "https://api.ipification.com/auth/realms/ipification/protocol/openid-connect/auth");
+        IPificationPlugin.setClientId("9f49df46a311454d882824607136c68f");
+        IPificationPlugin.setRedirectUri(
+            "https://api.dev.ipification.com/api/v1/callback");
       }
 
-      
-      var clientid = await IpSdk.getClientId();
+      var clientid = await IPificationPlugin.getClientId();
       print(clientid);
-      var coverageResult = await IpSdk.checkCoverage();
+      var coverageResult = await IPificationPlugin.checkCoverage();
       coverageAvailable = coverageResult.isAvailable;
       // print(coverageResult.isAvaiable);
       print("operatorCode: ${coverageResult.operatorCode}");
@@ -99,9 +104,10 @@ class _MyAppState extends State<MyApp> {
         print(countryCode + phoneNumber);
         // IpSdk.addQueryParam(key: "custom_key", value: "custom_value");
         // IpSdk.setState(value: "custom_state");
-        IpSdk.setScope(value: "openid");
+        IPificationPlugin.setScope(value: "openid");
         AuthenticationResponse authResponse =
-            await IpSdk.doAuthentication(loginHint: countryCode + phoneNumber);
+            await IPificationPlugin.doAuthentication(
+                loginHint: countryCode + phoneNumber);
         authenCode = authResponse.code;
 
         print(authenCode);
@@ -144,8 +150,9 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> doTokenExchange(var authentCode,
       Function(Map<String, dynamic>) success, Function(String) fail) async {
-    var clientID = await IpSdk.getConfigurationByName("client_id");
-    String redirectURI = await IpSdk.getConfigurationByName("redirect_uri");
+    var clientID = await IPificationPlugin.getConfigurationByName("client_id");
+    String redirectURI =
+        await IPificationPlugin.getConfigurationByName("redirect_uri");
     log("client_id:$clientID");
     log("redirect_uri:$redirectURI");
     var details = {

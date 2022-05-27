@@ -1,2 +1,2 @@
 - [<- Back](README.md "Back")
-- [Flutter Plugin](/flutter-plugin/latest/ "Flutter Plugin")
+- [Flutter Plugin](/flutter-plugin/2.0/ "Flutter Plugin")

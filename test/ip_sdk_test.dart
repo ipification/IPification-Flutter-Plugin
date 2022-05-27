@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ip_sdk/ip_sdk.dart';
+import 'package:ipification_plugin/ipification.dart';
 
 void main() {
   // const MethodChannel channel = MethodChannel('ip_sdk');
