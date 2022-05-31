@@ -44,3 +44,8 @@ Support Null-Safety
 ## 1.8.1
 
 Sync with native library 1.8.1
+
+
+## 1.8.2
+
+Fix header issue

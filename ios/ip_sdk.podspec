@@ -4,14 +4,14 @@
 #
 Pod::Spec.new do |s|
   s.name = "ip_sdk"
-  s.version = "1.7.1"
+  s.version = "1.8.2"
   s.summary = "IPIfication SDK"
   s.description = <<-DESC
 IPIfication SDK
                        DESC
   s.homepage = "https://ipification.com"
   s.license = { :file => "../LICENSE" }
-  s.author = { "IPification" => "tn@ipification.com" }
+  s.author = { "IPification" => "info@ipification.com" }
   s.source = { :path => "." }
   s.source_files = "Classes/**/*"
   s.dependency "Flutter"
