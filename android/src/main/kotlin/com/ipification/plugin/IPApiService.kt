@@ -52,7 +52,7 @@ class IPApiService(private val activity: Activity, var authRequestBuilder:AuthRe
         }
         val authRequest = authRequestBuilder.build()
         try {
-            IPificationServices.startIMAuthentication(activity, authRequest , callback)
+            IPificationServices.startAuthentication(activity, authRequest , callback)
         } catch (ex:Exception){
             ex.printStackTrace()
         }
