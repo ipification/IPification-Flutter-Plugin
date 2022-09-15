@@ -195,5 +195,4 @@ class AuthenticationHelper(val apiService: IPApiService)  {
        return cellularService.getConfiguration(name)
 
     }
-    
 }

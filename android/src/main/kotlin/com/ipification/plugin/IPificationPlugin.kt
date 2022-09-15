@@ -31,6 +31,7 @@ import com.ipification.mobile.sdk.im.IMService
 import com.ipification.mobile.sdk.im.IMTheme
 import com.ipification.mobile.sdk.im.ui.IMVerificationActivity
 import io.flutter.plugin.common.PluginRegistry.ActivityResultListener
+import com.ipification.mobile.sdk.android.IPEnvironment
 
 /** IPificationPlugin */
 class IPificationPlugin: FlutterPlugin, MethodCallHandler , ActivityAware, ActivityResultListener{
@@ -237,7 +238,7 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler , ActivityAware, Activ
       }
       authenticationHelper?.startAuthorization(activity!!, channel, listener)
     }    
-    else if(call.method=="checkCoverage") {
+    else if(call.method == "checkCoverage") {
 
       if (authInProgress.get()) {
         return
@@ -264,7 +265,7 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler , ActivityAware, Activ
       })
 
     }
-    else if(call.method=="checkCoverageWithPhoneNumber") {
+    else if(call.method == "checkCoverageWithPhoneNumber") {
 
       if (authInProgress.get()) {
         return
@@ -302,7 +303,7 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler , ActivityAware, Activ
       
 
     }
-    else if(call.method=="setConfiguration"){
+    else if(call.method == "setConfiguration"){
       val json_config = call.argument<String>("config_file_name")
       if (!json_config.isNullOrEmpty()){
         if(BuildConfig.DEBUG) {
@@ -315,7 +316,7 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler , ActivityAware, Activ
       }
 
     }
-    else if(call.method=="getConfiguration"){
+    else if(call.method == "getConfiguration"){
       val configName = call.argument<String>("config_name")
       if (!configName.isNullOrEmpty()){
         if(authenticationHelper==null){
@@ -328,17 +329,29 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler , ActivityAware, Activ
       }
 
     }
-    else if(call.method=="getClientId"){
+    else if(call.method == "setEnv"){
+      val env = call.argument<String>("value")
+      if (env == "production"){
+        activity?.let {
+          IPConfiguration.getInstance().ENV = IPEnvironment.PRODUCTION
+        }
+      } else{
+        activity?.let {
+          IPConfiguration.getInstance().ENV = IPEnvironment.SANDBOX
+        }
+      }
+    }
+    else if(call.method == "getClientId"){
       activity?.let {
         result.success(IPConfiguration.getInstance().CLIENT_ID)
       }
     }
-    else if(call.method=="getRedirectUri"){
+    else if(call.method == "getRedirectUri"){
       activity?.let {
         result.success(IPConfiguration.getInstance().REDIRECT_URI.toString())
       }
     }
-    else if(call.method=="setClientId"){
+    else if(call.method == "setClientId"){
       val clientValue = call.argument<String>("value")
       if (!clientValue.isNullOrEmpty()){
         activity?.let {
@@ -346,7 +359,7 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler , ActivityAware, Activ
         }
       }
     }
-    else if(call.method=="setRedirectUri"){
+    else if(call.method == "setRedirectUri"){
       val redirectValue = call.argument<String>("value")
       if (!redirectValue.isNullOrEmpty()){
         activity?.let {
@@ -354,7 +367,7 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler , ActivityAware, Activ
         }
       }
     }
-    else if(call.method=="setCheckCoverageUrl"){
+    else if(call.method == "setCheckCoverageUrl"){
       val coverageValue = call.argument<String>("value")
       if (!coverageValue.isNullOrEmpty()){
         activity?.let {
@@ -362,7 +375,7 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler , ActivityAware, Activ
         }
       }
     }
-    else if(call.method=="setAuthorizationUrl"){
+    else if(call.method == "setAuthorizationUrl"){
       val authorizationValue = call.argument<String>("value")
       if (!authorizationValue.isNullOrEmpty()){
         activity?.let {
@@ -372,7 +385,7 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler , ActivityAware, Activ
     }
     
     
-    else if(call.method=="addQueryParam"){
+    else if(call.method == "addQueryParam"){
       activity?.let {
         var key = call.argument<String>("key") ?: ""
         var value = call.argument<String>("value") ?: ""
@@ -382,7 +395,7 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler , ActivityAware, Activ
         authenticationHelper?.addQueryParam(key, value)
       }
     }
-    else if(call.method=="setState"){
+    else if(call.method == "setState"){
       activity?.let {
         var state = call.argument<String>("value") ?: ""
         if(authenticationHelper==null){
@@ -391,7 +404,7 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler , ActivityAware, Activ
         authenticationHelper?.setState(state)
       }
     }
-    else if(call.method=="setScope"){
+    else if(call.method == "setScope"){
       activity?.let {
         var scope = call.argument<String>("value") ?: ""
         if(authenticationHelper==null){
@@ -400,12 +413,12 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler , ActivityAware, Activ
         authenticationHelper?.setScope(scope)
       }
     }
-    else if(call.method=="generateState"){
+    else if(call.method == "generateState"){
       activity?.let {
         result.success(IPConfiguration.getInstance().generateState())
       }
     }
-    else if(call.method=="showNotification"){
+    else if(call.method == "showNotification"){
       Log.d(TAG,"context: " + ContextHelper.context)
       if(activity == null){
         activity = ContextHelper.context
@@ -424,7 +437,7 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler , ActivityAware, Activ
       }catch(e: Exception){
         Log.e(TAG, "showNotification error : ${e.message}")
       }
-    } else if(call.method=="unregisterNetwork"){
+    } else if(call.method == "unregisterNetwork"){
       activity?.let {
         val result =  CellularService.unregisterNetwork(activity!!)
         if(BuildConfig.DEBUG) {
@@ -432,13 +445,13 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler , ActivityAware, Activ
         }
       }
     }
-    else if(call.method=="enableLog"){
+    else if(call.method == "enableLog"){
       IPConfiguration.getInstance().debug = true
     }
-    else if(call.method=="getLog"){
+    else if(call.method == "getLog"){
       result.success(IPConstant.getInstance().LOG ?: "")
     }
-    else if(call.method=="updateLocale"){
+    else if(call.method == "updateLocale"){
       activity?.let {
         try{
           val mainTitle = call.argument<String>("mainTitle") ?: ""
@@ -462,7 +475,7 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler , ActivityAware, Activ
         }
       }
     }
-    else if(call.method=="updateTheme"){
+    else if(call.method == "updateTheme"){
       activity?.let {
         try{
           val backgroundColor = call.argument<String>("backgroundColor") ?: ""

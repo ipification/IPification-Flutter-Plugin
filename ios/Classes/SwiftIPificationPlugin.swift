@@ -177,6 +177,15 @@ public class SwiftIPificationPlugin: NSObject, FlutterPlugin {
         IPConfiguration.sharedInstance.REDIRECT_URI = redirectValue ?? ""
       }
     }
+    else if(call.method=="setEnv"){
+      let arg = call.arguments as? Dictionary<String, Any>
+      let envValue = arg!["value"] as? String
+      if (envValue == "production"){
+        IPConfiguration.sharedInstance.ENV = IPEnvironment.PRODUCTION
+      }else{
+        IPConfiguration.sharedInstance.ENV = IPEnvironment.SANDBOX
+      }
+    }
     else if(call.method=="setCheckCoverageUrl"){
       let arg = call.arguments as? Dictionary<String, Any>
       let coverageValue = arg!["value"] as? String

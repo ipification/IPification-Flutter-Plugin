@@ -6,6 +6,10 @@ import 'package:flutter/services.dart';
 import 'dart:math';
 import 'dart:convert';
 
+enum ENV { 
+   SANDBOX, 
+   PRODUCTION
+}  
 class IPificationPlugin {
   static const MethodChannel _channel =
       const MethodChannel('ipification_plugin');
@@ -87,10 +91,18 @@ class IPificationPlugin {
     _channel.invokeMethod<String>('setClientId', {"value": clientId});
   }
 
+  static void setEnv(ENV env) async {
+    if (env == ENV.SANDBOX) {
+      _channel.invokeMethod<String>('setEnv', {"value": 'sandbox'});
+    }else{
+      _channel.invokeMethod<String>('setEnv', {"value": 'production'});
+    }    
+  }
+
   static void setRedirectUri(String redirectUri) async {
     _channel.invokeMethod<String>('setRedirectUri', {"value": redirectUri});
   }
-
+  
   static void setCheckCoverageUrl(String checkCoverageUrl) async {
     _channel.invokeMethod<String>(
         'setCheckCoverageUrl', {"value": checkCoverageUrl});
