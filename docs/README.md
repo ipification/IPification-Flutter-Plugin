@@ -18,7 +18,7 @@ Mobile applications that implement IPification SDK don’t have to care about if
 
 # I. Add IPification plugin to your Flutter project
 ## 1. Download plugin
-Download the plugin file we provided then extract it (latest version: `2.0.14`) .
+Download the plugin file we provided then extract it (latest version: `2.0.16`) .
 
 ## 2. Install Plugin
 
