@@ -368,17 +368,21 @@ class IPificationPlugin: FlutterPlugin, MethodCallHandler , ActivityAware, Activ
       }
     }
     else if(call.method == "setCheckCoverageUrl"){
+      
       val coverageValue = call.argument<String>("value")
       if (!coverageValue.isNullOrEmpty()){
         activity?.let {
+          IPConfiguration.getInstance().customUrls = true
           IPConfiguration.getInstance().COVERAGE_URL = Uri.parse(coverageValue)
         }
       }
     }
     else if(call.method == "setAuthorizationUrl"){
+      
       val authorizationValue = call.argument<String>("value")
       if (!authorizationValue.isNullOrEmpty()){
         activity?.let {
+          IPConfiguration.getInstance().customUrls = true
           IPConfiguration.getInstance().AUTHORIZATION_URL = Uri.parse(authorizationValue)
         }
       }

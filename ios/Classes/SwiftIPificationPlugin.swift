@@ -190,13 +190,16 @@ public class SwiftIPificationPlugin: NSObject, FlutterPlugin {
       let arg = call.arguments as? Dictionary<String, Any>
       let coverageValue = arg!["value"] as? String
       if (coverageValue != ""){
+        IPConfiguration.sharedInstance.customUrls = true
         IPConfiguration.sharedInstance.COVERAGE_URL = coverageValue ?? ""
       }
     }
     else if(call.method=="setAuthorizationUrl"){
+      
       let arg = call.arguments as? Dictionary<String, Any>
       let authValue = arg!["value"] as? String
       if (authValue != ""){
+        IPConfiguration.sharedInstance.customUrls = true
         IPConfiguration.sharedInstance.AUTHORIZATION_URL = authValue ?? ""
       }
     }
@@ -207,9 +210,11 @@ public class SwiftIPificationPlugin: NSObject, FlutterPlugin {
       // do nothing
     }
     else if(call.method=="enableLog"){
+      print("enableLog")
       IPConfiguration.sharedInstance.debug = true
     }
     else if(call.method=="getLog"){
+      print("log", IPConfiguration.sharedInstance.COVERAGE_URL)
       result(IPConfiguration.sharedInstance.log)
     }
     else if(call.method=="updateLocale"){

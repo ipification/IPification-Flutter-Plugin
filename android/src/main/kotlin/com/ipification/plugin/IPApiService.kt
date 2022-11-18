@@ -9,6 +9,7 @@ import com.ipification.mobile.sdk.android.response.AuthResponse
 import com.ipification.mobile.sdk.android.response.CoverageResponse
 import com.ipification.mobile.sdk.android.callback.IPificationCallback
 import com.ipification.mobile.sdk.android.IPificationServices
+import android.util.Log
 
 
 class IPApiService(private val activity: Activity, var authRequestBuilder:AuthRequest.Builder = AuthRequest.Builder()) {

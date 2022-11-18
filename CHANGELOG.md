@@ -50,3 +50,7 @@ Sync with native library 2.0.5
 ## 2.0.14
 
 Sync with native library android: 2.0.14 - iOS 2.0.8
+
+## 2.0.16
+
+Sync with native library android: 2.0.16 - iOS 2.0.10

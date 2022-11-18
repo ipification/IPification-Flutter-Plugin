@@ -1,0 +1,22 @@
+PODS:
+  - Flutter (1.0.0)
+  - ipification_plugin (2.0.10):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - ipification_plugin (from `.symlinks/plugins/ipification_plugin/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  ipification_plugin:
+    :path: ".symlinks/plugins/ipification_plugin/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  ipification_plugin: c50003e2d16cf085c27d9f4d5ec4af08445c620e
+
+PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+
+COCOAPODS: 1.11.3

@@ -37,17 +37,29 @@ class _MyAppState extends State<MyApp> {
       appBar: AppBar(
         title: const Text('IPification SDK example'),
       ),
-      body: ConstrainedBox(
-          constraints: const BoxConstraints.expand(),
+      body: Container(
           child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                Text('$alertMessage\n', textAlign: TextAlign.center),
-                ElevatedButton(
-                  child: const Text('Authenticate'),
-                  onPressed: doAuthentication,
-                )
-              ])),
+            new Expanded(
+              flex: 1,
+              child: new SingleChildScrollView(
+                scrollDirection: Axis.vertical, //.horizontal
+                child: new Text(
+                  '$alertMessage\n',
+                  textAlign: TextAlign.center,
+                  style: new TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.red,
+                  ),
+                ),
+              ),
+            ),
+            ElevatedButton(
+              child: const Text('Authenticate'),
+              onPressed: doAuthentication,
+            )
+          ])),
     );
   }
 
@@ -60,6 +72,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> doAuthentication() async {
+    IPificationPlugin.enableLog();
+
     String errMessage;
     try {
       setState(() {
@@ -68,20 +82,24 @@ class _MyAppState extends State<MyApp> {
       // if (Platform.isAndroid) {
       //   IpSdk.setAuthorizationServiceConfiguration("ipification_services");
       // }
+      IPificationPlugin.setEnv(ENV.SANDBOX);
       if (kReleaseMode) {
+        print(1);
         IPificationPlugin.setCheckCoverageUrl(
-            "https://stage.ipification.com/auth/realms/ipification/coverage/202.175.50.128");
+            "https://api.ipification.com/auth/realms/ipification/coverage");
         IPificationPlugin.setAuthorizationUrl(
-            "https://stage.ipification.com/auth/realms/ipification/protocol/openid-connect/auth");
-        IPificationPlugin.setClientId("9f49df46a311454d882824607136c68f");
+            "https://api.ipification.com/auth/realms/ipification/protocol/openid-connect/auth");
+        IPificationPlugin.setClientId("webclient3");
         IPificationPlugin.setRedirectUri(
             "https://api.dev.ipification.com/api/v1/callback");
       } else {
+        print(2);
+
         IPificationPlugin.setCheckCoverageUrl(
-            "https://api.ipification.com/auth/realms/ipification/coverage/202.175.50.128");
+            "https://stage.ipification.com/auth/realms/ipification/coverage2");
         IPificationPlugin.setAuthorizationUrl(
-            "https://api.ipification.com/auth/realms/ipification/protocol/openid-connect/auth");
-        IPificationPlugin.setClientId("9f49df46a311454d882824607136c68f");
+            "https://stage.ipification.com/auth/realms/ipification/protocol/openid-connect/auth");
+        IPificationPlugin.setClientId("webclient3");
         IPificationPlugin.setRedirectUri(
             "https://api.dev.ipification.com/api/v1/callback");
       }
@@ -90,12 +108,15 @@ class _MyAppState extends State<MyApp> {
       print(clientid);
       var coverageResult = await IPificationPlugin.checkCoverage();
       coverageAvailable = coverageResult.isAvailable;
+      var log = await IPificationPlugin.getLog();
+      print("log" + log);
       // print(coverageResult.isAvaiable);
       print("operatorCode: ${coverageResult.operatorCode}");
     } on PlatformException catch (e) {
       coverageAvailable = false;
       errMessage = e.code + "\n" + e.message;
     }
+
     if (coverageAvailable == true) {
       try {
         // if (Platform.isAndroid) {
@@ -133,6 +154,9 @@ class _MyAppState extends State<MyApp> {
           errMessage = "code nil";
         }
       } on PlatformException catch (e) {
+        print(e);
+        var log = await IPificationPlugin.getLog();
+        print(log);
         errMessage = e.code + "\n" + e.message;
       }
     }
