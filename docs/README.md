@@ -17,10 +17,12 @@ This is flow overview:
 Mobile applications that implement IPification SDK don’t have to care about if the device is on cellular data or not. SDK will force authentication request to go via cellular data even in cases when device is on WiFi connection. Put it simply - everything you have to do is to call `doAuthorization()` and do authorization code exchange from your backend service.
 
 # I. Add IPification plugin to your Flutter project
-## 1. Download plugin
+
+## 1. Send us request for Flutter library share
+## 2. Download plugin
 Download the plugin file we provided then extract it (latest version: `2.0.16`) .
 
-## 2. Install Plugin
+## 3. Install Plugin
 
 Add the IPification Plugin as a dependency to your project by `flutter pub add ipification_plugin_folder_path` or updating `pubspec.yaml` file: 
 
@@ -29,7 +31,7 @@ dependencies:
  ipification_plugin:
     path: ipification_plugin_folder_path (for example: `path: ../ipification_plugin/`)
 ```
-## 2. Configuration Variables
+## 4. Configuration Variables
 
 During the onboarding process, IPification will provide you with SDK configuration. The SDK will read this configuration variables then use it during the authentication flow. 
 
