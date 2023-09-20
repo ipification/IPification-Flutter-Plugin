@@ -20,7 +20,7 @@ Mobile applications that implement IPification SDK don’t have to care about if
 
 ## 1. Send us request for Flutter library share
 ## 2. Download plugin
-Download the plugin file we provided then extract it (latest version: `2.0.16`) .
+Download the plugin file we provided then extract it (latest version: `2.0.18`) .
 
 ## 3. Install Plugin
 
