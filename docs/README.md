@@ -30,6 +30,8 @@ dependencies:
       url: https://github.com/bvantagelimited/IPification-Flutter-Plugin-Release.git
       ref: 2.0.18
 ```
+3. Run `flutter pub get`
+
 ## 2. Configuration Variables
 
 During the onboarding process, IPification will provide you with SDK configuration. The SDK will read this configuration variables then use it during the authentication flow. 
