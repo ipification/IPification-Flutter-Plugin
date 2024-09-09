@@ -18,20 +18,19 @@ Mobile applications that implement IPification SDK don’t have to care about if
 
 # I. Add IPification plugin to your Flutter project
 
-## 1. Send us request for Flutter library share
-## 2. Download plugin
-Download the plugin file we provided then extract it (latest version: `2.0.18`) .
+## 1. Install Plugin
 
-## 3. Install Plugin
-
-Add the IPification Plugin as a dependency to your project by `flutter pub add ipification_plugin_folder_path` or updating `pubspec.yaml` file: 
+1. Open your `pubspec.yaml` file.
+2. Add the dependency in the following format:
 
 ```yaml
 dependencies:
  ipification_plugin:
-    path: ipification_plugin_folder_path (for example: `path: ../ipification_plugin/`)
+    git:
+      url: https://github.com/bvantagelimited/IPification-Flutter-Plugin-Release.git
+      ref: 2.0.18
 ```
-## 4. Configuration Variables
+## 2. Configuration Variables
 
 During the onboarding process, IPification will provide you with SDK configuration. The SDK will read this configuration variables then use it during the authentication flow. 
 
