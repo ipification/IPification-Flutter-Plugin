@@ -23,6 +23,7 @@ Mobile applications that implement IPification SDK don’t have to care about if
 1. Open your `pubspec.yaml` file.
 2. Add the dependency in the following format:
 
+
 ```yaml
 dependencies:
  ipification_plugin:
@@ -30,6 +31,18 @@ dependencies:
       url: https://github.com/bvantagelimited/IPification-Flutter-Plugin-Release.git
       ref: 2.0.18
 ```
+
+** XCode 16 : use this version which has disabled Bitcode
+
+
+```yaml
+dependencies:
+ ipification_plugin:
+    git:
+      url: https://github.com/bvantagelimited/IPification-Flutter-Plugin-Release.git
+      ref: 2.0.19
+```
+
 3. Run `flutter pub get`
 
 ## 2. Configuration Variables
