@@ -29,7 +29,7 @@ dependencies:
  ipification_plugin:
     git:
       url: https://github.com/bvantagelimited/IPification-Flutter-Plugin-Release.git
-      ref: 2.0.18
+      ref: 2.0.20
 ```
 
 ** XCode 16 : use this version which has disabled Bitcode
