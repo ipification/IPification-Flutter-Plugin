@@ -63,3 +63,12 @@ Sync with native library android: 2.0.18 - iOS 2.0.11
 ## 2.0.19
 
 Sync with native library iOS 2.0.11.1
+
+
+## 2.0.20
+
+Sync with native library android 2.0.18.2
+
+## 2.0.21
+
+Sync with native library android 2.0.11.2

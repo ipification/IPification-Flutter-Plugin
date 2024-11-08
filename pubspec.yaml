@@ -1,6 +1,6 @@
 name: ipification_plugin
 description: IPification Flutter Plugin.
-version: 2.0.19
+version: 2.0.21
 homepage: developer.ipification.com
 
 environment:
