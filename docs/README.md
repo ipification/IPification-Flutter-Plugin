@@ -160,7 +160,25 @@ Future<void> doAuthentication() async {
    - **grant_type** - value is `authorization_code`
    - **redirect_uri** 
 
-Example request:
+
+
+<!-- tabs:start -->
+#### **Stage**
+```
+POST /auth/realms/ipification/protocol/openid-connect/token 
+HTTP/1.1
+Host: api.stage.ipification.com
+Content-Type: application/x-www-form-urlencoded
+
+Body in x-www-form-urlencoded:
+redirect_uri=your-redirect-uri
+grant_type=authorization_code
+code=81e2a518-e2ee-47dd-8ef4-833c92bc5f53.d684b91b-92c0-470e-b477
+client_id=example-client
+client_secret=64accf15-ea...bc-81b96197ef7e
+```
+#### **Production**
+
 ```
 POST /auth/realms/ipification/protocol/openid-connect/token 
 HTTP/1.1
@@ -174,6 +192,8 @@ code=81e2a518-e2ee-47dd-8ef4-833c92bc5f53.d684b91b-92c0-470e-b477
 client_id=example-client
 client_secret=64accf15-ea...bc-81b96197ef7e
 ```
+<!-- tabs:end -->
+
  
 Response will contain `access_token`, `refresh_token` and `id_token`.<br><br>
 Next, your backend service needs to prepare a POST request API to `/userinfo` or Decoded `ID Token` will contain IPification related claims.
