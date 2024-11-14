@@ -161,7 +161,6 @@ Future<void> doAuthentication() async {
    - **redirect_uri** 
 
 
-
 <!-- tabs:start -->
 #### **Stage**
 ```
@@ -171,11 +170,11 @@ Host: api.stage.ipification.com
 Content-Type: application/x-www-form-urlencoded
 
 Body in x-www-form-urlencoded:
-redirect_uri=your-redirect-uri
+redirect_uri={your-redirect-uri}
 grant_type=authorization_code
-code=81e2a518-e2ee-47dd-8ef4-833c92bc5f53.d684b91b-92c0-470e-b477
-client_id=example-client
-client_secret=64accf15-ea...bc-81b96197ef7e
+code={auth-code}
+client_id={your-STAGE-client-id}
+client_secret={your-STAGE-client-secret}
 ```
 #### **Production**
 
@@ -186,14 +185,14 @@ Host: api.ipification.com
 Content-Type: application/x-www-form-urlencoded
 
 Body in x-www-form-urlencoded:
-redirect_uri=your-redirect-uri
+redirect_uri={your-redirect-uri}
 grant_type=authorization_code
-code=81e2a518-e2ee-47dd-8ef4-833c92bc5f53.d684b91b-92c0-470e-b477
-client_id=example-client
-client_secret=64accf15-ea...bc-81b96197ef7e
+code={auth-code}
+client_id={your-PROD-client-id}
+client_secret={your-PROD-client-secret}
 ```
 <!-- tabs:end -->
-
+ 
  
 Response will contain `access_token`, `refresh_token` and `id_token`.<br><br>
 Next, your backend service needs to prepare a POST request API to `/userinfo` or Decoded `ID Token` will contain IPification related claims.
