@@ -20,30 +20,71 @@ Mobile applications that implement IPification SDK don’t have to care about if
 
 ## 1. Install Plugin
 
-1. Open your `pubspec.yaml` file.
+You can install the `ipification_plugin` package using either the **Git method** or by **downloading it locally**. Follow one of the two options below:
+
+---
+
+#### ✅ **Option 1: Install via Git (Recommended)**
+
+1. Open your `pubspec.yaml` file.  
 2. Add the dependency in the following format:
 
 
+##### 📌 **For Xcode 16 (Bitcode Disabled):**
 ```yaml
 dependencies:
- ipification_plugin:
-    git:
-      url: https://github.com/bvantagelimited/IPification-Flutter-Plugin-Release.git
-      ref: 2.0.23
-```
-
-** XCode 16 : use this version which has disabled Bitcode
-
-
-```yaml
-dependencies:
- ipification_plugin:
+  ipification_plugin:
     git:
       url: https://github.com/bvantagelimited/IPification-Flutter-Plugin-Release.git
       ref: 2.0.24
 ```
 
-3. Run `flutter pub get`
+##### 📌 **For XCode under 16 :**
+```yaml
+dependencies:
+  ipification_plugin:
+    git:
+      url: https://github.com/bvantagelimited/IPification-Flutter-Plugin-Release.git
+      ref: 2.0.23
+```
+
+
+3. Run the following command in your terminal:
+```bash
+flutter pub get
+```
+
+---
+
+#### ✅ **Option 2: Install Locally**
+
+If you prefer to use a **local version** of the plugin:
+
+1. **Download the Plugin Source Code:**
+
+```
+https://github.com/bvantagelimited/IPification-Flutter-Plugin-Release/archive/refs/tags/2.0.24.zip (for Xcode 16)
+
+or
+
+https://github.com/bvantagelimited/IPification-Flutter-Plugin-Release/archive/refs/tags/2.0.23.zip (for Xcode 15 or older)
+
+```
+
+2. **Extract the ZIP File:**  
+Place the extracted folder in your project directory, e.g., `./plugins/IPification-Flutter-Plugin-Release-2.0.24`.
+
+3. **Update `pubspec.yaml` to use the local path:**
+```yaml
+dependencies:
+  ipification_plugin:
+    path: ./plugins/IPification-Flutter-Plugin-Release-2.0.24
+```
+
+4. Run the following command in your terminal:
+```bash
+flutter pub get
+```
 
 ## 2. Configuration Variables
 
