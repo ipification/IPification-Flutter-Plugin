@@ -119,7 +119,13 @@ During the onboarding process, IPification will provide you with SDK configurati
 
 
 # II. IP Authentication Flow
-## 1. Check Coverage
+
+## 1. Collect Mobile Phone Number
+
+To begin the process, the mobile phone number needs to be collected from the user. This step is crucial as it ensures that we have the correct contact information to proceed with the necessary actions. The phone number will be used for verification and further communication.
+
+
+## 2. Check Coverage
 
 `Check Coverage` is used to check if IPification Solution is available for the submitted user/subscriber
 
@@ -133,7 +139,7 @@ During the onboarding process, IPification will provide you with SDK configurati
     ```dart
     Future<bool> checkCoverage() async {
         try {
-            var coverageResponse = await IPificationPlugin.checkCoverage();
+            var coverageResponse = await IPificationPlugin.checkCoverageWithPhoneNumber(phoneNumber: input_phone_number);
             return coverageResponse.isAvailable;
         } on PlatformException catch (e) {
             print(e.code + " - " + e.message);
@@ -145,11 +151,6 @@ During the onboarding process, IPification will provide you with SDK configurati
 
     * `getOperatorCode(): String?` - resolved Telco operator. This function returns null by default. Read detail (<a href="#/auth/latest/?id=operator-data-in-json-response" target="_blank">Operator Code</a>)
 
-> Use `IPificationPlugin.checkCoverageWithPhoneNumber(phoneNumber: input_phone_number)` to checkCoverage with `phone` query param. To use this function, client need to collect Mobile Phone Number (step 2) before do check Coverage. Read detail (<a href="#/auth/latest/?id=coverage-api" target="_blank">Coverage API</a>)
-
-## 2. Collect Mobile Phone Number
-
-If the client wants to validate the user’s phone number (`MSISDN`) but doesn’t have it already, the client’s app should prompt the user to enter it in this step. Details on how to pass `MSISDN` to the authentication request are explained in step 3.
 
 ## 3. Perform IP Authentication
 
