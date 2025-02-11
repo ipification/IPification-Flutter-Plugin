@@ -36,7 +36,7 @@ dependencies:
   ipification_plugin:
     git:
       url: https://github.com/bvantagelimited/IPification-Flutter-Plugin-Release.git
-      ref: 2.0.24
+      ref: 2.0.25
 ```
 
 ##### 📌 **For XCode under 16 :**
@@ -63,7 +63,7 @@ If you prefer to use a **local version** of the plugin:
 1. **Download the Plugin Source Code:**
 
 ```
-https://github.com/bvantagelimited/IPification-Flutter-Plugin-Release/archive/refs/tags/2.0.24.zip (for Xcode 16)
+https://github.com/bvantagelimited/IPification-Flutter-Plugin-Release/archive/refs/tags/2.0.25.zip (for Xcode 16)
 
 or
 
@@ -72,13 +72,13 @@ https://github.com/bvantagelimited/IPification-Flutter-Plugin-Release/archive/re
 ```
 
 2. **Extract the ZIP File:**  
-Place the extracted folder in your project directory, e.g., `./plugins/IPification-Flutter-Plugin-Release-2.0.24`.
+Place the extracted folder in your project directory, e.g., `./plugins/IPification-Flutter-Plugin-Release-2.0.25`.
 
 3. **Update `pubspec.yaml` to use the local path:**
 ```yaml
 dependencies:
   ipification_plugin:
-    path: ./plugins/IPification-Flutter-Plugin-Release-2.0.24
+    path: ./plugins/IPification-Flutter-Plugin-Release-2.0.25
 ```
 
 4. Run the following command in your terminal:
