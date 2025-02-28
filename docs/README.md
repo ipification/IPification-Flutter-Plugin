@@ -30,13 +30,13 @@ You can install the `ipification_plugin` package using either the **Git method**
 2. Add the dependency in the following format:
 
 
-##### 📌 **For Xcode 16 (Bitcode Disabled):**
+##### 📌 **For Xcode 16:**
 ```yaml
 dependencies:
   ipification_plugin:
     git:
       url: https://github.com/bvantagelimited/IPification-Flutter-Plugin-Release.git
-      ref: 2.0.27
+      ref: 2.0.28
 ```
 
 ##### 📌 **For XCode under 16 :**
@@ -45,7 +45,7 @@ dependencies:
   ipification_plugin:
     git:
       url: https://github.com/bvantagelimited/IPification-Flutter-Plugin-Release.git
-      ref: 2.0.26
+      ref: 2.0.23
 ```
 
 
@@ -63,22 +63,22 @@ If you prefer to use a **local version** of the plugin:
 1. **Download the Plugin Source Code:**
 
 ```
-https://github.com/bvantagelimited/IPification-Flutter-Plugin-Release/archive/refs/tags/2.0.27.zip (for Xcode 16)
+https://github.com/bvantagelimited/IPification-Flutter-Plugin-Release/archive/refs/tags/2.0.28.zip (for Xcode 16)
 
 or
 
-https://github.com/bvantagelimited/IPification-Flutter-Plugin-Release/archive/refs/tags/2.0.26.zip (for Xcode 15 or older)
+https://github.com/bvantagelimited/IPification-Flutter-Plugin-Release/archive/refs/tags/2.0.23.zip (for Xcode 15 or older)
 
 ```
 
 2. **Extract the ZIP File:**  
-Place the extracted folder in your project directory, e.g., `./plugins/IPification-Flutter-Plugin-Release-2.0.27`.
+Place the extracted folder in your project directory, e.g., `./plugins/IPification-Flutter-Plugin-Release-2.0.28`.
 
 3. **Update `pubspec.yaml` to use the local path:**
 ```yaml
 dependencies:
   ipification_plugin:
-    path: ./plugins/IPification-Flutter-Plugin-Release-2.0.27
+    path: ./plugins/IPification-Flutter-Plugin-Release-2.0.28
 ```
 
 4. Run the following command in your terminal:
@@ -94,17 +94,19 @@ During the onboarding process, IPification will provide you with SDK configurati
 #### **Stage**
 ```
     void initIPConfiguration() async {
-        IPificationPlugin.setEnv(ENV.SANDBOX);
-        IPificationPlugin.setClientId("your-stage-client-id");
-        IPificationPlugin.setRedirectUri("your-redirect-uri");
+        final ipPlugin = IPificationPlugin();
+        ipPlugin.setEnv(ENV.SANDBOX);
+        ipPlugin.setClientId("your-stage-client-id");
+        ipPlugin.setRedirectUri("your-redirect-uri");
     }
 ```
 #### **Production**
 ```
     void initIPConfiguration() async {
-        IPificationPlugin.setEnv(ENV.PRODUCTION);
-        IPificationPlugin.setClientId("your-prod-client-id");
-        IPificationPlugin.setRedirectUri("your-redirect-uri");
+        final ipPlugin = IPificationPlugin();
+        ipPlugin.setEnv(ENV.PRODUCTION);
+        ipPlugin.setClientId("your-prod-client-id");
+        ipPlugin.setRedirectUri("your-redirect-uri");
     }
 ```
 <!-- tabs:end -->
@@ -139,7 +141,8 @@ To begin the process, the mobile phone number needs to be collected from the use
     ```dart
     Future<bool> checkCoverage() async {
         try {
-            var coverageResponse = await IPificationPlugin.checkCoverageWithPhoneNumber(phoneNumber: input_phone_number);
+            final ipPlugin = IPificationPlugin();
+            var coverageResponse = await ipPlugin.checkCoverageWithPhoneNumber(phoneNumber: input_phone_number);
             return coverageResponse.isAvailable;
         } on PlatformException catch (e) {
             print(e.code + " - " + e.message);
@@ -167,9 +170,10 @@ Perform IP authentication with `doAuthorization(loginHint: input_phone_number)` 
 Future<void> doAuthentication() async {
     String authCode;
     try {
-        IPificationPlugin.setScope(value: "openid ip:phone_verify");
+        final ipPlugin = IPificationPlugin();
+        ipPlugin.setScope(value: "openid ip:phone_verify");
     
-        var authResponse = await IPificationPlugin.doAuthentication(loginHint: input_phone_number);
+        var authResponse = await ipPlugin.doAuthentication(loginHint: input_phone_number);
         authCode = authResponse.code;
     } on PlatformException catch (error) {
         print( error.code + "\n" + error.message);
@@ -282,7 +286,8 @@ In order to have a nice UX without any end users confusion, you should unregiste
 @override
 void deactivate() {
    if (Platform.isAndroid) {
-     IPificationPlugin.unregisterNetwork();
+     final ipPlugin = IPificationPlugin();
+     ipPlugin.unregisterNetwork();
    }
    super.deactivate();
  }
@@ -383,9 +388,11 @@ In order to enable IM fallback Auth, one extra parameter `channel` is required w
 
 
 ```dart
-IPificationPlugin.setScope(value: "openid ip:phone");
-// IPificationPlugin.setState(value: state);
-var authResponse = await IPificationPlugin.doIMAuthentication(
+final ipPlugin = IPificationPlugin();
+ipPlugin.setScope(value: "openid ip:phone");
+// ipPlugin.setState(value: state);
+
+var authResponse = await ipPlugin.doIMAuthentication(
           channel: "wa telegram viber");
 if (authResponse?.code?.isNotEmpty != null) {
     // await IPNetworkManager.doTokenExchange(
@@ -420,7 +427,8 @@ Use those two functions to change theme and texts on IM page:
 #### **iOS**
 
 ```dart
-    IPificationPlugin.updateIOSLocale(
+    final ipPlugin = IPificationPlugin();
+    ipPlugin.updateIOSLocale(
         "IPification",
         "Phone Number Verify",
         "Please tap on the preferred messaging app then follow instructions on the screen",
@@ -428,7 +436,7 @@ Use those two functions to change theme and texts on IM page:
         "Login with Telegram",
         "Login with Viber",
         "Cancel");
-    IPificationPlugin.updateIOSTheme(
+    ipPlugin.updateIOSTheme(
         "#000000", "#000000", "#000000", "#000000", "#ffffff");
     
 ```
@@ -450,7 +458,8 @@ Use those two functions to change theme and texts on IM page:
 **
 
 ```dart
-    IPificationPlugin.updateAndroidLocale(
+    final ipPlugin = IPificationPlugin();
+    ipPlugin.updateAndroidLocale(
         "IPification",
         "Phone Number Verification",
         "Please tap on the preferred messaging app then follow instructions on the screen",
@@ -458,7 +467,7 @@ Use those two functions to change theme and texts on IM page:
         "Login with Telegram",
         "Login with Viber");
 
-    IPificationPlugin.updateAndroidTheme("#ffffff", "#ffffff", "#c91636");
+    ipPlugin.updateAndroidTheme("#ffffff", "#ffffff", "#c91636");
 
 
 ```
@@ -586,7 +595,7 @@ Check here for more detail (<a href="#/auth/latest/?id=scopes-explained" target=
 # V. Restrictions
 **1. Flutter**:
 
-Supported flutter version >= 2.12.0 (with `null-safety`)
+Supported flutter version >= 3.3.0
 
 **2. Android**:
 
