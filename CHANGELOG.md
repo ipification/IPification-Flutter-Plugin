@@ -77,4 +77,42 @@ Sync with native library android 2.0.11.2
 
 ## 2.0.22 (Xcode 16)
 
-Sync with native library android 2.0.11.2
+Sync with native library ios 2.0.11.3
+
+
+## 2.0.23
+
+Sync with native library android 2.0.18.3
+
+
+## 2.0.24 (Xcode 16)
+
+Sync with native library android 2.0.18.3
+
+
+## 2.0.25 (Xcode 16)
+
+Sync with native library iOS 2.0.11.4
+
+## 2.0.26
+
+Sync with native library iOS 2.0.11.2 and android 2.0.18.4
+
+
+## 2.0.27 (Xcode 16)
+
+Sync with native library iOS 2.0.11.2 and android 2.0.18.4
+
+## 2.0.28 (Xcode 16)
+
+Sync with native library iOS 2.0.11.5 and android 2.0.18.5
+
+
+## 2.0.29 (Xcode 16)
+
+Synced with native SDK android v2.0.18.5 and iOS 2.0.11.5
+
+
+## 2.0.30
+
+Synced with native SDK android v2.0.18.5 and iOS 2.0.11.6

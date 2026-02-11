@@ -1,22 +1,28 @@
 import 'dart:convert';
 
 class CheckCoverageResponse {
-  var isAvailable;
-  var operatorCode;
-  CheckCoverageResponse(bool isAvailable, String? operatorCode) {
-    this.isAvailable = isAvailable;
-    this.operatorCode = operatorCode;
-  }
-  factory CheckCoverageResponse.fromJson(dynamic str) {
-    if (str == null || str == "") {
+  final bool isAvailable;
+  final String? operatorCode;
+
+  CheckCoverageResponse(this.isAvailable, this.operatorCode);
+
+  factory CheckCoverageResponse.fromJson(String? str) {
+    if (str == null || str.isEmpty) {
       return CheckCoverageResponse(false, null);
     }
     try {
-      var json = jsonDecode(str);
+      final Map<String, dynamic> json = jsonDecode(str);
       return CheckCoverageResponse(
-          json['available'] as bool, json['operator_code'] as String?);
+        json['available'] as bool? ?? false,
+        json['operator_code'] as String?,
+      );
     } catch (e) {
       return CheckCoverageResponse(false, null);
     }
   }
+
+  Map<String, dynamic> toJson() => {
+        'available': isAvailable,
+        'operator_code': operatorCode,
+      };
 }

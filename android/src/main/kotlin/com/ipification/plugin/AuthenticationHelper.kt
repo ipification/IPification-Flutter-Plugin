@@ -13,15 +13,16 @@ import com.ipification.mobile.sdk.android.callback.CellularCallback
 import com.ipification.mobile.sdk.android.exception.CellularException
 import com.ipification.mobile.sdk.android.response.AuthResponse
 import com.ipification.mobile.sdk.android.response.CoverageResponse
-import com.ipification.plugin.AuthenticationListener
-import com.ipification.plugin.AuthenticationError
-import com.ipification.plugin.ErrorCode
+
 import com.ipification.mobile.sdk.android.callback.IPificationCallback
 import com.ipification.mobile.sdk.android.IPificationServices
 import com.ipification.mobile.sdk.android.exception.IPificationError
 import com.ipification.mobile.sdk.im.IMService
 import com.ipification.mobile.sdk.im.ui.IMVerificationActivity
 
+import com.ipification.plugin.AuthenticationListener
+import com.ipification.plugin.AuthenticationError
+import com.ipification.plugin.ErrorCode
 
 class AuthenticationHelper(val apiService: IPApiService)  {
 
@@ -187,12 +188,10 @@ class AuthenticationHelper(val apiService: IPApiService)  {
         val resourceId: Int = context.resources.getIdentifier(file_name, "raw", context.packageName)
         val inputStream = apiService.context().resources.openRawResource(resourceId)
         cellularService.setAuthorizationServiceConfiguration(AuthorizationServiceConfiguration(inputStream))
-
     }
 
     fun getConfigurationByName(name : String) : String?{
         val cellularService = CellularService<CoverageResponse>(apiService.context())
        return cellularService.getConfiguration(name)
-
     }
 }

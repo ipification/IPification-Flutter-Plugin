@@ -1,10 +1,10 @@
 #
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html.
-# Run `pod lib lint ipification_plugin.podspec' to validate before publishing.
+# Run `pod lib lint ipification_plugin.podspec` to validate before publishing.
 #
 Pod::Spec.new do |s|
   s.name = "ipification_plugin"
-  s.version = "2.0.11.3"
+  s.version = "2.0.11.6"
   s.summary = "IPIfication Plugin"
   s.description = "IPIfication Plugin"
   s.homepage = "https://ipification.com"

@@ -1,222 +1,125 @@
-import 'dart:async';
-import 'dart:io';
-import 'package:ipification_plugin/authentication_response.dart';
+import 'ipification_plugin_platform_interface.dart';
 import 'package:ipification_plugin/coverage_response.dart';
-import 'package:flutter/services.dart';
-import 'dart:math';
-import 'dart:convert';
+import 'package:ipification_plugin/authentication_response.dart';
 
-enum ENV { 
-   SANDBOX, 
-   PRODUCTION
-}  
+
+enum ENV { SANDBOX, PRODUCTION }
+
 class IPificationPlugin {
-  static const MethodChannel _channel =
-      const MethodChannel('ipification_plugin');
-
-  // static Future<String> get platformVersion async {
-  //   final String version = await _channel.invokeMethod('getPlatformVersion');
-  //   return version;
-  // }
-  @Deprecated('Use [setAuthorizationUrl()]')
-  static void setAuthorizationServiceConfiguration(String fileName) {
-    _channel
-        .invokeMethod<bool>('setConfiguration', {"config_file_name": fileName});
+  Future<String?> getPlatformVersion() {
+    return IPificationPluginPlatform.instance.getPlatformVersion();
   }
 
-  @Deprecated('Deprecated')
-  static Future<String?> getConfigurationByName(String configName) async {
-    final String? result = await _channel
-        .invokeMethod<String>('getConfiguration', {"config_name": configName});
-    return result;
+  Future<void> setAuthorizationServiceConfiguration(String fileName) {
+    return IPificationPluginPlatform.instance.setAuthorizationServiceConfiguration(fileName);
   }
 
-  static Future<CheckCoverageResponse> checkCoverage() async {
-    final String? resultJson =
-        await _channel.invokeMethod<String>('checkCoverage');
-    var result = CheckCoverageResponse.fromJson(resultJson);
-    return result;
+  Future<String?> getConfigurationByName(String configName) {
+    return IPificationPluginPlatform.instance.getConfigurationByName(configName);
   }
 
-  static Future<CheckCoverageResponse> checkCoverageWithPhoneNumber(
-      {required String phoneNumber}) async {
-    final String? resultJson = await _channel.invokeMethod<String>(
-        'checkCoverageWithPhoneNumber', {"phone_number": phoneNumber});
-    var result = CheckCoverageResponse.fromJson(resultJson);
-    return result;
+  Future<void> setEnv(ENV env) {
+    return IPificationPluginPlatform.instance.setEnv(env);
   }
 
-  static void addQueryParam({required String key, required String value}) {
-    _channel.invokeMethod("addQueryParam", {"key": key, "value": value});
+  Future<void> setClientId(String clientId) {
+    return IPificationPluginPlatform.instance.setClientId(clientId);
   }
 
-  static void setState({required String value}) {
-    _channel.invokeMethod("setState", {"value": value});
+  Future<void> setScope({required String value}) {
+    return IPificationPluginPlatform.instance.setScope(value);
   }
 
-  static void setScope({required String value}) {
-    _channel.invokeMethod("setScope", {"value": value});
+  Future<void> setState({required String value}) {
+    return IPificationPluginPlatform.instance.setState(value);
   }
 
-  static Future<AuthenticationResponse> doAuthentication(
-      {required String loginHint}) async {
-    final String? resultJson = await _channel
-        .invokeMethod("doAuthentication", {"login_hint": loginHint});
-    var result = AuthenticationResponse.fromUri(resultJson);
-    return result;
+  Future<void> setRedirectUri(String redirectUri) {
+    return IPificationPluginPlatform.instance.setRedirectUri(redirectUri);
   }
 
-  static Future<AuthenticationResponse> doAuthenticationWithChannel(
-      {required String channel, required String loginHint}) async {
-    final String? resultJson = await _channel.invokeMethod(
-        "doAuthenticationWithChannel",
-        {"channel": channel, "login_hint": loginHint});
-    var result = AuthenticationResponse.fromUri(resultJson);
-    return result;
+  Future<void> setAuthorizationUrl(String authUrl) {
+    return IPificationPluginPlatform.instance.setAuthorizationUrl(authUrl);
   }
 
-  static Future<AuthenticationResponse> doIMAuthentication(
-      {required String channel}) async {
-    final String? resultJson = await _channel
-        .invokeMethod("doAuthenticationWithChannel", {"channel": channel});
-    var result = AuthenticationResponse.fromUri(resultJson);
-    return result;
+  Future<String?> getClientId() {
+    return IPificationPluginPlatform.instance.getClientId();
   }
 
-  static void unregisterNetwork() {
-    _channel.invokeMethod("unregisterNetwork");
+  Future<String?> getRedirectUri() {
+    return IPificationPluginPlatform.instance.getRedirectUri();
   }
 
-  static void setClientId(String clientId) async {
-    _channel.invokeMethod<String>('setClientId', {"value": clientId});
+  Future<String> generateState() {
+    return IPificationPluginPlatform.instance.generateState();
   }
 
-  static void setEnv(ENV env) async {
-    if (env == ENV.SANDBOX) {
-      _channel.invokeMethod<String>('setEnv', {"value": 'sandbox'});
-    }else{
-      _channel.invokeMethod<String>('setEnv', {"value": 'production'});
-    }    
+  Future<void> unregisterNetwork() {
+    return IPificationPluginPlatform.instance.unregisterNetwork();
   }
 
-  static void setRedirectUri(String redirectUri) async {
-    _channel.invokeMethod<String>('setRedirectUri', {"value": redirectUri});
-  }
-  
-  static void setCheckCoverageUrl(String checkCoverageUrl) async {
-    _channel.invokeMethod<String>(
-        'setCheckCoverageUrl', {"value": checkCoverageUrl});
+  Future<void> addQueryParam({required String key, required String value}) {
+    return IPificationPluginPlatform.instance.addQueryParam(key, value);
   }
 
-  static void setAuthorizationUrl(String authUrl) async {
-    _channel.invokeMethod<String>('setAuthorizationUrl', {"value": authUrl});
+  Future<void> setCheckCoverageUrl(String checkCoverageUrl) {
+    return IPificationPluginPlatform.instance.setCheckCoverageUrl(checkCoverageUrl);
   }
 
-  static Future<String?> getClientId() async {
-    final String? result = await _channel.invokeMethod<String>('getClientId');
-    return result;
+  Future<CheckCoverageResponse> checkCoverage() {
+    return IPificationPluginPlatform.instance.checkCoverage();
   }
 
-  static Future<String?> getRedirectUri() async {
-    final String? result =
-        await _channel.invokeMethod<String>('getRedirectUri');
-    return result;
+  Future<CheckCoverageResponse> checkCoverageWithPhoneNumber(String phoneNumber) {
+    return IPificationPluginPlatform.instance.checkCoverageWithPhoneNumber(phoneNumber);
   }
 
-  static Future<String> generateState() async {
-    final String? result = await _channel.invokeMethod<String>('generateState');
-    return result ?? getRandString(100);
+  Future<AuthenticationResponse> doAuthentication({required String loginHint}) {
+    return IPificationPluginPlatform.instance.doAuthentication(loginHint);
   }
 
-  static Future<void> enableLog() async {
-    await _channel.invokeMethod<String>('enableLog');
+  Future<AuthenticationResponse> doAuthenticationWithChannel({required String channel, required String loginHint}) {
+    return IPificationPluginPlatform.instance.doAuthenticationWithChannel(channel, loginHint);
   }
 
-  static Future<String> getLog() async {
-    final String? result = await _channel.invokeMethod<String>('getLog');
-    return result ?? "";
+  Future<AuthenticationResponse> doIMAuthentication({required String channel}) {
+    return IPificationPluginPlatform.instance.doIMAuthentication(channel);
   }
 
-  static String getRandString(int len) {
-    var random = Random.secure();
-    var values = List<int>.generate(len, (i) => random.nextInt(255));
-    return base64UrlEncode(values);
+  Future<void> enableLog() {
+    return IPificationPluginPlatform.instance.enableLog();
   }
 
-  static void showNotification(String title, String message,
-      String notificationFolder, String notificationIcon) async {
-    _channel.invokeMethod<String>('showNotification', {
-      "title": title,
-      "message": message,
-      "notificationFolder": notificationFolder,
-      "notificationIcon": notificationIcon
-    });
+  Future<String?> getLog() {
+    return IPificationPluginPlatform.instance.getLog();
   }
 
-  static void updateIOSLocale(
-      String titleBar,
-      String mainTitle,
-      String description,
-      String whatsappBtnText,
-      String telegramBtnText,
-      String viberBtnText,
-      String cancelBtnText) {
-    if (Platform.isIOS) {
-      {
-        _channel.invokeMethod<String>('updateLocale', {
-          "titleBar": titleBar,
-          "mainTitle": mainTitle,
-          "description": description,
-          "whatsappBtnText": whatsappBtnText,
-          "telegramBtnText": telegramBtnText,
-          "viberBtnText": viberBtnText,
-          "cancelBtnText": cancelBtnText,
-        });
-      }
-    }
+  Future<void> showNotification(
+      String title, String message, String notificationFolder, String notificationIcon) {
+    return IPificationPluginPlatform.instance.showNotification(
+        title, message, notificationFolder, notificationIcon);
   }
 
-  static void updateIOSTheme(String toolbarTitleColor, String titleColor,
-      String descColor, String cancelBtnColor, String backgroundColor) {
-    if (Platform.isIOS) {
-      {
-        _channel.invokeMethod<String>('updateTheme', {
-          "toolbarTitleColor": toolbarTitleColor,
-          "cancelBtnColor": cancelBtnColor,
-          "titleColor": titleColor,
-          "descColor": descColor,
-          "backgroundColor": backgroundColor
-        });
-      }
-    }
+  Future<void> updateIOSLocale(String titleBar, String mainTitle, String description,
+      String whatsappBtnText, String telegramBtnText, String viberBtnText, String cancelBtnText) {
+    return IPificationPluginPlatform.instance.updateIOSLocale(
+        titleBar, mainTitle, description, whatsappBtnText, telegramBtnText, viberBtnText, cancelBtnText);
   }
 
-  static void updateAndroidLocale(String toolbarTitle, String mainTitle, String description,
+  Future<void> updateIOSTheme(String toolbarTitleColor, String titleColor, String descColor,
+      String cancelBtnColor, String backgroundColor) {
+    return IPificationPluginPlatform.instance.updateIOSTheme(
+        toolbarTitleColor, titleColor, descColor, cancelBtnColor, backgroundColor);
+  }
+
+  Future<void> updateAndroidLocale(String toolbarTitle, String mainTitle, String description,
       String whatsappBtnText, String telegramBtnText, String viberBtnText) {
-    if (Platform.isAndroid) {
-      {
-        _channel.invokeMethod<String>('updateLocale', {
-          "toolbarTitle": toolbarTitle,
-          "mainTitle": mainTitle,
-          "description": description,
-          "whatsappBtnText": whatsappBtnText,
-          "telegramBtnText": telegramBtnText,
-          "viberBtnText": viberBtnText
-        });
-      }
-    }
+    return IPificationPluginPlatform.instance.updateAndroidLocale(
+        toolbarTitle, mainTitle, description, whatsappBtnText, telegramBtnText, viberBtnText);
   }
 
-  static void updateAndroidTheme(
-      String backgroundColor, String toolbarTextColor, String toolbarColor) {
-    if (Platform.isAndroid) {
-      {
-        _channel.invokeMethod<String>('updateTheme', {
-          "backgroundColor": backgroundColor,
-          "toolbarTextColor": toolbarTextColor,
-          "toolbarColor": toolbarColor
-        });
-      }
-    }
+  Future<void> updateAndroidTheme(String backgroundColor, String toolbarTextColor, String toolbarColor) {
+    return IPificationPluginPlatform.instance.updateAndroidTheme(
+        backgroundColor, toolbarTextColor, toolbarColor);
   }
 }

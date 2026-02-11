@@ -52,13 +52,6 @@ class AuthenticationHelper {
     }
     
     func doAuthentication(login_hint:String, success:@escaping(String?)->(Void),fail:@escaping(AuthenticationError)->(Void)){
-        // if login_hint.isEmpty {
-        //     var temp = AuthenticationError()
-        //     temp.error_code = ErrorCode.AUTHENTICATE_PHONE_MISSING
-        //     temp.error_message = "login-hint is missing"
-        //     fail(temp)
-        //     return
-        // }
         let authorizationService = AuthorizationService()
         authorizationService.callbackFailed = { (error) -> Void in
             print("authorized failed ", error.localizedDescription)
@@ -74,15 +67,8 @@ class AuthenticationHelper {
             error.error_code = ErrorCode.AUTHENTICATE_IM_CANCEL
             fail(error)
         }
-        authorizationService.callbackSuccess = { (response) -> Void in
-            // print("authorized successful with code:", response.getCode())
-            
+        authorizationService.callbackSuccess = { (response) -> Void in            
             if(response.getCode() != nil){
-                // let state = response.getState() ?? ""
-                // let resData = response.getPlainResponse()
-                // let json = """{"code":"\(response.getCode())","state":"\(state)", "response_data": "\(resData)"}"""
-                // let json = "{\"code\": \"\(response.getCode()!)\", \"state\": \"\(state)\", \"response_data\": \"\(resData)\"}"
-                // print(json)
                 success(response.getPlainResponse())
             }else{
                 var temp = AuthenticationError()
@@ -147,13 +133,6 @@ class AuthenticationHelper {
     }
 
     func doAuthentication(channel: String, success:@escaping(String?)->(Void),fail:@escaping(AuthenticationError)->(Void)){
-        // if login_hint.isEmpty {
-        //     var temp = AuthenticationError()
-        //     temp.error_code = ErrorCode.AUTHENTICATE_PHONE_MISSING
-        //     temp.error_message = "login-hint is missing"
-        //     fail(temp)
-        //     return
-        // }
         let authorizationService = AuthorizationService()
         authorizationService.callbackFailed = { (error) -> Void in
             print("authorized failed ", error.localizedDescription)
@@ -169,15 +148,8 @@ class AuthenticationHelper {
             error.error_code = ErrorCode.AUTHENTICATE_IM_CANCEL
             fail(error)
         }
-        authorizationService.callbackSuccess = { (response) -> Void in
-            // print("authorized successful with code:", response.getCode())
-            
+        authorizationService.callbackSuccess = { (response) -> Void in            
             if(response.getCode() != nil){
-                // let state = response.getState() ?? ""
-                // let resData = response.getPlainResponse()
-                // let json = """{"code":"\(response.getCode())","state":"\(state)", "response_data": "\(resData)"}"""
-                // let json = "{\"code\": \"\(response.getCode()!)\", \"state\": \"\(state)\", \"response_data\": \"\(resData)\"}"
-                // print(json)
                 success(response.getPlainResponse())
             }else{
                 var temp = AuthenticationError()
@@ -218,7 +190,6 @@ class AuthenticationHelper {
             let xml         = FileManager.default.contents(atPath: path),
             let preferences = try? PropertyListDecoder().decode(Configuration.self, from: xml)
         {
-            // print("login_hint", preferences.CLIENT_ID)
             switch configName {
             case "client_id":
                 return preferences.CLIENT_ID
