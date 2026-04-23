@@ -183,27 +183,7 @@ class AuthenticationHelper {
         print("setScope", value)
         authBuilder.setScope(value: value)
     }
-        
-    func getConfigurationByName(configName: String?) -> String?
-    {
-      if  let path        = Bundle.main.path(forResource: "Info", ofType: "plist"),
-            let xml         = FileManager.default.contents(atPath: path),
-            let preferences = try? PropertyListDecoder().decode(Configuration.self, from: xml)
-        {
-            switch configName {
-            case "client_id":
-                return preferences.CLIENT_ID
-            case "redirect_uri":
-                return preferences.REDIRECT_URI?.replacingOccurrences(of: "\\", with: "")
-            default:
-                return ""
-            }
-        }
-        return ""
-        
-    }
 }
-
 
 
 

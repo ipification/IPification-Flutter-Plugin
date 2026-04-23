@@ -3,7 +3,7 @@ import 'package:ipification_plugin/coverage_response.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'ipification_plugin_method_channel.dart';
-import 'ipification.dart'; 
+import 'ipification.dart';
 
 abstract class IPificationPluginPlatform extends PlatformInterface {
   /// Constructs a IPificationPluginPlatform.
@@ -30,8 +30,6 @@ abstract class IPificationPluginPlatform extends PlatformInterface {
 
   Future<void> setAuthorizationServiceConfiguration(String fileName);
 
-  Future<String?> getConfigurationByName(String configName);
-
   Future<void> setEnv(ENV env);
 
   Future<void> setClientId(String clientId);
@@ -39,6 +37,7 @@ abstract class IPificationPluginPlatform extends PlatformInterface {
   Future<void> setRedirectUri(String redirectUri);
 
   Future<void> setAuthorizationUrl(String authUrl);
+  Future<void> setBaseUrl(String baseUrl);
   Future<void> setCheckCoverageUrl(String checkCoverageUrl);
 
   Future<String?> getClientId();
@@ -60,33 +59,57 @@ abstract class IPificationPluginPlatform extends PlatformInterface {
   Future<String> getLog();
 
   Future<void> showNotification(
-      String title, String message, String notificationFolder, String notificationIcon);
+    String title,
+    String message,
+    String notificationFolder,
+    String notificationIcon,
+  );
 
   Future<void> updateIOSLocale(
-      String titleBar,
-      String mainTitle,
-      String description,
-      String whatsappBtnText,
-      String telegramBtnText,
-      String viberBtnText,
-      String cancelBtnText);
+    String titleBar,
+    String mainTitle,
+    String description,
+    String whatsappBtnText,
+    String telegramBtnText,
+    String viberBtnText,
+    String cancelBtnText,
+  );
 
-  Future<void> updateIOSTheme(String toolbarTitleColor, String titleColor,
-      String descColor, String cancelBtnColor, String backgroundColor);
+  Future<void> updateIOSTheme(
+    String toolbarTitleColor,
+    String titleColor,
+    String descColor,
+    String cancelBtnColor,
+    String backgroundColor,
+  );
 
-  Future<void> updateAndroidLocale(String toolbarTitle, String mainTitle, String description,
-      String whatsappBtnText, String telegramBtnText, String viberBtnText);
+  Future<void> updateAndroidLocale(
+    String toolbarTitle,
+    String mainTitle,
+    String description,
+    String whatsappBtnText,
+    String telegramBtnText,
+    String viberBtnText,
+  );
 
   Future<void> updateAndroidTheme(
-      String backgroundColor, String toolbarTextColor, String toolbarColor);
+    String backgroundColor,
+    String toolbarTextColor,
+    String toolbarColor,
+  );
 
   Future<CheckCoverageResponse> checkCoverage();
 
-  Future<CheckCoverageResponse> checkCoverageWithPhoneNumber(String phoneNumber);
+  Future<CheckCoverageResponse> checkCoverageWithPhoneNumber(
+    String phoneNumber,
+  );
 
   Future<AuthenticationResponse> doAuthentication(String loginHint);
 
-  Future<AuthenticationResponse> doAuthenticationWithChannel(String channel,  String loginHint);
+  Future<AuthenticationResponse> doAuthenticationWithChannel(
+    String channel,
+    String loginHint,
+  );
 
   Future<AuthenticationResponse> doIMAuthentication(String channel);
 }

@@ -1,9 +1,7 @@
 // swift-interface-format-version: 1.0
 // swift-compiler-version: Apple Swift version 5.3.2 (swiftlang-1200.0.45 clang-1200.0.32.28)
 // swift-module-flags: -target arm64-apple-ios10.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name IPificationSDK
-import IPificationSDK.CocoaAsyncSocket
 import CoreTelephony
-import IPificationSDK.DNSResolver
 import Foundation
 @_exported import IPificationSDK
 import Network
@@ -27,8 +25,6 @@ public protocol ResponseProtocol : AnyObject {
 public protocol RequestProtocol : AnyObject {
   var readTimeout: Foundation.TimeInterval { get set }
   var connectTimeout: Foundation.TimeInterval { get set }
-  var dnsConnectionTimeout: Foundation.TimeInterval { get set }
-  var isIPv4PreferredOverIPv6: Swift.Bool { get set }
   func toUri() -> Foundation.URLComponents
   func parseToURLComponents() -> Foundation.URLComponents?
   func formatedHeaders(enableCarrierHeaders: Swift.Bool) -> Swift.String
@@ -40,8 +36,12 @@ public class CoverageService {
   public var callbackFailed: ((IPificationSDK.IPificationException) -> Swift.Void)?
   public var callbackLog: ((Swift.String) -> Swift.Void)?
   public init()
+  @available(*, deprecated, message: "Use `startCheckCoverage` instead.")
   public func checkCoverage(_ customCoverageRequest: IPificationSDK.CoverageRequest? = nil)
+  public func startCheckCoverage(_ customCoverageRequest: IPificationSDK.CoverageRequest? = nil)
+  @available(*, deprecated, message: "Use `startCheckCoverage` instead.")
   public func checkCoverage(phoneNumber phone: Swift.String, _ customCoverageRequest: IPificationSDK.CoverageRequest? = nil)
+  public func startCheckCoverage(phoneNumber phone: Swift.String, _ customCoverageRequest: IPificationSDK.CoverageRequest? = nil)
   @objc deinit
 }
 @objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class IPificationTheme : ObjectiveC.NSObject {
@@ -82,6 +82,8 @@ public struct IsoCountryInfo {
   public func getCode() -> Swift.String?
   public func getState() -> Swift.String?
   public func getError() -> Swift.String
+  public func getErrorCode() -> Swift.String?
+  public func getErrorDescription() -> Swift.String?
   public func isAvailable() -> Swift.Bool
   @objc deinit
 }
@@ -94,8 +96,12 @@ public class AuthorizationService {
   public var callbackIMCanceled: (() -> Swift.Void)?
   public var callbackLog: ((Swift.String) -> Swift.Void)?
   public init()
+  @available(*, deprecated, message: "Use `startAuthentication` instead.")
   public func startAuthorization(_ authRequest: IPificationSDK.AuthorizationRequest? = nil)
+  @available(*, deprecated, message: "Use `startAuthentication` instead.")
   public func startAuthorization(viewController: UIKit.UIViewController, _ authRequest: IPificationSDK.AuthorizationRequest? = nil)
+  public func startAuthentication(_ authRequest: IPificationSDK.AuthorizationRequest? = nil)
+  public func startAuthentication(viewController: UIKit.UIViewController, _ authRequest: IPificationSDK.AuthorizationRequest? = nil)
   public func startIMAuthorization(viewController: UIKit.UIViewController, _ authRequest: IPificationSDK.AuthorizationRequest? = nil)
   public func checkIPAddress()
   public func checkRequestedIP(url: Swift.String)
@@ -163,17 +169,14 @@ public enum ResponseType {
 public class CoverageRequest : IPificationSDK.RequestProtocol {
   public var readTimeout: Foundation.TimeInterval
   public var connectTimeout: Foundation.TimeInterval
-  public var dnsConnectionTimeout: Foundation.TimeInterval
-  public var isIPv4PreferredOverIPv6: Swift.Bool
   public var isRedirect: Swift.Bool
-  public init(endpoint: Foundation.URL?, queryParams: [Swift.String : Swift.String]?, headers: [Swift.String : Swift.String]?, connectTimeout: Foundation.TimeInterval, readTimeout: Foundation.TimeInterval, dnsConnectionTimeout: Foundation.TimeInterval)
+  public init(endpoint: Foundation.URL?, queryParams: [Swift.String : Swift.String]?, headers: [Swift.String : Swift.String]?, connectTimeout: Foundation.TimeInterval, readTimeout: Foundation.TimeInterval)
   public class Builder {
     public init()
     public func addHeader(key: Swift.String, value: Swift.String)
     public func addQueryParam(key: Swift.String, value: Swift.String)
     public func setConnectTimeout(value: Foundation.TimeInterval)
     public func setReadTimeout(value: Foundation.TimeInterval)
-    public func setIPv4OverIPv6(value: Swift.Bool)
     public func build() -> IPificationSDK.CoverageRequest
     @objc deinit
   }
@@ -193,32 +196,46 @@ public enum IPEnvironment {
 }
 @objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class IPConfiguration : ObjectiveC.NSObject {
   final public let CURRENT_VERSION: Swift.String
-  public var SDK_TYPE_VALUE: Swift.String
+  final public let SDK_TYPE_VALUE: Swift.String
   public var enableCarrierHeaders: Swift.Bool
   public var STATE_LENGTH: Swift.Int
+  public var DEFAULT_SCOPE: Swift.String
   public var CoverageReadTimeout: Swift.Double
   public var CoverageConnectTimeout: Swift.Double
   public var AuthReadTimeout: Swift.Double
   public var AuthConnectTimeout: Swift.Double
+  public var ErrorReportTimeout: Swift.Double
+  public var BASE_URL: Swift.String?
+  public var COVERAGE_PATH: Swift.String
+  public var AUTH_PATH: Swift.String
+  public var SDK_LOG_PATH: Swift.String
+  public var COVERAGE_PATH_FORCED_TRUE: Swift.String
   public var COVERAGE_URL: Swift.String
   public var AUTHORIZATION_URL: Swift.String
   public var REDIRECT_URI: Swift.String
   public var CLIENT_ID: Swift.String
+  @available(*, deprecated, message: "Use CONSENT_ID_VALUE instead")
   public var CONSENT_ID: Swift.String
+  public var CONSENT_ID_VALUE: Swift.String
+  public var RESPONSE_TYPE_VALUE: Swift.String
   public var ENV: IPificationSDK.IPEnvironment
+  @available(*, deprecated, message: "Use IPLogs.sharedInstance.log instead")
   public var log: Swift.String
+  public var coverageAlwaysTrue: Swift.Bool
   public var validateIMApps: Swift.Bool
   public var IM_AUTO_MODE: Swift.Bool
   public var IM_PRIORITY_APP_LIST: [Swift.String]
   public var ENABLE_AUTO_OPEN_IM_APP: Swift.Bool
   public var debug: Swift.Bool
+  public var automaticStateGenerationEnabled: Swift.Bool
   public var customUrls: Swift.Bool
   public var currentState: Swift.String
+  public var enableParamsValidation: Swift.Bool
   public static let sharedInstance: IPificationSDK.IPConfiguration
-  public var sendErrorLog: Swift.Bool
+  public var sendErrorReportsEnabled: Swift.Bool
   public var SDK_LOG_URL_STAGE: Swift.String
   public var SDK_LOG_URL_LIVE: Swift.String
-  public var SDK_LOG_URL_CUSTOM: Swift.String
+  public var MAX_LOG_LENGTH: Swift.Int
   public func generateState() -> Swift.String
   public func generateHeaderLogs(inputPhone: Swift.String, CLIENT_IP: Swift.String?)
   @objc deinit
@@ -226,12 +243,10 @@ public enum IPEnvironment {
 public class AuthorizationRequest : IPificationSDK.RequestProtocol {
   public var readTimeout: Foundation.TimeInterval
   public var connectTimeout: Foundation.TimeInterval
-  public var dnsConnectionTimeout: Foundation.TimeInterval
-  public var isIPv4PreferredOverIPv6: Swift.Bool
   public var isRedirect: Swift.Bool
   public init()
   public init(endpoint: Foundation.URL)
-  public init(endpoint: Foundation.URL?, queryParams: [Swift.String : Swift.String]?, headers: [Swift.String : Swift.String]?, connectTimeout: Foundation.TimeInterval, readTimeout: Foundation.TimeInterval, isIPv4PreferredOverIPv6: Swift.Bool, dnsConnectionTimeout: Foundation.TimeInterval, scope: Swift.String?, state: Swift.String?)
+  public init(endpoint: Foundation.URL?, queryParams: [Swift.String : Swift.String]?, headers: [Swift.String : Swift.String]?, connectTimeout: Foundation.TimeInterval, readTimeout: Foundation.TimeInterval, scope: Swift.String?, state: Swift.String?)
   public class Builder {
     public init()
     public init(url: Swift.String)
@@ -241,7 +256,6 @@ public class AuthorizationRequest : IPificationSDK.RequestProtocol {
     public func addQueryParam(key: Swift.String, value: Swift.String)
     public func setConnectTimeout(value: Foundation.TimeInterval)
     public func setReadTimeout(value: Foundation.TimeInterval)
-    public func setIPv4OverIPv6(value: Swift.Bool)
     public func build() -> IPificationSDK.AuthorizationRequest
     @objc deinit
   }
@@ -250,14 +264,18 @@ public class AuthorizationRequest : IPificationSDK.RequestProtocol {
   public func formatedHeaders(enableCarrierHeaders: Swift.Bool) -> Swift.String
   @objc deinit
 }
+@objc @_inheritsConvenienceInitializers public class IPLogs : ObjectiveC.NSObject {
+  public var log: Swift.String
+  public static let sharedInstance: IPificationSDK.IPLogs
+  @objc override dynamic public init()
+  @objc deinit
+}
 public enum IPificationError {
-  case notActive
-  case callback_nil
-  case request_nil
-  case connection_error
-  case general
-  case cannot_connect
   case validation
+  case unsupported_version
+  case notActive
+  case cannot_connect
+  case connection_error
   case authorized_failed
   case check_coverage_failed
   case user_cancel
@@ -271,7 +289,7 @@ public struct IPificationException : Swift.Error {
   public var localizedDescription: Swift.String {
     get
   }
-  public var errorCode: IPificationSDK.IPificationError {
+  public var sdkErrorCode: IPificationSDK.IPificationError {
     get
   }
 }

@@ -216,6 +216,12 @@ SWIFT_CLASS("_TtC14IPificationSDK15IPConfiguration")
 @end
 
 
+SWIFT_CLASS("_TtC14IPificationSDK6IPLogs")
+@interface IPLogs : NSObject
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+@end
+
+
 SWIFT_CLASS("_TtC14IPificationSDK17IPificationLocale")
 @interface IPificationLocale : NSObject
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
@@ -454,6 +460,12 @@ SWIFT_CLASS("_TtC14IPificationSDK15IPConfiguration")
 @end
 
 
+SWIFT_CLASS("_TtC14IPificationSDK6IPLogs")
+@interface IPLogs : NSObject
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+@end
+
+
 SWIFT_CLASS("_TtC14IPificationSDK17IPificationLocale")
 @interface IPificationLocale : NSObject
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
@@ -689,6 +701,12 @@ SWIFT_CLASS("_TtC14IPificationSDK15IPConfiguration")
 @interface IPConfiguration : NSObject
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
+@end
+
+
+SWIFT_CLASS("_TtC14IPificationSDK6IPLogs")
+@interface IPLogs : NSObject
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 @end
 
 

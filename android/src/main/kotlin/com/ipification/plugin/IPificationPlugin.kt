@@ -1,10 +1,11 @@
 package com.ipification.plugin
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import androidx.annotation.NonNull
@@ -26,6 +27,7 @@ import com.ipification.mobile.sdk.im.IMTheme
 import com.ipification.mobile.sdk.im.ui.IMVerificationActivity
 import com.ipification.mobile.sdk.android.IPificationServices
 import com.ipification.mobile.sdk.android.utils.IPConstant
+import com.ipification.mobile.sdk.android.utils.IPLogs
 
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -41,7 +43,9 @@ class IPificationPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Activ
     private lateinit var channel: MethodChannel
     private var authenticationHelper: AuthenticationHelper? = null
     private var activity: Activity? = null
+    private val mainHandler = Handler(Looper.getMainLooper())
     private val authInProgress = AtomicBoolean(false)
+    private val coverageInProgress = AtomicBoolean(false)
 
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(binding.binaryMessenger, CHANNEL_NAME)
@@ -58,6 +62,7 @@ class IPificationPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Activ
     }
 
     override fun onDetachedFromActivity() {
+        authenticationHelper = null
         activity = null
     }
 
@@ -78,12 +83,12 @@ class IPificationPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Activ
             "checkCoverage" -> handleCheckCoverage(result)
             "checkCoverageWithPhoneNumber" -> handleCheckCoverageWithPhoneNumber(call, result)
             "setConfiguration" -> handleSetConfiguration(call)
-            "getConfiguration" -> handleGetConfiguration(call, result)
             "setEnv" -> handleSetEnv(call)
             "getClientId" -> result.success(getConfigString { IPConfiguration.getInstance().CLIENT_ID })
-            "getRedirectUri" -> result.success(getConfigString { IPConfiguration.getInstance().REDIRECT_URI.toString() })
+            "getRedirectUri" -> result.success(getConfigString { IPConfiguration.getInstance().REDIRECT_URI?.toString() })
             "setClientId" -> handleSetClientId(call)
             "setRedirectUri" -> handleSetRedirectUri(call)
+            "setBaseUrl" -> handleSetBaseUrl(call)
             "setCheckCoverageUrl" -> handleSetCoverageUrl(call)
             "setAuthorizationUrl" -> handleSetAuthorizationUrl(call)
             "addQueryParam" -> handleAddQueryParam(call)
@@ -93,7 +98,7 @@ class IPificationPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Activ
             "showNotification" -> handleShowNotification(call, result)
             "unregisterNetwork" -> handleUnregisterNetwork()
             "enableLog" -> IPConfiguration.getInstance().debug = true
-            "getLog" -> result.success(IPConstant.getInstance().LOG ?: "")
+            "getLog" -> result.success(IPLogs.getInstance().LOG ?: "")
             "updateLocale" -> handleUpdateLocale(call)
             "updateTheme" -> handleUpdateTheme(call)
             else -> result.success("unregister function")
@@ -102,131 +107,152 @@ class IPificationPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Activ
 
     private fun createAuthListener(result: Result) = object : AuthenticationListener {
         override fun onSuccess(response: String) {
-            if (authInProgress.compareAndSet(true, false)) {
-                activity?.runOnUiThread { result.success(response) }
-                authenticationHelper = null
+            finishAuth()
+            mainHandler.post {
+                result.success(response)
             }
         }
 
         override fun onFail(errorResult: AuthenticationError) {
-            if (authInProgress.compareAndSet(true, false)) {
-                activity?.runOnUiThread {
-                    result.error(errorResult.error_code.code, errorResult.error_message, null)
-                }
-                authenticationHelper = null
+            finishAuth()
+            mainHandler.post {
+                result.error(errorResult.error_code.code, errorResult.error_message, null)
             }
         }
 
         override fun onIMCancel() {
-            authInProgress.set(false)
-            result.error(ErrorCode.AUTHENTICATE_IM_CANCEL.code, "im_canceled", null)
+            finishAuth()
+            mainHandler.post {
+                result.error(ErrorCode.AUTHENTICATE_IM_CANCEL.code, "im_canceled", null)
+            }
         }
     }
 
     private fun handleAuthentication(call: MethodCall, result: Result) {
-        if (authInProgress.get()) return
-        
-        val loginHint = call.argument<String>("login_hint") ?: ""
-        executeWithAuthHelper(result) { helper ->
-            authInProgress.set(true)
-            helper.doAuthentication(loginHint, createAuthListener(result))
+        if (!beginAuthRequest(result)) {
+            return
         }
+
+        val loginHint = call.argument<String>("login_hint") ?: ""
+        val helper = getOrCreateAuthHelper(result)
+        if (helper == null) {
+            finishAuth()
+            mainHandler.post {
+                result.error("NO_ACTIVITY", "Activity not available", null)
+            }
+            return
+        }
+        helper.doAuthentication(loginHint, createAuthListener(result))
     }
 
     private fun handleAuthenticationWithChannel(call: MethodCall, result: Result) {
-        if (authInProgress.get()) return
-        
+        if (!beginAuthRequest(result)) {
+            return
+        }
+
         val loginHint = call.argument<String>("login_hint") ?: ""
         val channel = call.argument<String>("channel") ?: ""
-        executeWithAuthHelper(result) { helper ->
-            authInProgress.set(true)
-            helper.startAuthorization(activity!!, loginHint, channel, createAuthListener(result))
+        val currentActivity = activity
+        val helper = getOrCreateAuthHelper(result)
+        if (currentActivity == null || helper == null) {
+            finishAuth()
+            mainHandler.post {
+                result.error("NO_ACTIVITY", "Activity not available", null)
+            }
+            return
         }
+        helper.startAuthorization(currentActivity, loginHint, channel, createAuthListener(result))
     }
 
     private fun handleIMAuthentication(call: MethodCall, result: Result) {
-        if (authInProgress.get()) return
-        
-        val channel = call.argument<String>("channel") ?: ""
-        executeWithAuthHelper(result) { helper ->
-            authInProgress.set(true)
-            helper.startAuthorization(activity!!, channel, createAuthListener(result))
+        if (!beginAuthRequest(result)) {
+            return
         }
+
+        val channel = call.argument<String>("channel") ?: ""
+        val currentActivity = activity
+        val helper = getOrCreateAuthHelper(result)
+        if (currentActivity == null || helper == null) {
+            finishAuth()
+            mainHandler.post {
+                result.error("NO_ACTIVITY", "Activity not available", null)
+            }
+            return
+        }
+        helper.startAuthorization(currentActivity, channel, createAuthListener(result))
     }
 
     private fun handleCheckCoverage(result: Result) {
-        if (authInProgress.get()) return
-        
-        executeWithAuthHelper(result) { helper ->
-            authInProgress.set(true)
-            helper.checkCoverage(
-                { response ->
-                    if (authInProgress.compareAndSet(true, false)) {
-                        activity?.runOnUiThread { result.success(response) }
-                        authenticationHelper = null
-                    }
-                },
-                { error ->
-                    if (authInProgress.compareAndSet(true, false)) {
-                        activity?.runOnUiThread {
-                            result.error(error.error_code.code, error.error_message, null)
-                        }
-                        authenticationHelper = null
-                    }
-                }
-            )
+        if (!beginCoverageRequest(result)) {
+            return
         }
+
+        val helper = createCoverageHelper(result)
+        if (helper == null) {
+            finishCoverage()
+            mainHandler.post {
+                result.error("NO_ACTIVITY", "Activity not available", null)
+            }
+            return
+        }
+
+        helper.checkCoverage(
+            { response ->
+                finishCoverage()
+                mainHandler.post {
+                    result.success(response)
+                }
+            },
+            { error ->
+                finishCoverage()
+                mainHandler.post {
+                    result.error(error.error_code.code, error.error_message, null)
+                }
+            }
+        )
     }
 
     private fun handleCheckCoverageWithPhoneNumber(call: MethodCall, result: Result) {
-        if (authInProgress.get()) return
-        
+        if (!beginCoverageRequest(result)) {
+            return
+        }
+
         val phoneNumber = call.argument<String>("phone_number")
         if (phoneNumber.isNullOrEmpty()) {
-            activity?.runOnUiThread {
+            finishCoverage()
+            mainHandler.post {
                 result.error("invalid_parameter", "phoneNumber cannot be empty", null)
             }
             return
         }
-        
-        executeWithAuthHelper(result) { helper ->
-            authInProgress.set(true)
-            helper.checkCoverage(phoneNumber,
-                { response ->
-                    if (authInProgress.compareAndSet(true, false)) {
-                        activity?.runOnUiThread { result.success(response) }
-                        authenticationHelper = null
-                    }
-                },
-                { error ->
-                    if (authInProgress.compareAndSet(true, false)) {
-                        activity?.runOnUiThread {
-                            result.error(error.error_code.code, error.error_message, null)
-                        }
-                        authenticationHelper = null
-                    }
-                }
-            )
+
+        val helper = createCoverageHelper(result)
+        if (helper == null) {
+            finishCoverage()
+            mainHandler.post {
+                result.error("NO_ACTIVITY", "Activity not available", null)
+            }
+            return
         }
+
+        helper.checkCoverage(phoneNumber,
+            { response ->
+                finishCoverage()
+                mainHandler.post {
+                    result.success(response)
+                }
+            },
+            { error ->
+                finishCoverage()
+                mainHandler.post {
+                    result.error(error.error_code.code, error.error_message, null)
+                }
+            }
+        )
     }
 
     private fun handleSetConfiguration(call: MethodCall) {
-        val jsonConfig = call.argument<String>("config_file_name")
-        if (!jsonConfig.isNullOrEmpty()) {
-            // if (BuildConfig.DEBUG) Log.d(TAG, "config_file_name: $jsonConfig")
-            executeWithAuthHelper { it.setConfiguration(jsonConfig) }
-        }
-    }
-
-    private fun handleGetConfiguration(call: MethodCall, result: Result) {
-        val configName = call.argument<String>("config_name")
-        if (!configName.isNullOrEmpty()) {
-            executeWithAuthHelper(result) { helper ->
-                activity?.runOnUiThread {
-                    result.success(helper.getConfigurationByName(configName))
-                }
-            }
-        }
+        // Kept as a no-op for Flutter API compatibility.
     }
 
     private fun handleSetEnv(call: MethodCall) {
@@ -252,6 +278,15 @@ class IPificationPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Activ
         val redirectValue = call.argument<String>("value")
         if (!redirectValue.isNullOrEmpty()) {
             activity?.let { IPConfiguration.getInstance().REDIRECT_URI = Uri.parse(redirectValue) }
+        }
+    }
+
+    private fun handleSetBaseUrl(call: MethodCall) {
+        val baseUrl = call.argument<String>("value")
+        if (!baseUrl.isNullOrEmpty()) {
+            activity?.let {
+                IPConfiguration.getInstance().BASE_URL = baseUrl
+            }
         }
     }
 
@@ -326,7 +361,7 @@ class IPificationPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Activ
 
     private fun handleUnregisterNetwork() {
         activity?.let {
-            val unregisterResult = CellularService.unregisterNetwork(it)
+            val unregisterResult = IPificationServices.unregisterNetwork(it)
             Log.d(TAG, "unregisterNetwork: $unregisterResult")
         }
     }
@@ -366,18 +401,50 @@ class IPificationPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Activ
     }
 
     private fun executeWithAuthHelper(result: Result? = null, action: (AuthenticationHelper) -> Unit) {
-        activity?.let {
-            if (authenticationHelper == null) {
-                authenticationHelper = AuthenticationHelper(IPApiService(it))
-            }
-            authenticationHelper?.let(action) ?: run {
-                result?.error("HELPER_NULL", "Authentication helper initialization failed", null)
-            }
-        } ?: result?.error("NO_ACTIVITY", "Activity not available", null)
+        getOrCreateAuthHelper(result)?.let(action)
     }
 
-    private fun getConfigString(action: () -> String): String? {
+    private fun getOrCreateAuthHelper(result: Result? = null): AuthenticationHelper? {
+        val currentActivity = activity ?: return null
+
+        if (authenticationHelper == null) {
+            authenticationHelper = AuthenticationHelper(IPApiService(currentActivity))
+        }
+
+        return authenticationHelper
+    }
+
+    private fun createCoverageHelper(result: Result? = null): AuthenticationHelper? {
+        val currentActivity = activity ?: return null
+
+        return AuthenticationHelper(IPApiService(currentActivity))
+    }
+
+    private fun getConfigString(action: () -> String?): String? {
         return activity?.let { action() }
+    }
+
+    private fun beginAuthRequest(result: Result): Boolean {
+        if (!authInProgress.compareAndSet(false, true)) {
+            return false
+        }
+        return true
+    }
+
+    private fun beginCoverageRequest(result: Result): Boolean {
+        if (!coverageInProgress.compareAndSet(false, true)) {
+            return false
+        }
+        return true
+    }
+
+    private fun finishAuth() {
+        authInProgress.set(false)
+        authenticationHelper = null
+    }
+
+    private fun finishCoverage() {
+        coverageInProgress.set(false)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {

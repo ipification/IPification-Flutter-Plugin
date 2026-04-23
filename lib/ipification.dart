@@ -1,7 +1,8 @@
+// ignore_for_file: constant_identifier_names
+
 import 'ipification_plugin_platform_interface.dart';
 import 'package:ipification_plugin/coverage_response.dart';
 import 'package:ipification_plugin/authentication_response.dart';
-
 
 enum ENV { SANDBOX, PRODUCTION }
 
@@ -11,11 +12,8 @@ class IPificationPlugin {
   }
 
   Future<void> setAuthorizationServiceConfiguration(String fileName) {
-    return IPificationPluginPlatform.instance.setAuthorizationServiceConfiguration(fileName);
-  }
-
-  Future<String?> getConfigurationByName(String configName) {
-    return IPificationPluginPlatform.instance.getConfigurationByName(configName);
+    return IPificationPluginPlatform.instance
+        .setAuthorizationServiceConfiguration(fileName);
   }
 
   Future<void> setEnv(ENV env) {
@@ -42,6 +40,10 @@ class IPificationPlugin {
     return IPificationPluginPlatform.instance.setAuthorizationUrl(authUrl);
   }
 
+  Future<void> setBaseUrl(String baseUrl) {
+    return IPificationPluginPlatform.instance.setBaseUrl(baseUrl);
+  }
+
   Future<String?> getClientId() {
     return IPificationPluginPlatform.instance.getClientId();
   }
@@ -63,23 +65,35 @@ class IPificationPlugin {
   }
 
   Future<void> setCheckCoverageUrl(String checkCoverageUrl) {
-    return IPificationPluginPlatform.instance.setCheckCoverageUrl(checkCoverageUrl);
+    return IPificationPluginPlatform.instance.setCheckCoverageUrl(
+      checkCoverageUrl,
+    );
   }
 
   Future<CheckCoverageResponse> checkCoverage() {
     return IPificationPluginPlatform.instance.checkCoverage();
   }
 
-  Future<CheckCoverageResponse> checkCoverageWithPhoneNumber(String phoneNumber) {
-    return IPificationPluginPlatform.instance.checkCoverageWithPhoneNumber(phoneNumber);
+  Future<CheckCoverageResponse> checkCoverageWithPhoneNumber(
+    String phoneNumber,
+  ) {
+    return IPificationPluginPlatform.instance.checkCoverageWithPhoneNumber(
+      phoneNumber,
+    );
   }
 
   Future<AuthenticationResponse> doAuthentication({required String loginHint}) {
     return IPificationPluginPlatform.instance.doAuthentication(loginHint);
   }
 
-  Future<AuthenticationResponse> doAuthenticationWithChannel({required String channel, required String loginHint}) {
-    return IPificationPluginPlatform.instance.doAuthenticationWithChannel(channel, loginHint);
+  Future<AuthenticationResponse> doAuthenticationWithChannel({
+    required String channel,
+    required String loginHint,
+  }) {
+    return IPificationPluginPlatform.instance.doAuthenticationWithChannel(
+      channel,
+      loginHint,
+    );
   }
 
   Future<AuthenticationResponse> doIMAuthentication({required String channel}) {
@@ -95,31 +109,82 @@ class IPificationPlugin {
   }
 
   Future<void> showNotification(
-      String title, String message, String notificationFolder, String notificationIcon) {
+    String title,
+    String message,
+    String notificationFolder,
+    String notificationIcon,
+  ) {
     return IPificationPluginPlatform.instance.showNotification(
-        title, message, notificationFolder, notificationIcon);
+      title,
+      message,
+      notificationFolder,
+      notificationIcon,
+    );
   }
 
-  Future<void> updateIOSLocale(String titleBar, String mainTitle, String description,
-      String whatsappBtnText, String telegramBtnText, String viberBtnText, String cancelBtnText) {
+  Future<void> updateIOSLocale(
+    String titleBar,
+    String mainTitle,
+    String description,
+    String whatsappBtnText,
+    String telegramBtnText,
+    String viberBtnText,
+    String cancelBtnText,
+  ) {
     return IPificationPluginPlatform.instance.updateIOSLocale(
-        titleBar, mainTitle, description, whatsappBtnText, telegramBtnText, viberBtnText, cancelBtnText);
+      titleBar,
+      mainTitle,
+      description,
+      whatsappBtnText,
+      telegramBtnText,
+      viberBtnText,
+      cancelBtnText,
+    );
   }
 
-  Future<void> updateIOSTheme(String toolbarTitleColor, String titleColor, String descColor,
-      String cancelBtnColor, String backgroundColor) {
+  Future<void> updateIOSTheme(
+    String toolbarTitleColor,
+    String titleColor,
+    String descColor,
+    String cancelBtnColor,
+    String backgroundColor,
+  ) {
     return IPificationPluginPlatform.instance.updateIOSTheme(
-        toolbarTitleColor, titleColor, descColor, cancelBtnColor, backgroundColor);
+      toolbarTitleColor,
+      titleColor,
+      descColor,
+      cancelBtnColor,
+      backgroundColor,
+    );
   }
 
-  Future<void> updateAndroidLocale(String toolbarTitle, String mainTitle, String description,
-      String whatsappBtnText, String telegramBtnText, String viberBtnText) {
+  Future<void> updateAndroidLocale(
+    String toolbarTitle,
+    String mainTitle,
+    String description,
+    String whatsappBtnText,
+    String telegramBtnText,
+    String viberBtnText,
+  ) {
     return IPificationPluginPlatform.instance.updateAndroidLocale(
-        toolbarTitle, mainTitle, description, whatsappBtnText, telegramBtnText, viberBtnText);
+      toolbarTitle,
+      mainTitle,
+      description,
+      whatsappBtnText,
+      telegramBtnText,
+      viberBtnText,
+    );
   }
 
-  Future<void> updateAndroidTheme(String backgroundColor, String toolbarTextColor, String toolbarColor) {
+  Future<void> updateAndroidTheme(
+    String backgroundColor,
+    String toolbarTextColor,
+    String toolbarColor,
+  ) {
     return IPificationPluginPlatform.instance.updateAndroidTheme(
-        backgroundColor, toolbarTextColor, toolbarColor);
+      backgroundColor,
+      toolbarTextColor,
+      toolbarColor,
+    );
   }
 }

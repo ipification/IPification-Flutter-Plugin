@@ -117,17 +117,6 @@ public class IPificationPlugin: NSObject, FlutterPlugin {
         }
         authenticationHelper?.setScope(value: paramValue)
         
-    case "getConfiguration":
-        guard let arg = call.arguments as? [String: Any],
-              let configName = arg["config_name"] as? String else {
-            result(nil)
-            return
-        }
-        if authenticationHelper == nil {
-            authenticationHelper = AuthenticationHelper()
-        }
-        result(authenticationHelper?.getConfigurationByName(configName: configName))
-        
     case "getClientId":
         result(IPConfiguration.sharedInstance.CLIENT_ID)
         
@@ -135,7 +124,6 @@ public class IPificationPlugin: NSObject, FlutterPlugin {
         result(IPConfiguration.sharedInstance.REDIRECT_URI)
         
     case "setClientId":
-        IPConfiguration.sharedInstance.SDK_TYPE_VALUE = "flutter"
         let arg = call.arguments as? [String: Any]
         if let clientValue = arg?["value"] as? String, !clientValue.isEmpty {
             IPConfiguration.sharedInstance.CLIENT_ID = clientValue
@@ -166,6 +154,13 @@ public class IPificationPlugin: NSObject, FlutterPlugin {
             IPConfiguration.sharedInstance.customUrls = true
             IPConfiguration.sharedInstance.AUTHORIZATION_URL = authValue
         }
+
+    case "setBaseUrl":
+        let arg = call.arguments as? [String: Any]
+        if let baseUrl = arg?["value"] as? String, !baseUrl.isEmpty {
+            IPConfiguration.sharedInstance.BASE_URL = baseUrl
+        }
+        
         
     case "generateState":
         result(IPConfiguration.sharedInstance.generateState())
@@ -179,7 +174,7 @@ public class IPificationPlugin: NSObject, FlutterPlugin {
         
     case "getLog":
         print("log", IPConfiguration.sharedInstance.COVERAGE_URL)
-        result(IPConfiguration.sharedInstance.log)
+        result(IPLogs.sharedInstance.log)
         
     case "updateLocale":
         let arg = call.arguments as? [String: Any]
