@@ -18,21 +18,23 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 
-import com.ipification.mobile.sdk.android.CellularService
-import com.ipification.mobile.sdk.android.IPConfiguration
-import com.ipification.mobile.sdk.android.IPEnvironment
+import com.ipification.mobile.sdk.ip.IPConfiguration
+import com.ipification.mobile.sdk.ip.IPEnvironment
 import com.ipification.mobile.sdk.im.IMLocale
 import com.ipification.mobile.sdk.im.IMService
 import com.ipification.mobile.sdk.im.IMTheme
 import com.ipification.mobile.sdk.im.ui.IMVerificationActivity
-import com.ipification.mobile.sdk.android.IPificationServices
-import com.ipification.mobile.sdk.android.utils.IPConstant
-import com.ipification.mobile.sdk.android.utils.IPLogs
+import com.ipification.mobile.sdk.ip.IPificationServices
+import com.ipification.mobile.sdk.ip.utils.IPConstant
+import com.ipification.mobile.sdk.ip.utils.IPLogs
 
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
- * Flutter plugin for IPification authentication services on Android
+ * Flutter plugin entry point for IPification authentication services on Android.
+ *
+ * The plugin owns the method channel exposed to Dart, maps Flutter method calls to
+ * native SDK operations, and normalizes native callback results into Flutter responses.
  */
 class IPificationPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, ActivityResultListener {
     companion object {

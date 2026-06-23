@@ -2,16 +2,23 @@ import Flutter
 import UIKit
 import IPificationSDK
 
+/// Flutter plugin entry point for IPification authentication services on iOS.
+///
+/// This class owns the method channel exposed to Dart, maps Flutter method calls
+/// to native SDK operations, and returns normalized results to Flutter.
 public class IPificationPlugin: NSObject, FlutterPlugin {
 
+  /// Helper used for the current authentication or coverage operation.
   var authenticationHelper: AuthenticationHelper? = nil
 
+  /// Registers the plugin method channel with the Flutter engine.
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "ipification_plugin", binaryMessenger: registrar.messenger())
     let instance = IPificationPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
 
+  /// Handles method-channel calls from the Dart side of the plugin.
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
     case "getPlatformVersion":
@@ -210,6 +217,7 @@ public class IPificationPlugin: NSObject, FlutterPlugin {
     }
   }
 
+  /// Converts a six-digit hex color string into a `UIColor`.
   func hexStringToUIColor (hex:String) -> UIColor {
       var cString:String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
 

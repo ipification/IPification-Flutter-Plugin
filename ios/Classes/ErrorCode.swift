@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// Error codes exposed to Flutter when native IPification operations fail.
 enum ErrorCode  :String {
     case COVERAGE_UNAVAILABLE = "coverage_unavailable"
     case COVERAGE_ERROR = "coverage_error"

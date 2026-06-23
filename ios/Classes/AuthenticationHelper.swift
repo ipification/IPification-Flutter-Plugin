@@ -11,11 +11,22 @@ import Flutter
 import IPificationSDK
 
 
+/// Wraps the iOS IPification SDK and normalizes SDK callbacks for the Flutter bridge.
 class AuthenticationHelper {
+    /// Builder reused for authorization request options configured from Flutter.
     var authBuilder : AuthorizationRequest.Builder
+
+    /// Creates a helper with a fresh authorization request builder.
     init(){
         authBuilder = AuthorizationRequest.Builder()
     }
+
+    /// Checks whether IPification coverage is available for a specific phone number.
+    ///
+    /// - Parameters:
+    ///   - phoneNumber: Phone number to check with the native SDK.
+    ///   - success: Called with the raw SDK response when the coverage lookup succeeds.
+    ///   - fail: Called with a normalized plugin error when the coverage lookup fails.
     func checkCoverage(phoneNumber: String, success:@escaping(String)->(Void),fail:@escaping(AuthenticationError)->(Void)){
         let coverageService = CoverageService()
         coverageService.callbackFailed = { (error) -> Void in
@@ -33,6 +44,12 @@ class AuthenticationHelper {
         }
         coverageService.checkCoverage(phoneNumber: phoneNumber)
     }
+
+    /// Checks whether IPification coverage is available for the current device context.
+    ///
+    /// - Parameters:
+    ///   - success: Called with the raw SDK response when the coverage lookup succeeds.
+    ///   - fail: Called with a normalized plugin error when the coverage lookup fails.
     func checkCoverage(success:@escaping(String)->(Void),fail:@escaping(AuthenticationError)->(Void)){
         let coverageService = CoverageService()
         coverageService.callbackFailed = { (error) -> Void in
@@ -51,6 +68,12 @@ class AuthenticationHelper {
         coverageService.checkCoverage()
     }
     
+    /// Performs cellular authorization with an optional login hint.
+    ///
+    /// - Parameters:
+    ///   - login_hint: Optional login hint added to the authorization request.
+    ///   - success: Called with the raw SDK response when authorization succeeds.
+    ///   - fail: Called with a normalized plugin error when authorization fails or is canceled.
     func doAuthentication(login_hint:String, success:@escaping(String?)->(Void),fail:@escaping(AuthenticationError)->(Void)){
         let authorizationService = AuthorizationService()
         authorizationService.callbackFailed = { (error) -> Void in
@@ -87,6 +110,13 @@ class AuthenticationHelper {
     }
 
 
+    /// Starts authorization with optional login hint and channel values.
+    ///
+    /// - Parameters:
+    ///   - login_hint: Optional login hint added to the authorization request.
+    ///   - channel: Optional channel value added to the authorization request.
+    ///   - success: Called with the raw SDK response when authorization succeeds.
+    ///   - fail: Called with a normalized plugin error when authorization fails or is canceled.
     func doAuthentication(login_hint:String, channel: String, success:@escaping(String?)->(Void),fail:@escaping(AuthenticationError)->(Void)){
        
         let authorizationService = AuthorizationService()
@@ -132,6 +162,12 @@ class AuthenticationHelper {
         authorizationService.startAuthorization(viewController: controller, authBuilder.build())
     }
 
+    /// Starts Instant Messaging authorization for the supplied channel.
+    ///
+    /// - Parameters:
+    ///   - channel: Optional IM channel value added to the authorization request.
+    ///   - success: Called with the raw SDK response when authorization succeeds.
+    ///   - fail: Called with a normalized plugin error when authorization fails or is canceled.
     func doAuthentication(channel: String, success:@escaping(String?)->(Void),fail:@escaping(AuthenticationError)->(Void)){
         let authorizationService = AuthorizationService()
         authorizationService.callbackFailed = { (error) -> Void in
@@ -171,20 +207,24 @@ class AuthenticationHelper {
         authorizationService.startIMAuthorization(viewController: controller, authBuilder.build())
     }
     
+    /// Adds a custom query parameter to future authorization requests.
     func addQueryParam(key: String, value: String){
         print("key", key, value)
         authBuilder.addQueryParam(key: key, value: value)
     }
+
+    /// Sets the OAuth state value on future authorization requests.
     func setState(value: String){
         print("setState", value)
         authBuilder.setState(value: value)
     }
+
+    /// Sets the OAuth scope on future authorization requests.
     func setScope(value: String){
         print("setScope", value)
         authBuilder.setScope(value: value)
     }
 }
-
 
 
 
