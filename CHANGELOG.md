@@ -116,3 +116,8 @@ Synced with native SDK android v2.0.18.5 and iOS 2.0.11.5
 ## 2.0.30
 
 Synced with native SDK android v2.0.18.5 and iOS 2.0.11.6
+
+
+## 2.2.0
+
+Synced with native SDK android v2.2.3 and iOS 2.2.0
