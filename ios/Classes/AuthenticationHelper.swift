@@ -15,6 +15,8 @@ import IPificationSDK
 class AuthenticationHelper {
     /// Builder reused for authorization request options configured from Flutter.
     var authBuilder : AuthorizationRequest.Builder
+    private var multiAuthCallback: MultiAuthBridgeCallback?
+    private var smsCallback: SMSBridgeCallback?
 
     /// Creates a helper with a fresh authorization request builder.
     init(){
@@ -206,6 +208,38 @@ class AuthenticationHelper {
         let controller : FlutterViewController = window.rootViewController as! FlutterViewController
         authorizationService.startIMAuthorization(viewController: controller, authBuilder.build())
     }
+
+    /// Starts configured-channel authentication and returns either an auth response or OTP challenge.
+    func doAuthenticationWithChannels(loginHint:String, success:@escaping(String?)->(Void),fail:@escaping(AuthenticationError)->(Void)){
+        let authorizationService = AuthorizationService()
+        if loginHint.isEmpty == false {
+            authBuilder.addQueryParam(key: "login_hint", value: loginHint)
+        }
+
+        let callback = MultiAuthBridgeCallback(success: success, fail: fail)
+        multiAuthCallback = callback
+        let window: UIWindow = ((UIApplication.shared.delegate?.window)!)!
+        let controller : FlutterViewController = window.rootViewController as! FlutterViewController
+        authorizationService.startAuthentication(viewController: controller, authBuilder.build(), callback: callback)
+    }
+
+    /// Starts SMS authentication and returns the OTP initiation response.
+    func startSMSAuthentication(phoneNumber: String, scope: String?, success:@escaping(String?)->(Void),fail:@escaping(AuthenticationError)->(Void)){
+        let callback = SMSBridgeCallback(success: success, fail: fail)
+        smsCallback = callback
+        if let scopeValue = scope, scopeValue.isEmpty == false {
+            SMSServices.startVerification(phoneNumber: phoneNumber, scope: scopeValue, callback: callback)
+        } else {
+            SMSServices.startVerification(phoneNumber: phoneNumber, callback: callback)
+        }
+    }
+
+    /// Verifies a user-entered SMS OTP and returns the final token response.
+    func verifySMSOTP(otpCode: String, authReqId: String, nonce: String, success:@escaping(String?)->(Void),fail:@escaping(AuthenticationError)->(Void)){
+        let callback = SMSBridgeCallback(success: success, fail: fail)
+        smsCallback = callback
+        SMSServices.verifyOTP(otpCode: otpCode, authReqId: authReqId, nonce: nonce, callback: callback)
+    }
     
     /// Adds a custom query parameter to future authorization requests.
     func addQueryParam(key: String, value: String){
@@ -226,5 +260,95 @@ class AuthenticationHelper {
     }
 }
 
+private class MultiAuthBridgeCallback: MultiAuthCallback {
+    private let success: (String?)->(Void)
+    private let fail: (AuthenticationError)->(Void)
 
+    init(success:@escaping(String?)->(Void), fail:@escaping(AuthenticationError)->(Void)) {
+        self.success = success
+        self.fail = fail
+    }
 
+    func onSuccess(response: AuthorizationResponse) {
+        let json: [String: Any] = [
+            "type": "authentication",
+            "authentication_response": response.getPlainResponse()
+        ]
+        success(jsonString(json))
+    }
+
+    func onOTPRequired(response: SMSAuthResponse) {
+        let json: [String: Any] = [
+            "type": "otp_required",
+            "sms_auth_response": smsAuthJson(response)
+        ]
+        success(jsonString(json))
+    }
+
+    func onError(error: IPificationException) {
+        var temp = AuthenticationError()
+        temp.error_code = ErrorCode.AUTHENTICATE_FAIL
+        temp.error_message = error.localizedDescription
+        fail(temp)
+    }
+}
+
+private class SMSBridgeCallback: SMSCallback {
+    private let success: (String?)->(Void)
+    private let fail: (AuthenticationError)->(Void)
+
+    init(success:@escaping(String?)->(Void), fail:@escaping(AuthenticationError)->(Void)) {
+        self.success = success
+        self.fail = fail
+    }
+
+    func onAuthInitiated(response: SMSAuthResponse) {
+        success(jsonString(smsAuthJson(response)))
+    }
+
+    func onSuccess(response: SMSTokenResponse) {
+        success(jsonString(smsTokenJson(response)))
+    }
+
+    func onError(error: IPificationException) {
+        var temp = AuthenticationError()
+        temp.error_code = ErrorCode.AUTHENTICATE_FAIL
+        temp.error_message = error.localizedDescription
+        fail(temp)
+    }
+}
+
+private func smsAuthJson(_ response: SMSAuthResponse) -> [String: Any] {
+    var json: [String: Any] = [
+        "auth_req_id": response.authReqId,
+        "nonce": response.nonce,
+        "raw_response": response.rawResponse
+    ]
+    if let authServer = response.authServer {
+        json["auth_server"] = [
+            "id": authServer.id,
+            "url": authServer.url
+        ]
+    }
+    return json
+}
+
+private func smsTokenJson(_ response: SMSTokenResponse) -> [String: Any] {
+    var json: [String: Any] = [
+        "phone_number_verified": response.phoneNumberVerified
+    ]
+    json["sub"] = response.sub
+    json["phone_number"] = response.phoneNumber
+    json["login_hint"] = response.loginHint
+    json["raw_response"] = response.rawResponse
+    return json
+}
+
+private func jsonString(_ dictionary: [String: Any]) -> String {
+    guard JSONSerialization.isValidJSONObject(dictionary),
+          let data = try? JSONSerialization.data(withJSONObject: dictionary),
+          let string = String(data: data, encoding: .utf8) else {
+        return "{}"
+    }
+    return string
+}

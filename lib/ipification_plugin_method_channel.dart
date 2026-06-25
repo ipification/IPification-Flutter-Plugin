@@ -5,6 +5,9 @@ import 'ipification.dart';
 import 'package:flutter/services.dart';
 import 'package:ipification_plugin/authentication_response.dart';
 import 'package:ipification_plugin/coverage_response.dart';
+import 'package:ipification_plugin/multi_authentication_response.dart';
+import 'package:ipification_plugin/sms_auth_response.dart';
+import 'package:ipification_plugin/sms_token_response.dart';
 
 import 'ipification_plugin_platform_interface.dart';
 
@@ -144,6 +147,43 @@ class MethodChannelIPificationPlugin extends IPificationPluginPlatform {
   }
 
   @override
+  Future<MultiAuthenticationResponse> doAuthenticationWithChannels(
+    String loginHint,
+  ) async {
+    final String? resultJson = await _channel.invokeMethod(
+      "doAuthenticationWithChannels",
+      {"login_hint": loginHint},
+    );
+    return MultiAuthenticationResponse.fromJson(resultJson);
+  }
+
+  @override
+  Future<SmsAuthResponse> startSMSAuthentication(
+    String phoneNumber,
+    String? scope,
+  ) async {
+    final String? resultJson = await _channel.invokeMethod(
+      "startSMSAuthentication",
+      {"phone_number": phoneNumber, "scope": scope},
+    );
+    return SmsAuthResponse.fromJson(resultJson);
+  }
+
+  @override
+  Future<SmsTokenResponse> verifySMSOTP(
+    String otpCode,
+    String authReqId,
+    String nonce,
+  ) async {
+    final String? resultJson = await _channel.invokeMethod("verifySMSOTP", {
+      "otp_code": otpCode,
+      "auth_req_id": authReqId,
+      "nonce": nonce,
+    });
+    return SmsTokenResponse.fromJson(resultJson);
+  }
+
+  @override
   Future<void> enableLog() async {
     await _channel.invokeMethod<String>('enableLog');
   }
@@ -157,6 +197,55 @@ class MethodChannelIPificationPlugin extends IPificationPluginPlatform {
   @override
   Future<void> setScope(String value) async {
     _channel.invokeMethod("setScope", {"value": value});
+  }
+
+  @override
+  Future<void> setAuthChannels(List<AuthChannel> channels) async {
+    await _channel.invokeMethod("setAuthChannels", {
+      "channels": channels.map((channel) => channel.name).toList(),
+    });
+  }
+
+  @override
+  Future<void> setSMSConfiguration({
+    String? sandboxBackendUrl,
+    String? productionBackendUrl,
+    String? authPath,
+    String? tokenPath,
+    String? scope,
+    String? serverId,
+  }) async {
+    await _channel.invokeMethod("setSMSConfiguration", {
+      "sandbox_backend_url": sandboxBackendUrl,
+      "production_backend_url": productionBackendUrl,
+      "auth_path": authPath,
+      "token_path": tokenPath,
+      "scope": scope,
+      "server_id": serverId,
+    });
+  }
+
+  @override
+  Future<void> setTS43Configuration({
+    String? sandboxBackendUrl,
+    String? productionBackendUrl,
+    String? authPath,
+    String? tokenPath,
+    String? scopeVerifyPhone,
+    String? scopeGetPhone,
+    String? defaultLoginHint,
+    String? defaultCarrierHint,
+  }) async {
+    await _channel.invokeMethod("setTS43Configuration", {
+      "sandbox_backend_url": sandboxBackendUrl,
+      "production_backend_url": productionBackendUrl,
+      "auth_path": authPath,
+      "token_path": tokenPath,
+      "scope_verify_phone": scopeVerifyPhone,
+      "scope_get_phone": scopeGetPhone,
+      "default_login_hint": defaultLoginHint,
+      "default_carrier_hint": defaultCarrierHint,
+    });
   }
 
   @override

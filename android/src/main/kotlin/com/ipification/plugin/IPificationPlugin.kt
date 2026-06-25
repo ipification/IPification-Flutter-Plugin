@@ -19,6 +19,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 
 import com.ipification.mobile.sdk.ip.IPConfiguration
+import com.ipification.mobile.sdk.ip.AuthChannel
 import com.ipification.mobile.sdk.ip.IPEnvironment
 import com.ipification.mobile.sdk.im.IMLocale
 import com.ipification.mobile.sdk.im.IMService
@@ -82,27 +83,33 @@ class IPificationPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Activ
             "doAuthentication" -> handleAuthentication(call, result)
             "doAuthenticationWithChannel" -> handleAuthenticationWithChannel(call, result)
             "doIMAuthentication" -> handleIMAuthentication(call, result)
+            "doAuthenticationWithChannels" -> handleAuthenticationWithChannels(call, result)
+            "startSMSAuthentication" -> handleStartSMSAuthentication(call, result)
+            "verifySMSOTP" -> handleVerifySMSOTP(call, result)
             "checkCoverage" -> handleCheckCoverage(result)
             "checkCoverageWithPhoneNumber" -> handleCheckCoverageWithPhoneNumber(call, result)
-            "setConfiguration" -> handleSetConfiguration(call)
-            "setEnv" -> handleSetEnv(call)
+            "setConfiguration" -> { handleSetConfiguration(call); result.success(null) }
+            "setEnv" -> { handleSetEnv(call); result.success(null) }
             "getClientId" -> result.success(getConfigString { IPConfiguration.getInstance().CLIENT_ID })
             "getRedirectUri" -> result.success(getConfigString { IPConfiguration.getInstance().REDIRECT_URI?.toString() })
-            "setClientId" -> handleSetClientId(call)
-            "setRedirectUri" -> handleSetRedirectUri(call)
-            "setBaseUrl" -> handleSetBaseUrl(call)
-            "setCheckCoverageUrl" -> handleSetCoverageUrl(call)
-            "setAuthorizationUrl" -> handleSetAuthorizationUrl(call)
-            "addQueryParam" -> handleAddQueryParam(call)
-            "setState" -> handleSetState(call)
-            "setScope" -> handleSetScope(call)
+            "setClientId" -> { handleSetClientId(call); result.success(null) }
+            "setRedirectUri" -> { handleSetRedirectUri(call); result.success(null) }
+            "setBaseUrl" -> { handleSetBaseUrl(call); result.success(null) }
+            "setCheckCoverageUrl" -> { handleSetCoverageUrl(call); result.success(null) }
+            "setAuthorizationUrl" -> { handleSetAuthorizationUrl(call); result.success(null) }
+            "addQueryParam" -> { handleAddQueryParam(call); result.success(null) }
+            "setState" -> { handleSetState(call); result.success(null) }
+            "setScope" -> { handleSetScope(call); result.success(null) }
+            "setAuthChannels" -> handleSetAuthChannels(call, result)
+            "setSMSConfiguration" -> handleSetSMSConfiguration(call, result)
+            "setTS43Configuration" -> handleSetTS43Configuration(call, result)
             "generateState" -> result.success(getConfigString { IPConfiguration.getInstance().generateState() })
             "showNotification" -> handleShowNotification(call, result)
-            "unregisterNetwork" -> handleUnregisterNetwork()
-            "enableLog" -> IPConfiguration.getInstance().debug = true
+            "unregisterNetwork" -> { handleUnregisterNetwork(); result.success(null) }
+            "enableLog" -> { IPConfiguration.getInstance().debug = true; result.success(null) }
             "getLog" -> result.success(IPLogs.getInstance().LOG ?: "")
-            "updateLocale" -> handleUpdateLocale(call)
-            "updateTheme" -> handleUpdateTheme(call)
+            "updateLocale" -> { handleUpdateLocale(call); result.success(null) }
+            "updateTheme" -> { handleUpdateTheme(call); result.success(null) }
             else -> result.success("unregister function")
         }
     }
@@ -182,6 +189,94 @@ class IPificationPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Activ
             return
         }
         helper.startAuthorization(currentActivity, channel, createAuthListener(result))
+    }
+
+    private fun handleAuthenticationWithChannels(call: MethodCall, result: Result) {
+        if (!beginAuthRequest(result)) {
+            return
+        }
+
+        val loginHint = call.argument<String>("login_hint") ?: ""
+        val currentActivity = activity
+        val helper = getOrCreateAuthHelper(result)
+        if (currentActivity == null || helper == null) {
+            finishAuth()
+            mainHandler.post {
+                result.error("NO_ACTIVITY", "Activity not available", null)
+            }
+            return
+        }
+        helper.startMultiAuthentication(currentActivity, loginHint, createAuthListener(result))
+    }
+
+    private fun handleStartSMSAuthentication(call: MethodCall, result: Result) {
+        if (!beginAuthRequest(result)) {
+            return
+        }
+
+        val phoneNumber = call.argument<String>("phone_number") ?: ""
+        val scope = call.argument<String>("scope")
+        if (phoneNumber.isBlank()) {
+            finishAuth()
+            result.error("invalid_parameter", "phone_number cannot be empty", null)
+            return
+        }
+
+        val helper = getOrCreateAuthHelper(result)
+        if (helper == null) {
+            finishAuth()
+            result.error("NO_ACTIVITY", "Activity not available", null)
+            return
+        }
+
+        helper.startSMSAuthentication(
+            phoneNumber,
+            scope,
+            { response ->
+                finishAuth()
+                mainHandler.post { result.success(response) }
+            },
+            { error ->
+                finishAuth()
+                mainHandler.post { result.error(error.error_code.code, error.error_message, null) }
+            }
+        )
+    }
+
+    private fun handleVerifySMSOTP(call: MethodCall, result: Result) {
+        if (!beginAuthRequest(result)) {
+            return
+        }
+
+        val otpCode = call.argument<String>("otp_code") ?: ""
+        val authReqId = call.argument<String>("auth_req_id") ?: ""
+        val nonce = call.argument<String>("nonce") ?: ""
+        if (otpCode.isBlank() || authReqId.isBlank() || nonce.isBlank()) {
+            finishAuth()
+            result.error("invalid_parameter", "otp_code, auth_req_id, and nonce are required", null)
+            return
+        }
+
+        val helper = getOrCreateAuthHelper(result)
+        if (helper == null) {
+            finishAuth()
+            result.error("NO_ACTIVITY", "Activity not available", null)
+            return
+        }
+
+        helper.verifySMSOTP(
+            otpCode,
+            authReqId,
+            nonce,
+            { response ->
+                finishAuth()
+                mainHandler.post { result.success(response) }
+            },
+            { error ->
+                finishAuth()
+                mainHandler.post { result.error(error.error_code.code, error.error_message, null) }
+            }
+        )
     }
 
     private fun handleCheckCoverage(result: Result) {
@@ -338,6 +433,72 @@ class IPificationPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Activ
         }
     }
 
+    private fun handleSetAuthChannels(call: MethodCall, result: Result) {
+        val channels = call.argument<List<String>>("channels").orEmpty()
+            .mapNotNull { value ->
+                runCatching { AuthChannel.valueOf(value.uppercase()) }.getOrNull()
+            }
+
+        if (channels.isEmpty()) {
+            result.error("invalid_parameter", "channels cannot be empty", null)
+            return
+        }
+
+        IPConfiguration.getInstance().AUTH_CHANNELS = channels
+        result.success(null)
+    }
+
+    private fun handleSetSMSConfiguration(call: MethodCall, result: Result) {
+        IPConfiguration.getInstance().apply {
+            call.argument<String>("sandbox_backend_url")?.takeIf(String::isNotBlank)?.let {
+                SMS_BACKEND_URL_SANDBOX = it
+            }
+            call.argument<String>("production_backend_url")?.takeIf(String::isNotBlank)?.let {
+                SMS_BACKEND_URL_PRODUCTION = it
+            }
+            call.argument<String>("auth_path")?.takeIf(String::isNotBlank)?.let {
+                SMS_AUTH_PATH = it
+            }
+            call.argument<String>("token_path")?.takeIf(String::isNotBlank)?.let {
+                SMS_TOKEN_PATH = it
+            }
+            call.argument<String>("scope")?.takeIf(String::isNotBlank)?.let {
+                SMS_SCOPE_VERIFY_PHONE = it
+            }
+        }
+        result.success(null)
+    }
+
+    private fun handleSetTS43Configuration(call: MethodCall, result: Result) {
+        IPConfiguration.getInstance().apply {
+            call.argument<String>("sandbox_backend_url")?.takeIf(String::isNotBlank)?.let {
+                TS43_BACKEND_URL_SANDBOX = it
+            }
+            call.argument<String>("production_backend_url")?.takeIf(String::isNotBlank)?.let {
+                TS43_BACKEND_URL_PRODUCTION = it
+            }
+            call.argument<String>("auth_path")?.takeIf(String::isNotBlank)?.let {
+                TS43_AUTH_PATH = it
+            }
+            call.argument<String>("token_path")?.takeIf(String::isNotBlank)?.let {
+                TS43_TOKEN_PATH = it
+            }
+            call.argument<String>("scope_verify_phone")?.takeIf(String::isNotBlank)?.let {
+                TS43_SCOPE_VERIFY_PHONE = it
+            }
+            call.argument<String>("scope_get_phone")?.takeIf(String::isNotBlank)?.let {
+                TS43_SCOPE_GET_PHONE = it
+            }
+            call.argument<String>("default_login_hint")?.takeIf(String::isNotBlank)?.let {
+                TS43_DEFALT_LOGIN_HINT_SCOPE_GET_PHONE = it
+            }
+            call.argument<String>("default_carrier_hint")?.let {
+                TS43_DEFAULT_CARRIER_HINT = it
+            }
+        }
+        result.success(null)
+    }
+
     private fun handleShowNotification(call: MethodCall, result: Result) {
         try {
             val context = activity ?: run {
@@ -428,6 +589,7 @@ class IPificationPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Activ
 
     private fun beginAuthRequest(result: Result): Boolean {
         if (!authInProgress.compareAndSet(false, true)) {
+            result.error("request_in_progress", "Authentication request already in progress", null)
             return false
         }
         return true
@@ -435,6 +597,7 @@ class IPificationPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Activ
 
     private fun beginCoverageRequest(result: Result): Boolean {
         if (!coverageInProgress.compareAndSet(false, true)) {
+            result.error("request_in_progress", "Coverage request already in progress", null)
             return false
         }
         return true

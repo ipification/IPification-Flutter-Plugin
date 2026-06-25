@@ -2,11 +2,14 @@ package com.ipification.plugin
 
 import android.app.Activity
 import android.content.Context
+import com.ipification.mobile.sdk.ip.AuthChannel
 import com.ipification.mobile.sdk.ip.IPificationServices
 import com.ipification.mobile.sdk.ip.callback.IPAuthCallback
 import com.ipification.mobile.sdk.ip.callback.IPCoverageCallback
+import com.ipification.mobile.sdk.ip.callback.MultiAuthCallback
 import com.ipification.mobile.sdk.ip.callback.IPificationCallback
 import com.ipification.mobile.sdk.ip.request.AuthRequest
+import com.ipification.mobile.sdk.sms.callback.SMSCallback
 
 /**
  * Thin wrapper around the Android IPification SDK.
@@ -91,6 +94,51 @@ class IPApiService(
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
+    }
+
+    /**
+     * Starts multi-channel authentication using the configured channel priority.
+     */
+    fun startMultiAuthentication(
+        activity: Activity,
+        loginHint: String,
+        callback: MultiAuthCallback
+    ) {
+        if (loginHint.isNotEmpty()) {
+            authRequestBuilder.addQueryParam("login_hint", loginHint)
+        }
+        val authRequest = authRequestBuilder.build()
+        IPificationServices.startAuthentication(activity, authRequest, callback)
+    }
+
+    /**
+     * Starts SMS authentication and returns the OTP initiation response.
+     */
+    fun startSMSAuthentication(phoneNumber: String, scope: String?, callback: SMSCallback) {
+        if (scope.isNullOrEmpty()) {
+            IPificationServices.startSMSAuthentication(activity, phoneNumber, callback = callback)
+        } else {
+            IPificationServices.startSMSAuthentication(activity, phoneNumber, scope, callback)
+        }
+    }
+
+    /**
+     * Verifies a user-entered SMS OTP and returns the final token response.
+     */
+    fun verifySMSOTP(
+        otpCode: String,
+        authReqId: String,
+        nonce: String,
+        callback: SMSCallback
+    ) {
+        IPificationServices.verifySMSOTP(activity, otpCode, authReqId, nonce, callback)
+    }
+
+    /**
+     * Configures the native channel priority used by multi-channel authentication.
+     */
+    fun setAuthChannels(channels: List<AuthChannel>) {
+        com.ipification.mobile.sdk.ip.IPConfiguration.getInstance().AUTH_CHANNELS = channels
     }
 
     /**

@@ -35,8 +35,8 @@ You can install the `ipification_plugin` package using either the **Git method**
 dependencies:
   ipification_plugin:
     git:
-      url: https://github.com/bvantagelimited/IPification-Flutter-Plugin-Release.git
-      ref: 2.0.31
+      url: https://github.com/ipification/IPification-Flutter-Plugin.git
+      ref: 2.2.0
 ```
 
 3. Run the following command in your terminal:
@@ -53,7 +53,7 @@ If you prefer to use a **local version** of the plugin:
 1. **Download the Plugin Source Code:**
 
 ```
-https://github.com/bvantagelimited/IPification-Flutter-Plugin-Release/archive/refs/tags/2.0.31.zip
+https://github.com/bvantagelimited/IPification-Flutter-Plugin/archive/refs/tags/2.2.0.zip
 
 
 ```
@@ -65,7 +65,7 @@ Place the extracted folder in your project directory, e.g., `./plugins/IPificati
 ```yaml
 dependencies:
   ipification_plugin:
-    path: ./plugins/IPification-Flutter-Plugin-Release-2.0.31
+    path: ./plugins/IPification-Flutter-Plugin-Release-2.2.0
 ```
 
 4. Run the following command in your terminal:

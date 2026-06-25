@@ -1,5 +1,8 @@
 import 'package:ipification_plugin/authentication_response.dart';
 import 'package:ipification_plugin/coverage_response.dart';
+import 'package:ipification_plugin/multi_authentication_response.dart';
+import 'package:ipification_plugin/sms_auth_response.dart';
+import 'package:ipification_plugin/sms_token_response.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'ipification_plugin_method_channel.dart';
@@ -51,6 +54,28 @@ abstract class IPificationPluginPlatform extends PlatformInterface {
   Future<void> setState(String value);
 
   Future<void> setScope(String value);
+
+  Future<void> setAuthChannels(List<AuthChannel> channels);
+
+  Future<void> setSMSConfiguration({
+    String? sandboxBackendUrl,
+    String? productionBackendUrl,
+    String? authPath,
+    String? tokenPath,
+    String? scope,
+    String? serverId,
+  });
+
+  Future<void> setTS43Configuration({
+    String? sandboxBackendUrl,
+    String? productionBackendUrl,
+    String? authPath,
+    String? tokenPath,
+    String? scopeVerifyPhone,
+    String? scopeGetPhone,
+    String? defaultLoginHint,
+    String? defaultCarrierHint,
+  });
 
   Future<void> unregisterNetwork();
 
@@ -112,4 +137,19 @@ abstract class IPificationPluginPlatform extends PlatformInterface {
   );
 
   Future<AuthenticationResponse> doIMAuthentication(String channel);
+
+  Future<MultiAuthenticationResponse> doAuthenticationWithChannels(
+    String loginHint,
+  );
+
+  Future<SmsAuthResponse> startSMSAuthentication(
+    String phoneNumber,
+    String? scope,
+  );
+
+  Future<SmsTokenResponse> verifySMSOTP(
+    String otpCode,
+    String authReqId,
+    String nonce,
+  );
 }

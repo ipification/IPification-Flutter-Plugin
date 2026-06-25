@@ -3,8 +3,13 @@
 import 'ipification_plugin_platform_interface.dart';
 import 'package:ipification_plugin/coverage_response.dart';
 import 'package:ipification_plugin/authentication_response.dart';
+import 'package:ipification_plugin/multi_authentication_response.dart';
+import 'package:ipification_plugin/sms_auth_response.dart';
+import 'package:ipification_plugin/sms_token_response.dart';
 
 enum ENV { SANDBOX, PRODUCTION }
+
+enum AuthChannel { TS43, IP, SMS }
 
 class IPificationPlugin {
   Future<String?> getPlatformVersion() {
@@ -26,6 +31,50 @@ class IPificationPlugin {
 
   Future<void> setScope({required String value}) {
     return IPificationPluginPlatform.instance.setScope(value);
+  }
+
+  Future<void> setAuthChannels({required List<AuthChannel> channels}) {
+    return IPificationPluginPlatform.instance.setAuthChannels(channels);
+  }
+
+  Future<void> setSMSConfiguration({
+    String? sandboxBackendUrl,
+    String? productionBackendUrl,
+    String? authPath,
+    String? tokenPath,
+    String? scope,
+    String? serverId,
+  }) {
+    return IPificationPluginPlatform.instance.setSMSConfiguration(
+      sandboxBackendUrl: sandboxBackendUrl,
+      productionBackendUrl: productionBackendUrl,
+      authPath: authPath,
+      tokenPath: tokenPath,
+      scope: scope,
+      serverId: serverId,
+    );
+  }
+
+  Future<void> setTS43Configuration({
+    String? sandboxBackendUrl,
+    String? productionBackendUrl,
+    String? authPath,
+    String? tokenPath,
+    String? scopeVerifyPhone,
+    String? scopeGetPhone,
+    String? defaultLoginHint,
+    String? defaultCarrierHint,
+  }) {
+    return IPificationPluginPlatform.instance.setTS43Configuration(
+      sandboxBackendUrl: sandboxBackendUrl,
+      productionBackendUrl: productionBackendUrl,
+      authPath: authPath,
+      tokenPath: tokenPath,
+      scopeVerifyPhone: scopeVerifyPhone,
+      scopeGetPhone: scopeGetPhone,
+      defaultLoginHint: defaultLoginHint,
+      defaultCarrierHint: defaultCarrierHint,
+    );
   }
 
   Future<void> setState({required String value}) {
@@ -98,6 +147,36 @@ class IPificationPlugin {
 
   Future<AuthenticationResponse> doIMAuthentication({required String channel}) {
     return IPificationPluginPlatform.instance.doIMAuthentication(channel);
+  }
+
+  Future<MultiAuthenticationResponse> doAuthenticationWithChannels({
+    required String loginHint,
+  }) {
+    return IPificationPluginPlatform.instance.doAuthenticationWithChannels(
+      loginHint,
+    );
+  }
+
+  Future<SmsAuthResponse> startSMSAuthentication({
+    required String phoneNumber,
+    String? scope,
+  }) {
+    return IPificationPluginPlatform.instance.startSMSAuthentication(
+      phoneNumber,
+      scope,
+    );
+  }
+
+  Future<SmsTokenResponse> verifySMSOTP({
+    required String otpCode,
+    required String authReqId,
+    required String nonce,
+  }) {
+    return IPificationPluginPlatform.instance.verifySMSOTP(
+      otpCode,
+      authReqId,
+      nonce,
+    );
   }
 
   Future<void> enableLog() {

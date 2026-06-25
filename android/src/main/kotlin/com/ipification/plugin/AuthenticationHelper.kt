@@ -1,12 +1,18 @@
 package com.ipification.plugin
 
 import android.app.Activity
+import com.ipification.mobile.sdk.ip.AuthChannel
+import com.ipification.mobile.sdk.ip.callback.MultiAuthCallback
 import com.ipification.mobile.sdk.ip.callback.IPAuthCallback
 import com.ipification.mobile.sdk.ip.callback.IPCoverageCallback
 import com.ipification.mobile.sdk.ip.callback.IPificationCallback
 import com.ipification.mobile.sdk.ip.exception.IPificationError
 import com.ipification.mobile.sdk.ip.response.CoverageResponse
 import com.ipification.mobile.sdk.ip.response.IPAuthResponse
+import com.ipification.mobile.sdk.sms.callback.SMSCallback
+import com.ipification.mobile.sdk.sms.response.SMSAuthResponse
+import com.ipification.mobile.sdk.sms.response.SMSTokenResponse
+import org.json.JSONObject
 
 /**
  * Converts callbacks from [IPApiService] into plugin-level success and error handlers.
@@ -189,6 +195,85 @@ class AuthenticationHelper(private val apiService: IPApiService) {
     }
 
     /**
+     * Starts configured-channel authentication and returns either an auth response or OTP challenge.
+     *
+     * @param activity Activity used by the native SDK to launch UI if needed.
+     * @param loginHint Login hint added to the authorization request.
+     * @param listener Receives success, failure, or cancellation events.
+     */
+    fun startMultiAuthentication(
+        activity: Activity,
+        loginHint: String,
+        listener: AuthenticationListener
+    ) {
+        val callback = object : MultiAuthCallback {
+            override fun onSuccess(res: IPAuthResponse) {
+                val response = JSONObject()
+                    .put("type", "authentication")
+                    .put("authentication_response", res.fullResponse)
+                    .toString()
+                listener.onSuccess(response)
+            }
+
+            override fun onOTPRequired(response: SMSAuthResponse) {
+                listener.onSuccess(
+                    JSONObject()
+                        .put("type", "otp_required")
+                        .put("sms_auth_response", response.toJson())
+                        .toString()
+                )
+            }
+
+            override fun onError(error: IPificationError) {
+                listener.onFail(
+                    AuthenticationError(
+                        error_code = ErrorCode.AUTHENTICATE_FAIL,
+                        error_message = error.getErrorMessage()
+                    )
+                )
+            }
+        }
+        apiService.startMultiAuthentication(activity, loginHint, callback)
+    }
+
+    /**
+     * Starts SMS OTP verification.
+     */
+    fun startSMSAuthentication(
+        phoneNumber: String,
+        scope: String?,
+        onSuccess: (String) -> Unit,
+        onError: (AuthenticationError) -> Unit
+    ) {
+        apiService.startSMSAuthentication(phoneNumber, scope, createSMSCallback(onSuccess, onError))
+    }
+
+    /**
+     * Verifies the SMS OTP and returns the final token response.
+     */
+    fun verifySMSOTP(
+        otpCode: String,
+        authReqId: String,
+        nonce: String,
+        onSuccess: (String) -> Unit,
+        onError: (AuthenticationError) -> Unit
+    ) {
+        apiService.verifySMSOTP(
+            otpCode,
+            authReqId,
+            nonce,
+            createSMSCallback(onSuccess, onError)
+        )
+    }
+
+    /**
+     * Configures the authentication channel priority.
+     */
+    fun setAuthChannels(channels: List<AuthChannel>) {
+        apiService.setAuthChannels(channels)
+    }
+
+    /**
      * Sets the OAuth state value on future authentication requests.
      *
      * @param state State value to pass through the native SDK request builder.
@@ -214,5 +299,48 @@ class AuthenticationHelper(private val apiService: IPApiService) {
      */
     fun setScope(scope: String) {
         apiService.setScope(scope)
+    }
+
+    private fun createSMSCallback(
+        onSuccess: (String) -> Unit,
+        onError: (AuthenticationError) -> Unit
+    ) = object : SMSCallback {
+        override fun onAuthInitiated(response: SMSAuthResponse) {
+            onSuccess(response.toJson().toString())
+        }
+
+        override fun onSuccess(response: SMSTokenResponse) {
+            onSuccess(response.toJson().toString())
+        }
+
+        override fun onError(error: IPificationError) {
+            onError(
+                AuthenticationError(
+                    error_code = ErrorCode.AUTHENTICATE_FAIL,
+                    error_message = error.getErrorMessage()
+                )
+            )
+        }
+    }
+
+    private fun SMSAuthResponse.toJson(): JSONObject {
+        val authServerJson = authServer?.let {
+            JSONObject()
+                .put("id", it.id)
+                .put("url", it.url)
+        }
+        return JSONObject()
+            .put("auth_req_id", authReqId)
+            .put("nonce", nonce)
+            .put("auth_server", authServerJson)
+    }
+
+    private fun SMSTokenResponse.toJson(): JSONObject {
+        return JSONObject()
+            .put("sub", sub)
+            .put("phone_number", phoneNumber)
+            .put("phone_number_verified", phoneNumberVerified)
+            .put("login_hint", loginHint)
+            .put("raw_response", rawResponse)
     }
 }
