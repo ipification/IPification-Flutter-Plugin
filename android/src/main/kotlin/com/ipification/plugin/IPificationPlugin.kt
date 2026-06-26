@@ -589,7 +589,7 @@ class IPificationPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Activ
 
     private fun beginAuthRequest(result: Result): Boolean {
         if (!authInProgress.compareAndSet(false, true)) {
-            result.error("request_in_progress", "Authentication request already in progress", null)
+            // result.error("request_in_progress", "Authentication request already in progress", null)
             return false
         }
         return true
@@ -597,7 +597,7 @@ class IPificationPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Activ
 
     private fun beginCoverageRequest(result: Result): Boolean {
         if (!coverageInProgress.compareAndSet(false, true)) {
-            result.error("request_in_progress", "Coverage request already in progress", null)
+            // result.error("request_in_progress", "Coverage request already in progress", null)
             return false
         }
         return true
