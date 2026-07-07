@@ -57,6 +57,8 @@ abstract class IPificationPluginPlatform extends PlatformInterface {
 
   Future<void> setAuthChannels(List<AuthChannel> channels);
 
+  Future<void> setIPConfiguration(IPConfiguration configuration);
+
   Future<void> setSMSConfiguration({
     String? sandboxBackendUrl,
     String? productionBackendUrl,

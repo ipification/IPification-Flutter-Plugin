@@ -88,7 +88,7 @@ class IPificationPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Activ
             "verifySMSOTP" -> handleVerifySMSOTP(call, result)
             "checkCoverage" -> handleCheckCoverage(result)
             "checkCoverageWithPhoneNumber" -> handleCheckCoverageWithPhoneNumber(call, result)
-            "setConfiguration" -> { handleSetConfiguration(call); result.success(null) }
+            "setConfiguration" -> handleSetConfiguration(call, result)
             "setEnv" -> { handleSetEnv(call); result.success(null) }
             "getClientId" -> result.success(getConfigString { IPConfiguration.getInstance().CLIENT_ID })
             "getRedirectUri" -> result.success(getConfigString { IPConfiguration.getInstance().REDIRECT_URI?.toString() })
@@ -348,10 +348,6 @@ class IPificationPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Activ
         )
     }
 
-    private fun handleSetConfiguration(call: MethodCall) {
-        // Kept as a no-op for Flutter API compatibility.
-    }
-
     private fun handleSetEnv(call: MethodCall) {
         activity?.let {
             val env = call.argument<String>("value")
@@ -445,6 +441,164 @@ class IPificationPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, Activ
         }
 
         IPConfiguration.getInstance().AUTH_CHANNELS = channels
+        result.success(null)
+    }
+
+    private fun handleSetConfiguration(call: MethodCall, result: Result) {
+        if (call.argument<String>("config_file_name") != null) {
+            // Kept as a no-op for Flutter API compatibility.
+            result.success(null)
+            return
+        }
+
+        val authChannels = call.argument<List<String>>("auth_channels")
+        if (authChannels != null) {
+            val channels = authChannels.mapNotNull { value ->
+                runCatching { AuthChannel.valueOf(value.uppercase()) }.getOrNull()
+            }
+            if (channels.size != authChannels.size) {
+                result.error("invalid_parameter", "Unsupported auth channel", null)
+                return
+            }
+            IPConfiguration.getInstance().AUTH_CHANNELS = channels
+        }
+
+        IPConfiguration.getInstance().apply {
+            call.argument<Boolean>("debug")?.let { debug = it }
+            call.argument<Boolean>("dns_debug")?.let { dnsDebug = it }
+            call.argument<Boolean>("extra_debug")?.let { extraDebug = it }
+            call.argument<String>("env")?.let {
+                ENV = if (it == "production") IPEnvironment.PRODUCTION else IPEnvironment.SANDBOX
+            }
+            call.argument<String>("client_id")?.let { CLIENT_ID = it }
+            call.argument<String>("redirect_uri")?.let { REDIRECT_URI = Uri.parse(it) }
+            call.argument<Number>("state_length")?.let { STATE_LENGTH = it.toInt() }
+            call.argument<String>("current_state")?.let { currentState = it }
+            call.argument<String>("current_url")?.let { currentUrl = it }
+            call.argument<Boolean>("automatic_state_generation_enabled")?.let {
+                automaticStateGenerationEnabled = it
+            }
+            call.argument<Boolean>("send_error_reports_enabled")?.let {
+                sendErrorReportsEnabled = it
+            }
+            call.argument<Boolean>("error_report_enable_carrier_headers")?.let {
+                errorReportEnableCarrierHeaders = it
+            }
+            call.argument<Number>("error_report_timeout")?.let { ERROR_REPORT_TIMEOUT = it.toLong() }
+            call.argument<Boolean>("enable_single_request")?.let { enableSingleRequest = it }
+            call.argument<String>("default_scope")?.let { DEFAULT_SCOPE = it }
+            call.argument<String>("okhttp_user_agent")?.let { OKHTTP_USER_AGENT = it }
+            call.argument<String>("okhttp_accept")?.let { OKHTTP_ACCEPT = it }
+            call.argument<String>("sdk_type_value")?.let { SDK_TYPE_VALUE = it }
+            call.argument<Boolean>("auto_unregister_network")?.let { autoUnregisterNetwork = it }
+            call.argument<Boolean>("only_affected_brands")?.let { onlyAffectedBrands = it }
+            call.argument<Boolean>("retry_on_connection_failure")?.let {
+                retryOnConnectionFailure = it
+            }
+            call.argument<Number>("max_retries")?.let { MAX_RETRIES = it.toInt() }
+            call.argument<Boolean>("enabled_handle_cookie")?.let { enabledHandleCookie = it }
+            call.argument<Boolean>("coverage_always_true")?.let { coverageAlwaysTrue = it }
+            call.argument<String>("response_type_code")?.let { RESPONSE_TYPE_CODE = it }
+            call.argument<String>("coverage_path_forced_true")?.let {
+                COVERAGE_PATH_FORCED_TRUE = it
+            }
+            call.argument<String>("login_hint")?.let { LOGIN_HINT = it }
+            call.argument<String>("coverage_url_stage")?.let { COVERAGE_URL_STAGE = it }
+            call.argument<String>("coverage_url_live")?.let { COVERAGE_URL_LIVE = it }
+            call.argument<String>("auth_url_stage")?.let { AUTH_URL_STAGE = it }
+            call.argument<String>("auth_url_live")?.let { AUTH_URL_LIVE = it }
+            call.argument<String>("sdk_log_url_stage")?.let { SDK_LOG_URL_STAGE = it }
+            call.argument<String>("sdk_log_url_live")?.let { SDK_LOG_URL_LIVE = it }
+            call.argument<String>("coverage_url")?.let {
+                customUrls = true
+                COVERAGE_URL = Uri.parse(it)
+            }
+            call.argument<String>("authorization_url")?.let {
+                customUrls = true
+                AUTHORIZATION_URL = Uri.parse(it)
+            }
+            call.argument<Boolean>("custom_urls")?.let { customUrls = it }
+            call.argument<Boolean>("enable_params_validation")?.let {
+                enableParamsValidation = it
+            }
+            call.argument<String>("base_url")?.let { BASE_URL = it }
+            call.argument<String>("realm")?.let { REALM = it }
+            call.argument<String>("coverage_path")?.let { COVERAGE_PATH = it }
+            call.argument<String>("auth_path")?.let { AUTH_PATH = it }
+            call.argument<String>("sdk_log_path")?.let { SDK_LOG_PATH = it }
+            call.argument<Number>("coverage_read_timeout")?.let {
+                COVERAGE_READ_TIMEOUT = it.toLong()
+            }
+            call.argument<Number>("coverage_connect_timeout")?.let {
+                COVERAGE_CONNECT_TIMEOUT = it.toLong()
+            }
+            call.argument<Number>("auth_read_timeout")?.let { AUTH_READ_TIMEOUT = it.toLong() }
+            call.argument<Number>("auth_connect_timeout")?.let {
+                AUTH_CONNECT_TIMEOUT = it.toLong()
+            }
+            call.argument<Number>("connect_network_timeout")?.let {
+                CONNECT_NETWORK_TIMEOUT = it.toLong()
+            }
+            call.argument<Number>("connect_network_timeout_short")?.let {
+                CONNECT_NETWORK_TIMEOUT_SHORT = it.toLong()
+            }
+            call.argument<String>("consent_id_value")?.let { CONSENT_ID_VALUE = it }
+            call.argument<Number>("timeout_release_network")?.let {
+                TIMEOUT_RELEASE_NETWORK = it.toLong()
+            }
+            call.argument<Number>("default_timeout_release_network")?.let {
+                DEFAULT_TIMEOUT_RELEASE_NETWORK = it.toLong()
+            }
+            call.argument<String>("cellular_private_ip")?.let { CELLULAR_PRIVATE_IP = it }
+            call.argument<Boolean>("bind_app_to_cellular_network")?.let {
+                bindAppToCellularNetwork = it
+            }
+            call.argument<Boolean>("use_web_view_instead_of_api")?.let {
+                useWebViewInsteadOfApi = it
+            }
+            call.argument<String>("ip_token_url")?.let { IP_TOKEN_URL = it }
+            call.argument<Boolean>("enable_save_session_in_preference")?.let {
+                enable_Save_Session_In_Preference = it
+            }
+            call.argument<String>("whatsapp_package_name")?.let { whatsappPackageName = it }
+            call.argument<String>("telegram_package_name")?.let { telegramPackageName = it }
+            call.argument<String>("telegram_web_package_name")?.let { telegramWebPackageName = it }
+            call.argument<String>("viber_package_name")?.let { viberPackageName = it }
+            call.argument<Boolean>("im_auto_mode")?.let { IM_AUTO_MODE = it }
+            call.argument<List<String>>("im_priority_app_list")?.let {
+                IM_PRIORITY_APP_LIST = it.toTypedArray()
+            }
+            call.argument<Boolean>("validate_im_apps")?.let { validateIMApps = it }
+            call.argument<Number>("notification_id")?.let { NOTIFICATION_ID = it.toInt() }
+            call.argument<Number>("request_code")?.let { REQUEST_CODE = it.toInt() }
+            call.argument<String>("ts43_sandbox_backend_url")?.let {
+                TS43_BACKEND_URL_SANDBOX = it
+            }
+            call.argument<String>("ts43_production_backend_url")?.let {
+                TS43_BACKEND_URL_PRODUCTION = it
+            }
+            call.argument<String>("ts43_auth_path")?.let { TS43_AUTH_PATH = it }
+            call.argument<String>("ts43_token_path")?.let { TS43_TOKEN_PATH = it }
+            call.argument<String>("ts43_scope_verify_phone")?.let {
+                TS43_SCOPE_VERIFY_PHONE = it
+            }
+            call.argument<String>("ts43_scope_get_phone")?.let { TS43_SCOPE_GET_PHONE = it }
+            call.argument<String>("ts43_default_login_hint")?.let {
+                TS43_DEFALT_LOGIN_HINT_SCOPE_GET_PHONE = it
+            }
+            call.argument<String>("ts43_default_carrier_hint")?.let {
+                TS43_DEFAULT_CARRIER_HINT = it
+            }
+            call.argument<String>("sms_sandbox_backend_url")?.let {
+                SMS_BACKEND_URL_SANDBOX = it
+            }
+            call.argument<String>("sms_production_backend_url")?.let {
+                SMS_BACKEND_URL_PRODUCTION = it
+            }
+            call.argument<String>("sms_auth_path")?.let { SMS_AUTH_PATH = it }
+            call.argument<String>("sms_token_path")?.let { SMS_TOKEN_PATH = it }
+            call.argument<String>("sms_scope_verify_phone")?.let { SMS_SCOPE_VERIFY_PHONE = it }
+        }
         result.success(null)
     }
 

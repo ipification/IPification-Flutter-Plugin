@@ -24,9 +24,6 @@ public class IPificationPlugin: NSObject, FlutterPlugin {
     case "getPlatformVersion":
         result("iOS " + UIDevice.current.systemVersion)
 
-    case "setConfiguration":
-        result(nil)
-        
     case "checkCoverage":
         if authenticationHelper == nil {
             authenticationHelper = AuthenticationHelper()
@@ -209,6 +206,167 @@ public class IPificationPlugin: NSObject, FlutterPlugin {
             }
         }
         IPConfiguration.sharedInstance.AUTH_CHANNELS = channels
+        result(nil)
+
+    case "setConfiguration":
+        let arg = call.arguments as? [String: Any]
+        func doubleValue(_ key: String) -> Double? {
+            if let value = arg?[key] as? Double { return value }
+            if let value = arg?[key] as? Int { return Double(value) }
+            if let value = arg?[key] as? NSNumber { return value.doubleValue }
+            return nil
+        }
+        func intValue(_ key: String) -> Int? {
+            if let value = arg?[key] as? Int { return value }
+            if let value = arg?[key] as? NSNumber { return value.intValue }
+            return nil
+        }
+        if let values = arg?["auth_channels"] as? [String] {
+            var channels: [AuthChannel] = []
+            for value in values {
+                switch value.uppercased() {
+                case "IP":
+                    channels.append(.IP)
+                case "SMS":
+                    channels.append(.SMS)
+                case "TS43":
+                    result(FlutterError(code: "unsupported_channel", message: "TS43 is not available in the bundled iOS SDK 2.2.0 framework.", details: nil))
+                    return
+                default:
+                    result(FlutterError(code: "validation_failed", message: "Unsupported auth channel: \(value)", details: nil))
+                    return
+                }
+            }
+            IPConfiguration.sharedInstance.AUTH_CHANNELS = channels
+        }
+        if let value = arg?["debug"] as? Bool {
+            IPConfiguration.sharedInstance.debug = value
+        }
+        if let value = arg?["env"] as? String {
+            IPConfiguration.sharedInstance.ENV = (value == "production") ? .PRODUCTION : .SANDBOX
+        }
+        if let value = arg?["client_id"] as? String {
+            IPConfiguration.sharedInstance.CLIENT_ID = value
+        }
+        if let value = arg?["redirect_uri"] as? String {
+            IPConfiguration.sharedInstance.REDIRECT_URI = value
+        }
+        if let value = intValue("state_length") {
+            IPConfiguration.sharedInstance.STATE_LENGTH = value
+        }
+        if let value = arg?["current_state"] as? String {
+            IPConfiguration.sharedInstance.currentState = value
+        }
+        if let value = arg?["automatic_state_generation_enabled"] as? Bool {
+            IPConfiguration.sharedInstance.automaticStateGenerationEnabled = value
+        }
+        if let value = arg?["send_error_reports_enabled"] as? Bool {
+            IPConfiguration.sharedInstance.sendErrorReportsEnabled = value
+        }
+        if let value = arg?["enable_carrier_headers"] as? Bool {
+            IPConfiguration.sharedInstance.enableCarrierHeaders = value
+        }
+        if let value = doubleValue("error_report_timeout") {
+            IPConfiguration.sharedInstance.ErrorReportTimeout = value
+        }
+        if let value = arg?["default_scope"] as? String {
+            IPConfiguration.sharedInstance.DEFAULT_SCOPE = value
+        }
+        if let value = arg?["enabled_handle_cookie"] as? Bool {
+            IPConfiguration.sharedInstance.enableCookieHandling = value
+        }
+        if let value = arg?["coverage_always_true"] as? Bool {
+            IPConfiguration.sharedInstance.coverageAlwaysTrue = value
+        }
+        if let value = arg?["response_type_code"] as? String {
+            IPConfiguration.sharedInstance.RESPONSE_TYPE_VALUE = value
+        }
+        if let value = arg?["coverage_path_forced_true"] as? String {
+            IPConfiguration.sharedInstance.COVERAGE_PATH_FORCED_TRUE = value
+        }
+        if let value = arg?["coverage_url"] as? String {
+            IPConfiguration.sharedInstance.customUrls = true
+            IPConfiguration.sharedInstance.COVERAGE_URL = value
+        }
+        if let value = arg?["authorization_url"] as? String {
+            IPConfiguration.sharedInstance.customUrls = true
+            IPConfiguration.sharedInstance.AUTHORIZATION_URL = value
+        }
+        if let value = arg?["custom_urls"] as? Bool {
+            IPConfiguration.sharedInstance.customUrls = value
+        }
+        if let value = arg?["enable_params_validation"] as? Bool {
+            IPConfiguration.sharedInstance.enableParamsValidation = value
+        }
+        if let value = arg?["base_url"] as? String {
+            IPConfiguration.sharedInstance.BASE_URL = value
+        }
+        if let value = arg?["realm"] as? String {
+            IPConfiguration.sharedInstance.REALM_NAME = value
+        }
+        if let value = arg?["coverage_path"] as? String {
+            IPConfiguration.sharedInstance.COVERAGE_PATH = value
+        }
+        if let value = arg?["auth_path"] as? String {
+            IPConfiguration.sharedInstance.AUTH_PATH = value
+        }
+        if let value = arg?["sdk_log_path"] as? String {
+            IPConfiguration.sharedInstance.SDK_LOG_PATH = value
+        }
+        if let value = doubleValue("coverage_read_timeout") {
+            IPConfiguration.sharedInstance.CoverageReadTimeout = value
+        }
+        if let value = doubleValue("coverage_connect_timeout") {
+            IPConfiguration.sharedInstance.CoverageConnectTimeout = value
+        }
+        if let value = doubleValue("auth_read_timeout") {
+            IPConfiguration.sharedInstance.AuthReadTimeout = value
+        }
+        if let value = doubleValue("auth_connect_timeout") {
+            IPConfiguration.sharedInstance.AuthConnectTimeout = value
+        }
+        if let value = doubleValue("local_network_permission_first_prompt_timeout") {
+            IPConfiguration.sharedInstance.LocalNetworkPermissionFirstPromptTimeout = value
+        }
+        if let value = doubleValue("local_network_permission_timeout") {
+            IPConfiguration.sharedInstance.LocalNetworkPermissionTimeout = value
+        }
+        if let value = doubleValue("local_network_permission_grace_timeout") {
+            IPConfiguration.sharedInstance.LocalNetworkPermissionGraceTimeout = value
+        }
+        if let value = arg?["consent_id_value"] as? String {
+            IPConfiguration.sharedInstance.CONSENT_ID_VALUE = value
+        }
+        if let value = arg?["validate_im_apps"] as? Bool {
+            IPConfiguration.sharedInstance.validateIMApps = value
+        }
+        if let value = arg?["im_auto_mode"] as? Bool {
+            IPConfiguration.sharedInstance.IM_AUTO_MODE = value
+        }
+        if let value = arg?["im_priority_app_list"] as? [String] {
+            IPConfiguration.sharedInstance.IM_PRIORITY_APP_LIST = value
+        }
+        if let value = arg?["sms_sandbox_backend_url"] as? String {
+            IPConfiguration.sharedInstance.SMS_BACKEND_URL_SANDBOX = value
+        }
+        if let value = arg?["sms_production_backend_url"] as? String {
+            IPConfiguration.sharedInstance.SMS_BACKEND_URL_PRODUCTION = value
+        }
+        if let value = arg?["sms_auth_path"] as? String {
+            IPConfiguration.sharedInstance.SMS_AUTH_PATH = value
+        }
+        if let value = arg?["sms_token_path"] as? String {
+            IPConfiguration.sharedInstance.SMS_TOKEN_PATH = value
+        }
+        if let value = arg?["sms_scope_verify_phone"] as? String {
+            IPConfiguration.sharedInstance.SMS_SCOPE_VERIFY_PHONE = value
+        }
+        if let value = arg?["sms_server_id"] as? String {
+            IPConfiguration.sharedInstance.SMS_SERVER_ID = value
+        }
+        if let value = intValue("max_log_length") {
+            IPConfiguration.sharedInstance.MAX_LOG_LENGTH = value
+        }
         result(nil)
 
     case "setSMSConfiguration":

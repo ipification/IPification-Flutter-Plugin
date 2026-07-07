@@ -207,6 +207,11 @@ class MethodChannelIPificationPlugin extends IPificationPluginPlatform {
   }
 
   @override
+  Future<void> setIPConfiguration(IPConfiguration configuration) async {
+    await _channel.invokeMethod("setConfiguration", configuration.toMap());
+  }
+
+  @override
   Future<void> setSMSConfiguration({
     String? sandboxBackendUrl,
     String? productionBackendUrl,
