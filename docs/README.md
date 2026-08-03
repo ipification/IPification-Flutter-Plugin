@@ -55,7 +55,6 @@ If you prefer to use a **local version** of the plugin:
 ```
 https://github.com/bvantagelimited/IPification-Flutter-Plugin/archive/refs/tags/2.2.1.zip
 
-
 ```
 
 2. **Extract the ZIP File:**  
@@ -72,6 +71,34 @@ dependencies:
 ```bash
 flutter pub get
 ```
+
+#### [Android] Configure Cleartext HTTP Requests
+
+Cleartext traffic configuration is only required for the following supported telcos:
+
+| Country | Supported telcos |
+| --- | --- |
+| Indonesia | XL, Tri, Smartfren |
+| Canada | TELUS |
+| Mexico | Telcel |
+| UK | O2, Vodafone |
+| Sri Lanka | Dialog |
+| India | Jio |
+| India | Airtel |
+| Malaysia | CelcomDigi |
+| Argentina | Openxpand |
+
+?> **Why this is needed**
+These telcos require cleartext network traffic for authentication. Enable cleartext traffic only for the required domains, following the [Android network security configuration guide](https://developer.android.com/training/articles/security-config#CleartextTrafficPermitted).
+
+In the android application's manifest file (`AndroidManifest.xml`), add the following line inside the `<application>` tag:
+
+```xml
+android:networkSecurityConfig="@xml/ipification_network_security_config"
+```
+
+!> **Existing cleartext configuration**
+If your application already sets `cleartextTrafficPermitted="true"`, adding this network security config is unnecessary and may cause conflicts. Check your existing configuration before proceeding.
 
 ## 2. Configuration Variables
 
